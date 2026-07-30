@@ -70,14 +70,20 @@ catalog:
 # Controles de supply chain
 # ═══════════════════════════════════════════════════════════════════════════
 
-# Paquetes autorizados a ejecutar scripts de instalación. pnpm 10+ los bloquea
-# por defecto. Agregar acá solo tras verificar por qué necesitan un postinstall.
-onlyBuiltDependencies:
-  - esbuild
-  - sharp
-
 # No instalar versiones publicadas hace menos de 7 días. Mitiga los ataques en
 # los que se compromete una cuenta de npm y se publica una versión maliciosa:
 # la ventana de detección de la comunidad se mide en horas, no en semanas.
 # Consecuencia práctica: el catálogo nunca apunta a la versión de hoy.
 minimumReleaseAge: 10080
+
+# Paquetes autorizados a ejecutar scripts de instalación.
+#
+# pnpm los bloquea por defecto: un postinstall corre código arbitrario en la
+# máquina del desarrollador y en el runner de CI, y es el vector habitual de
+# los ataques de supply chain. Agregar uno solo tras entender por qué lo pide.
+#
+#   sharp → compila bindings nativos de libvips. Lo usa Next.js para optimizar
+#           imágenes; sin su build, `next build` cae a un backend mucho más
+#           lento o falla.
+allowBuilds:
+  sharp: true

@@ -1,0 +1,12 @@
+{
+  "extends": "@cair/config/tsconfig/library.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "lib": ["DOM", "DOM.Iterable", "ES2023"],
+    // `node` lo necesita styles.test.ts, que lee styles.css del disco para
+    // comparar los tokens de CSS contra los de @cair/tokens.
+    "types": ["node"],
+    "noEmit": true
+  },
+  "include": ["src/**/*"]
+}

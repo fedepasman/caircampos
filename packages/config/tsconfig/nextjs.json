@@ -4,6 +4,9 @@
   "extends": "./base.json",
   "compilerOptions": {
     "lib": ["DOM", "DOM.Iterable", "ES2023"],
+    // Las apps Next corren código de servidor (Route Handlers, Server
+    // Components, proxy), así que necesitan los tipos de Node además del DOM.
+    "types": ["node"],
     "jsx": "preserve",
     "noEmit": true,
     "allowJs": true,

@@ -14,6 +14,16 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
 
+    // TypeScript 6 dejó de incluir automáticamente todo lo que haya en
+    // node_modules/@types: el default de `types` pasó a ser lista vacía. Cada
+    // paquete declara los tipos globales que necesita.
+    //
+    // No es solo una adaptación al cambio, es mejor así en un monorepo: evita
+    // que los tipos del DOM se filtren al paquete de React Native o que los de
+    // Node se filtren a código de navegador, donde harían pasar por válido un
+    // API que en runtime no existe.
+    "types": [],
+
     // ── Modo estricto ────────────────────────────────────────────────────
     // `strict` no alcanza por sí solo. Las tres opciones siguientes son las
     // que evitan las clases de bug que `strict` deja pasar.

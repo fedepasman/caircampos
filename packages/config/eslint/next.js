@@ -27,14 +27,20 @@ export function nextConfig({ tsconfigRootDir }) {
       },
     },
     {
-      // `packages/ui` contiene componentes de shadcn/ui pensados para el DOM.
-      // No debe existir en el árbol de imports de la app móvil, pero sí puede
-      // usarse libremente acá: la restricción vive en la config de RN.
       files: ['**/*.ts', '**/*.tsx'],
       languageOptions: {
         globals: {
           React: 'readonly',
         },
+      },
+    },
+    {
+      // La API de Next tipa `headers`, `redirects` y `rewrites` como funciones
+      // que devuelven una promesa, así que hay que declararlas `async` aunque
+      // no tengan ningún `await`. Acá `require-await` es un falso positivo.
+      files: ['next.config.ts', 'next.config.mjs', 'next.config.js'],
+      rules: {
+        '@typescript-eslint/require-await': 'off',
       },
     },
   );

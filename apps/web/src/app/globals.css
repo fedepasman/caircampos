@@ -1,0 +1,10 @@
+/*
+ * El tema vive en @cair/ui/styles.css, que ya importa Tailwind y declara el
+ * @theme con los tokens del proyecto. Web y admin lo comparten, para que no
+ * puedan divergir.
+ */
+@import '@cair/ui/styles.css';
+
+/* Las fuentes del monorepo hay que declararlas como origen de clases, o
+ * Tailwind no ve las que se usan dentro de packages/ui al hacer el tree-shake. */
+@source '../../../../packages/ui/src';
