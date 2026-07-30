@@ -23,8 +23,7 @@ export { z };
 
 /** Resultado de una validación, en forma discriminada. */
 export type ResultadoValidacion<T> =
-  | { ok: true; data: T }
-  | { ok: false; errores: Record<string, string[]> };
+  { ok: true; data: T } | { ok: false; errores: Record<string, string[]> };
 
 /**
  * Valida y devuelve un resultado en vez de lanzar.
@@ -41,7 +40,10 @@ export function validar<T extends z.ZodType>(
   if (resultado.success) {
     return { ok: true, data: resultado.data };
   }
-  return { ok: false, errores: z.flattenError(resultado.error).fieldErrors as Record<string, string[]> };
+  return {
+    ok: false,
+    errores: z.flattenError(resultado.error).fieldErrors as Record<string, string[]>,
+  };
 }
 
 /**

@@ -1,0 +1,22 @@
+# Código de terceros vendorizado. Se analiza lo que escribimos y podemos
+# corregir; incluir código ajeno solo agrega ruido no accionable, y un job de
+# seguridad ruidoso se termina ignorando, que es peor que no tenerlo.
+.agents/
+
+# Artefactos de build y dependencias.
+node_modules/
+.next/
+.expo/
+.turbo/
+dist/
+build/
+coverage/
+
+# Archivo generado por el CLI de Supabase.
+packages/supabase/src/database.types.ts
+
+# Nota: .semgrep/fixtures/ NO se excluye acá. Contiene violaciones
+# deliberadas y sí debe poder analizarse desde
+# scripts/verificar-reglas-semgrep.mjs, que es lo que comprueba que las reglas
+# sigan detectando. Del escaneo principal se excluye con --exclude, porque
+# .semgrepignore también aplica cuando se apunta explícitamente a la ruta.

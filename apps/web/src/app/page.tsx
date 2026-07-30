@@ -9,9 +9,7 @@
 export default function Home() {
   return (
     <main className="mx-auto flex min-h-dvh max-w-2xl flex-col justify-center gap-4 px-6">
-      <p className="text-brand-600 text-sm font-semibold tracking-wide uppercase">
-        Sitio público
-      </p>
+      <p className="text-brand-600 text-sm font-semibold tracking-wide uppercase">Sitio público</p>
       <h1 className="text-4xl font-bold text-balance text-neutral-900">
         Cámara Argentina de Inmobiliarias Rurales
       </h1>

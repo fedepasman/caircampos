@@ -4,7 +4,10 @@
   "private": true,
   "type": "module",
   "description": "Configuración compartida: TypeScript, ESLint y reglas de dependencia entre paquetes",
-  "files": ["tsconfig", "eslint"],
+  "files": [
+    "tsconfig",
+    "eslint"
+  ],
   "exports": {
     "./eslint/base": "./eslint/base.js",
     "./eslint/next": "./eslint/next.js",

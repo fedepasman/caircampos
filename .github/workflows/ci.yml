@@ -1,0 +1,115 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Permisos mínimos por defecto. Cada job que necesite más los pide de forma
+# explícita. Sin esto, el GITHUB_TOKEN llega con permisos de escritura y
+# cualquier dependencia comprometida podría usarlo para modificar el
+# repositorio.
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Corepack instala la versión exacta de pnpm declarada en `packageManager`,
+  # así que no hace falta una acción de terceros para configurarlo.
+  NODE_VERSION: '24'
+
+jobs:
+  validar:
+    name: Lint, tipos, tests y build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Habilitar corepack
+        run: corepack enable
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Instalar dependencias
+        # --frozen-lockfile falla si package.json y el lockfile divergen. Es lo
+        # que impide que CI resuelva versiones distintas de las revisadas en el
+        # PR, incluida la política de minimumReleaseAge.
+        run: pnpm install --frozen-lockfile
+
+      - name: Verificar formato
+        run: pnpm format:check
+
+      - name: Lint
+        run: pnpm turbo lint
+
+      - name: Verificar tipos
+        run: pnpm turbo typecheck
+
+      - name: Tests
+        run: pnpm turbo test
+
+      - name: Build
+        run: pnpm turbo build
+        env:
+          # Valores de relleno: el build necesita que las variables validen
+          # contra el esquema de Zod, pero no se conecta a ningún servicio.
+          NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: sb_publishable_ci
+          NEXT_PUBLIC_SITE_URL: http://localhost:3000
+          NEXT_PUBLIC_ADMIN_URL: http://localhost:3001
+
+  base-de-datos:
+    name: Migraciones, guardrails de RLS y tipos
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Habilitar corepack
+        run: corepack enable
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Instalar dependencias
+        run: pnpm install --frozen-lockfile
+
+      - name: Instalar Supabase CLI
+        # Fijada por SHA: una etiqueta de git es móvil y quien controle el
+        # repositorio de la acción puede reapuntarla a código malicioso.
+        uses: supabase/setup-cli@46f7f98c7f948ad727d22c1e67fab04c223a0520 # v3.0.0
+        with:
+          version: 2.109.0
+
+      - name: Levantar Supabase local
+        run: supabase start
+
+      - name: Aplicar migraciones desde cero
+        # Verifica que las migraciones generadas apliquen limpio sobre una base
+        # vacía. Una migración que solo funciona sobre la base de alguien no
+        # sirve.
+        run: supabase db reset
+
+      - name: Guardrails de seguridad (pgTAP)
+        # Verifica que ninguna tabla quede sin RLS, que ninguna vista evada las
+        # políticas y que ninguna política lea user_metadata. Es la
+        # comprobación automática del punto 9 del pliego.
+        run: supabase test db
+
+      - name: Advisors de Supabase
+        run: supabase db advisors --local
+
+      - name: Los tipos generados están al día
+        # Si el esquema cambió y no se regeneraron los tipos, el tipado miente
+        # sobre la forma real de la base. Acá rompe.
+        run: pnpm db:types:check

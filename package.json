@@ -15,6 +15,7 @@
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
+    "security": "node scripts/verificar-reglas-semgrep.mjs && semgrep --config p/security-audit --config p/typescript --config .semgrep/cair.yaml --exclude .semgrep/fixtures --error --skip-unknown-extensions .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "db:start": "supabase start",

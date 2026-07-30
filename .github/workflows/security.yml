@@ -1,0 +1,109 @@
+name: Seguridad
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    # Semanal: una dependencia segura hoy puede tener un CVE publicado la
+    # semana que viene sin que nadie toque el código.
+    - cron: '0 6 * * 1'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  semgrep:
+    name: Análisis estático
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+
+      - name: Instalar Semgrep
+        # Por pip y no con una acción de terceros ni un contenedor: evita tener
+        # que fijar y mantener un SHA externo, y la versión queda a la vista.
+        run: pip install semgrep==1.172.0
+
+      - name: Las reglas propias siguen detectando
+        # Se verifica ANTES de escanear. Una regla que dejó de matchear no
+        # falla: no encuentra nada y deja el job en verde con cobertura cero.
+        run: node scripts/verificar-reglas-semgrep.mjs
+
+      - name: Reglas de seguridad y del proyecto
+        # p/security-audit y p/typescript son rulesets públicos; .semgrep/
+        # cair.yaml tiene las reglas propias, entre ellas la que prohíbe la
+        # service_role key fuera de supabase/functions/.
+        run: |
+          semgrep \
+            --config p/security-audit \
+            --config p/typescript \
+            --config .semgrep/cair.yaml \
+            --exclude .semgrep/fixtures \
+            --error --skip-unknown-extensions .
+
+  dependencias:
+    name: Auditoría de dependencias
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Habilitar corepack
+        run: corepack enable
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          cache: pnpm
+
+      - name: Instalar dependencias
+        run: pnpm install --frozen-lockfile
+
+      - name: Vulnerabilidades conocidas
+        # Falla solo ante severidad alta o crítica. Con un umbral más bajo el
+        # job queda siempre en rojo por avisos de dependencias de desarrollo y
+        # se termina ignorando, que es peor que no tenerlo.
+        run: pnpm audit --audit-level high
+
+  secretos:
+    name: Búsqueda de secretos
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # Historial completo: un secreto commiteado y luego borrado sigue
+          # estando en el historial, y sigue estando filtrado.
+          fetch-depth: 0
+
+      - name: Verificar que no haya archivos .env versionados
+        run: |
+          set -euo pipefail
+          encontrados=$(git ls-files | grep -E '(^|/)\.env($|\.)' | grep -v '\.env\.example$' || true)
+          if [ -n "$encontrados" ]; then
+            echo "::error::Hay archivos .env versionados:"
+            echo "$encontrados"
+            exit 1
+          fi
+          echo "OK: solo .env.example está versionado"
+
+      - name: Buscar claves de servicio en el historial
+        run: |
+          set -euo pipefail
+          # La service_role key evade RLS por completo. Si alguna vez estuvo
+          # commiteada, hay que rotarla aunque ya se haya borrado del árbol.
+          if git log --all -p | grep -nE 'sb_secret_[A-Za-z0-9_-]{10,}|service_role.*eyJ[A-Za-z0-9_-]{20,}'; then
+            echo "::error::Aparece una clave secreta en el historial de git. Rotala antes de seguir."
+            exit 1
+          fi
+          echo "OK: no aparecen claves secretas en el historial"

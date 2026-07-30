@@ -24,7 +24,13 @@ export type { Database, Json } from './database.types.js';
  *   TablesUpdate<'campos'>  → payload de actualización
  *   Enums<'tipo_operacion'> → enum de Postgres como unión de TypeScript
  */
-export type { Tables, TablesInsert, TablesUpdate, Enums, CompositeTypes } from './database.types.js';
+export type {
+  Tables,
+  TablesInsert,
+  TablesUpdate,
+  Enums,
+  CompositeTypes,
+} from './database.types.js';
 
 /** Cliente ya tipado contra el esquema real. Usar este alias, nunca `SupabaseClient` pelado. */
 export type ClienteCair = SupabaseClient<Database>;

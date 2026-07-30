@@ -1,7 +1,13 @@
 import type { NextConfig } from 'next';
 
 const config: NextConfig = {
-  transpilePackages: ['@cair/ui', '@cair/tokens', '@cair/shared', '@cair/schemas', '@cair/supabase'],
+  transpilePackages: [
+    '@cair/ui',
+    '@cair/tokens',
+    '@cair/shared',
+    '@cair/schemas',
+    '@cair/supabase',
+  ],
 
   typescript: { ignoreBuildErrors: false },
   poweredByHeader: false,

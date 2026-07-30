@@ -4,7 +4,13 @@ const config: NextConfig = {
   // Los paquetes del monorepo exponen TypeScript sin compilar (patrón
   // Just-in-Time): Turbopack tiene que transpilarlos como si fueran código
   // propio de la app.
-  transpilePackages: ['@cair/ui', '@cair/tokens', '@cair/shared', '@cair/schemas', '@cair/supabase'],
+  transpilePackages: [
+    '@cair/ui',
+    '@cair/tokens',
+    '@cair/shared',
+    '@cair/schemas',
+    '@cair/supabase',
+  ],
 
   // Un error de tipos no puede llegar a producción en silencio. Next permite
   // saltearlo; acá queda explícito que no se saltea.

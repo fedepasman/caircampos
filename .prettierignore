@@ -1,0 +1,24 @@
+# Skills de terceros vendorizados. No se reformatean: skills-lock.json guarda
+# un hash de cada SKILL.md, y cualquier cambio de formato lo invalida y hace
+# imposible verificar que el contenido sea el de upstream.
+.agents/
+
+# Archivo generado por el CLI de Supabase; se sobrescribe en cada regeneración.
+packages/supabase/src/database.types.ts
+
+# Fixtures con violaciones deliberadas: se mantienen tal cual para que las
+# reglas de Semgrep sigan matcheando sobre la forma exacta esperada.
+.semgrep/fixtures/
+
+# Artefactos de build y dependencias.
+node_modules/
+.next/
+.expo/
+.turbo/
+dist/
+build/
+coverage/
+pnpm-lock.yaml
+
+# Documentación comercial.
+Presupuestos/

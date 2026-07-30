@@ -1,0 +1,98 @@
+rules:
+  # ─────────────────────────────────────────────────────────────────────────
+  - id: cair-service-role-fuera-de-edge-functions
+    languages: [typescript, javascript]
+    severity: ERROR
+    message: >-
+      La clave secreta de Supabase (service_role) evade RLS por completo:
+      filtrarla equivale a publicar la base entera. Su único lugar legítimo es
+      supabase/functions/. Si hace falta desde una app, la operación va en una
+      Edge Function.
+    paths:
+      include:
+        - apps/
+        - packages/
+    pattern-either:
+      - pattern: process.env.SUPABASE_SECRET_KEY
+      - pattern: process.env.SUPABASE_SERVICE_ROLE_KEY
+      - pattern: Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")
+      - pattern-regex: \bsb_secret_[A-Za-z0-9_-]{10,}
+
+  # ─────────────────────────────────────────────────────────────────────────
+  - id: cair-secreto-con-prefijo-publico
+    languages: [typescript, javascript]
+    severity: ERROR
+    message: >-
+      Toda variable con prefijo NEXT_PUBLIC_ o EXPO_PUBLIC_ viaja al navegador
+      o queda embebida en el binario que se publica en las tiendas. Este nombre
+      indica un secreto: sacale el prefijo y leelo solo del lado servidor.
+    pattern-regex: \b(NEXT_PUBLIC|EXPO_PUBLIC)_[A-Z0-9_]*(SECRET|SERVICE_ROLE|PRIVATE_KEY|PASSWORD)[A-Z0-9_]*\b
+
+  # ─────────────────────────────────────────────────────────────────────────
+  - id: cair-getsession-para-autorizar
+    languages: [typescript, javascript]
+    severity: WARNING
+    message: >-
+      getSession() solo lee la cookie, y la cookie la controla el cliente: no
+      sirve para decidir si alguien está autenticado. Usá getUser(), que valida
+      el token contra el servidor de Auth.
+    paths:
+      include:
+        - apps/
+      exclude:
+        - '*.test.ts'
+        - '*.test.tsx'
+    pattern: $SUPABASE.auth.getSession()
+
+  # ─────────────────────────────────────────────────────────────────────────
+  - id: cair-almacenamiento-inseguro-de-sesion
+    languages: [typescript, javascript]
+    severity: ERROR
+    message: >-
+      AsyncStorage guarda en texto plano: en un dispositivo con root o
+      jailbreak el token de sesión queda legible, y con ese token se accede a
+      los datos de contacto de los compradores. Usá expo-secure-store, que se
+      apoya en el Keychain de iOS y el Keystore de Android.
+    paths:
+      include:
+        - apps/mobile/
+    # Se detecta el import y no la forma exacta de la llamada: la primera es
+    # una señal inequívoca y estable, la segunda se rompe con cualquier
+    # refactor y daría una falsa sensación de cobertura.
+    pattern-regex: '@react-native-async-storage/async-storage'
+
+  # ─────────────────────────────────────────────────────────────────────────
+  - id: cair-vista-sin-security-invoker
+    languages: [generic]
+    severity: ERROR
+    message: >-
+      Una vista sin security_invoker corre con los permisos de quien la creó y
+      EVADE las políticas RLS de las tablas que consulta. Declarala como
+      "create view ... with (security_invoker = true)".
+    paths:
+      include:
+        - supabase/schemas/
+        - supabase/migrations/
+    patterns:
+      - pattern-regex: (?i)create\s+(or\s+replace\s+)?view\s+
+      - pattern-not-regex: (?i)security_invoker\s*=\s*true
+
+  # ─────────────────────────────────────────────────────────────────────────
+  - id: cair-politica-lee-user-metadata
+    languages: [generic]
+    severity: ERROR
+    message: >-
+      raw_user_meta_data lo edita el propio usuario y aparece en auth.jwt(): una
+      política que lo lea permite que cualquiera se declare admin o socio. Los
+      datos de autorización van en app_metadata.
+    paths:
+      include:
+        - supabase/
+    # Una sola expresión acotada por `[^;]*` a la misma sentencia. Con dos
+    # patrones separados, Semgrep en modo genérico exige que coincidan en la
+    # misma región y la regla no dispara nunca.
+    #
+    # Es una segunda línea de defensa: el guardrail 4 de pgTAP verifica lo
+    # mismo sobre las políticas ya creadas en la base, que es más confiable
+    # porque no depende de cómo esté escrito el SQL.
+    pattern-regex: '(?is)create\s+policy\b[^;]*user_metadata'

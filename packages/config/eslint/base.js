@@ -28,7 +28,14 @@ export const ignores = [
 export const noAppImports = {
   patterns: [
     {
-      group: ['@cair/web', '@cair/web/*', '@cair/admin', '@cair/admin/*', '@cair/mobile', '@cair/mobile/*'],
+      group: [
+        '@cair/web',
+        '@cair/web/*',
+        '@cair/admin',
+        '@cair/admin/*',
+        '@cair/mobile',
+        '@cair/mobile/*',
+      ],
       message:
         'Las apps son hojas del grafo de dependencias. Mové el código compartido a packages/ en vez de importarlo desde una app.',
     },
