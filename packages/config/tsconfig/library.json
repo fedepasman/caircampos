@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "Library",
+  "extends": "./base.json",
+  "compilerOptions": {
+    "lib": ["ES2023"],
+    // Los paquetes compartidos no compilan: exponen TypeScript directamente y
+    // lo transpila el bundler de cada app (Turbopack en Next, Metro en Expo).
+    // Es el patrón "Just-in-Time Packages" de Turborepo: un paso de build
+    // menos y ningún artefacto intermedio que pueda quedar desactualizado.
+    //
+    // `rootDir` y `outDir` se omiten a propósito: en un tsconfig base se
+    // resolverían relativos a ESTE archivo, no al paquete que lo extiende.
+    "noEmit": true,
+    "declaration": false,
+    "declarationMap": false
+  }
+}

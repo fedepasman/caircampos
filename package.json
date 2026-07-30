@@ -1,0 +1,35 @@
+{
+  "name": "cair",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Plataforma de búsqueda y comercialización de campos — Cámara Argentina de Inmobiliarias Rurales",
+  "packageManager": "pnpm@11.15.1",
+  "engines": {
+    "node": ">=24.0.0",
+    "pnpm": ">=11.0.0"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "db:start": "supabase start",
+    "db:stop": "supabase stop",
+    "db:reset": "supabase db reset",
+    "db:test": "supabase test db",
+    "db:advisors": "supabase db advisors",
+    "db:types": "supabase gen types typescript --local --schema public > packages/supabase/src/database.types.ts",
+    "db:types:check": "pnpm db:types && git diff --exit-code packages/supabase/src/database.types.ts"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "prettier": "catalog:",
+    "prettier-plugin-tailwindcss": "catalog:",
+    "turbo": "2.10.6",
+    "typescript": "catalog:"
+  }
+}

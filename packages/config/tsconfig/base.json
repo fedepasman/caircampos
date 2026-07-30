@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "Base",
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2023"],
+    "module": "preserve",
+    "moduleResolution": "bundler",
+    "moduleDetection": "force",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+
+    // ── Modo estricto ────────────────────────────────────────────────────
+    // `strict` no alcanza por sí solo. Las tres opciones siguientes son las
+    // que evitan las clases de bug que `strict` deja pasar.
+    "strict": true,
+    // Un acceso por índice puede devolver undefined: obliga a comprobarlo.
+    "noUncheckedIndexedAccess": true,
+    // Las propiedades opcionales no pueden recibir undefined explícito.
+    "exactOptionalPropertyTypes": true,
+    // Un `catch (e)` tipa `e` como unknown, no como any.
+    "useUnknownInCatchVariables": true,
+
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "allowUnreachableCode": false,
+
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "incremental": true
+  },
+  "exclude": ["node_modules", "dist", ".next", ".turbo", ".expo"]
+}

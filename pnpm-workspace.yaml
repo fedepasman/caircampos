@@ -1,0 +1,83 @@
+packages:
+  - apps/*
+  - packages/*
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Catálogo: fuente única de versiones para todo el monorepo.
+# Las apps y paquetes referencian `catalog:` en vez de fijar versiones sueltas,
+# de modo que web, admin y mobile nunca queden en versiones divergentes.
+#
+# Todas las versiones respetan `minimumReleaseAge` (ver más abajo): ninguna
+# tiene menos de una semana publicada. Al actualizar, verificar la fecha de
+# publicación de la versión concreta, no la del paquete.
+# ═══════════════════════════════════════════════════════════════════════════
+catalog:
+  # --- Lenguaje y tooling ---
+  # TypeScript se mantiene en 6.0.x a propósito. typescript-eslint declara
+  # `typescript: ">=4.8.4 <6.1.0"` y todavía no soporta TS 7 (el port nativo a
+  # Go), ni siquiera en su canal canary. Subir a 7 rompe todas las reglas de
+  # lint que requieren información de tipos. Ver docs/adr/0006.
+  typescript: 6.0.3
+  '@types/node': 24.13.3
+
+  # --- Calidad ---
+  eslint: 10.7.0
+  '@eslint/js': 10.0.1
+  typescript-eslint: 8.65.0
+  eslint-config-prettier: 10.1.8
+  eslint-plugin-react-hooks: 7.1.1
+  '@next/eslint-plugin-next': 16.2.11
+  prettier: 3.9.6
+  prettier-plugin-tailwindcss: 0.8.1
+  vitest: 4.1.10
+
+  # --- Validación ---
+  zod: 4.4.3
+
+  # --- Backend ---
+  '@supabase/supabase-js': 2.110.8
+  '@supabase/ssr': 0.12.3
+
+  # --- Web (Next.js) ---
+  next: 16.2.11
+  react: 19.2.8
+  react-dom: 19.2.8
+  '@types/react': 19.2.17
+  '@types/react-dom': 19.2.3
+  tailwindcss: 4.3.3
+  '@tailwindcss/postcss': 4.3.3
+  lucide-react: 1.25.0
+
+  # --- Formularios y datos ---
+  react-hook-form: 7.82.0
+  '@hookform/resolvers': 5.4.0
+  '@tanstack/react-query': 5.101.4
+  '@tanstack/react-table': 8.21.3
+
+  # --- Mapas (web) ---
+  mapbox-gl: 3.26.0
+  react-map-gl: 8.1.1
+
+  # --- Observabilidad y email ---
+  '@sentry/nextjs': 10.67.0
+  resend: 6.18.0
+
+  # --- Firmado de URLs para Cloudflare R2 (solo servidor) ---
+  '@aws-sdk/client-s3': 3.1093.0
+  '@aws-sdk/s3-request-presigner': 3.1093.0
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Controles de supply chain
+# ═══════════════════════════════════════════════════════════════════════════
+
+# Paquetes autorizados a ejecutar scripts de instalación. pnpm 10+ los bloquea
+# por defecto. Agregar acá solo tras verificar por qué necesitan un postinstall.
+onlyBuiltDependencies:
+  - esbuild
+  - sharp
+
+# No instalar versiones publicadas hace menos de 7 días. Mitiga los ataques en
+# los que se compromete una cuenta de npm y se publica una versión maliciosa:
+# la ventana de detección de la comunidad se mide en horas, no en semanas.
+# Consecuencia práctica: el catálogo nunca apunta a la versión de hoy.
+minimumReleaseAge: 10080

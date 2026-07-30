@@ -1,0 +1,58 @@
+# ─── Secretos ────────────────────────────────────────────────────────────────
+# Regla del proyecto: NINGÚN secreto entra al repositorio. Solo .env.example,
+# con las claves vacías, se versiona.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p8
+*.p12
+*.mobileprovision
+*.keystore
+!debug.keystore
+
+# ─── Dependencias ────────────────────────────────────────────────────────────
+node_modules/
+.pnpm-store/
+
+# ─── Builds y cachés ─────────────────────────────────────────────────────────
+dist/
+build/
+.turbo/
+.next/
+out/
+*.tsbuildinfo
+coverage/
+
+# ─── Expo / React Native ─────────────────────────────────────────────────────
+.expo/
+.expo-shared/
+ios/
+android/
+*.orig.*
+*.jks
+
+# ─── Supabase ────────────────────────────────────────────────────────────────
+# El directorio temporal del CLI local. `schemas/`, `migrations/`, `functions/`
+# y `tests/` SÍ se versionan.
+supabase/.temp/
+supabase/.branches/
+
+# ─── Skills y herramientas de agentes ────────────────────────────────────────
+# Estado local del skill `impeccable`; no se comparte entre máquinas.
+.impeccable/
+.agents/context/
+
+# ─── Sistema operativo y editores ────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# ─── Documentación comercial ─────────────────────────────────────────────────
+# Propuestas y presupuestos: material contractual, no código.
+Presupuestos/
