@@ -14,23 +14,20 @@ import type { Database } from './database.types.js';
 
 export type { Database, Json } from './database.types.js';
 
+/**
+ * Helpers de tipo que emite el propio generador. Se reexportan en vez de
+ * escribir alias propios: así siguen siendo correctos cuando cambie la forma
+ * del archivo generado.
+ *
+ *   Tables<'campos'>        → fila tal como la devuelve un SELECT
+ *   TablesInsert<'campos'>  → payload de inserción, con los opcionales bien
+ *   TablesUpdate<'campos'>  → payload de actualización
+ *   Enums<'tipo_operacion'> → enum de Postgres como unión de TypeScript
+ */
+export type { Tables, TablesInsert, TablesUpdate, Enums, CompositeTypes } from './database.types.js';
+
 /** Cliente ya tipado contra el esquema real. Usar este alias, nunca `SupabaseClient` pelado. */
 export type ClienteCair = SupabaseClient<Database>;
-
-/** Fila de una tabla del esquema `public`, tal como la devuelve un SELECT. */
-export type Tabla<N extends keyof Database['public']['Tables']> =
-  Database['public']['Tables'][N]['Row'];
-
-/** Payload de inserción de una tabla, con sus campos opcionales correctos. */
-export type Insertar<N extends keyof Database['public']['Tables']> =
-  Database['public']['Tables'][N]['Insert'];
-
-/** Payload de actualización de una tabla. */
-export type Actualizar<N extends keyof Database['public']['Tables']> =
-  Database['public']['Tables'][N]['Update'];
-
-/** Enum de Postgres expuesto como unión de TypeScript. */
-export type Enum<N extends keyof Database['public']['Enums']> = Database['public']['Enums'][N];
 
 /**
  * Configuración de conexión.

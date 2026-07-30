@@ -1,0 +1,2 @@
+CREATE EXTENSION postgis WITH SCHEMA extensions;
+CREATE SCHEMA private AUTHORIZATION postgres;
