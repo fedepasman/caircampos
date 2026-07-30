@@ -1,0 +1,7 @@
+{
+  "extends": "@cair/config/tsconfig/library.json",
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "include": ["src/**/*", "*.config.ts"]
+}

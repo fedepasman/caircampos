@@ -1,0 +1,24 @@
+{
+  "name": "@cair/schemas",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Validación con Zod — fuente única de verdad compartida por cliente y servidor",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@cair/config": "workspace:*",
+    "eslint": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}
