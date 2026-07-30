@@ -1,0 +1,10 @@
+{
+  "extends": "@cair/config/tsconfig/react-native.json",
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src/**/*", "*.ts", ".expo/types/**/*.ts", "expo-env.d.ts"],
+  "exclude": ["node_modules", ".expo"]
+}

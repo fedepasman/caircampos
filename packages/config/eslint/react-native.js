@@ -41,3 +41,27 @@ export function reactNativeConfig({ tsconfigRootDir }) {
     },
   });
 }
+
+/**
+ * Configuración para los archivos que Metro exige en CommonJS.
+ *
+ * `metro.config.js` lo carga el bundler antes de que exista cualquier
+ * transformación, así que tiene que ser CJS: usa `require`, `module.exports`
+ * y `__dirname`. No es código de la app y no se le aplican sus reglas.
+ */
+export const configMetro = {
+  files: ['metro.config.js', 'babel.config.js'],
+  languageOptions: {
+    sourceType: 'commonjs',
+    globals: {
+      require: 'readonly',
+      module: 'writable',
+      __dirname: 'readonly',
+      process: 'readonly',
+    },
+  },
+  rules: {
+    '@typescript-eslint/no-require-imports': 'off',
+    'no-undef': 'off',
+  },
+};

@@ -40,8 +40,11 @@ catalog:
 
   # --- Web (Next.js) ---
   next: 16.2.11
-  react: 19.2.8
-  react-dom: 19.2.8
+  # React queda en la versión que fija Expo SDK 57, no en la última. Next 16
+  # acepta cualquier ^19, así que unificar acá es gratis para web y evita que
+  # el monorepo tenga dos Reacts distintos.
+  react: 19.2.3
+  react-dom: 19.2.3
   '@types/react': 19.2.17
   '@types/react-dom': 19.2.3
   tailwindcss: 4.3.3
