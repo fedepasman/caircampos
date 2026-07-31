@@ -231,10 +231,15 @@ expande cuando la haya.
 
 ### Panel de socios
 
-- Lectura únicamente por ahora: lista de "Mis campos" (con badge
-  Publicado/Borrador en `brand.900`/`neutral.600`) y "Consultas recibidas"
-  (con nombre, apellido y teléfono del comprador). Sin alta ni edición de
-  campos todavía — próxima pasada.
+- Lista de "Mis campos" (con badge Publicado/Borrador en
+  `brand.900`/`neutral.600`, cada fila es un link a su edición) y
+  "Consultas recibidas" (con nombre, apellido y teléfono del comprador).
+- **Alta y edición de campos:** mismo formulario para ambas
+  (`apps/web/src/app/panel/formulario-campo.tsx`), con un selector de
+  ubicación en mapa en vez de inputs de latitud/longitud — un clic coloca
+  un pin arrastrable (`apps/web/src/components/selector-ubicacion.tsx`).
+  Pedirle a una inmobiliaria que tipee grados decimales a mano produciría
+  datos basura; el mapa es la única fuente de esas dos columnas.
 
 ## Do's and Don'ts
 

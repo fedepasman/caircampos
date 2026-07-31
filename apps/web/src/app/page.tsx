@@ -151,7 +151,7 @@ export default async function Home() {
               <MapaCampos campos={camposParaMapa} />
 
               {/* Panel visual: sin lógica de filtrado real todavía. */}
-              <div className="absolute top-4 left-4 z-10 w-56 rounded-md border border-neutral-600 bg-neutral-50 p-4 shadow-md">
+              <div className="absolute top-2 left-2 z-10 w-36 rounded-md border border-neutral-600 bg-neutral-50 p-3 shadow-md sm:top-4 sm:left-4 sm:w-56 sm:p-4">
                 <p className="font-display text-sm font-semibold text-neutral-950">
                   Filtrar área
                 </p>

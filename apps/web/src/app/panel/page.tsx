@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { clienteServidor } from '@/lib/supabase/server';
 import { BotonCerrarSesion } from './boton-cerrar-sesion';
@@ -63,29 +64,39 @@ export default async function PanelPage() {
       </div>
 
       <section className="mt-10">
-        <h2 className="font-display text-xl font-semibold text-neutral-950">Mis campos</h2>
+        <div className="flex items-center justify-between">
+          <h2 className="font-display text-xl font-semibold text-neutral-950">Mis campos</h2>
+          <Link
+            href="/panel/campos/nuevo"
+            className="text-sm font-semibold text-brand-900 underline underline-offset-4"
+          >
+            Cargar campo nuevo
+          </Link>
+        </div>
         {campos && campos.length > 0 ? (
           <ul className="mt-4 flex flex-col gap-3">
             {campos.map((campo) => (
-              <li
-                key={campo.id}
-                className="flex items-center justify-between rounded-md border border-neutral-600 bg-neutral-50 p-4"
-              >
-                <div>
-                  <p className="font-semibold text-neutral-950">{campo.titulo}</p>
-                  <p className="text-sm text-neutral-800">
-                    {campo.localidad}, {campo.provincia} · {campo.hectareas} ha
-                  </p>
-                </div>
-                <span
-                  className={
-                    campo.publicado
-                      ? 'rounded-sm bg-brand-900 px-2 py-1 text-xs font-semibold text-neutral-50'
-                      : 'rounded-sm bg-neutral-600 px-2 py-1 text-xs font-semibold text-neutral-50'
-                  }
+              <li key={campo.id}>
+                <Link
+                  href={`/panel/campos/${campo.id}/editar`}
+                  className="flex items-center justify-between rounded-md border border-neutral-600 bg-neutral-50 p-4 hover:border-brand-900"
                 >
-                  {campo.publicado ? 'Publicado' : 'Borrador'}
-                </span>
+                  <div>
+                    <p className="font-semibold text-neutral-950">{campo.titulo}</p>
+                    <p className="text-sm text-neutral-800">
+                      {campo.localidad}, {campo.provincia} · {campo.hectareas} ha
+                    </p>
+                  </div>
+                  <span
+                    className={
+                      campo.publicado
+                        ? 'rounded-sm bg-brand-900 px-2 py-1 text-xs font-semibold text-neutral-50'
+                        : 'rounded-sm bg-neutral-600 px-2 py-1 text-xs font-semibold text-neutral-50'
+                    }
+                  >
+                    {campo.publicado ? 'Publicado' : 'Borrador'}
+                  </span>
+                </Link>
               </li>
             ))}
           </ul>

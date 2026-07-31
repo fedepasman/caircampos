@@ -72,3 +72,23 @@ export const esquemaIngreso = z.object({
 });
 
 export type Ingreso = z.infer<typeof esquemaIngreso>;
+
+/**
+ * Alta/edición de un campo desde el panel de socios.
+ *
+ * Los mismos límites que ya imponen los `check` de `public.campos`
+ * (hectareas > 0, latitud/longitud en rango): esto da un mensaje de error
+ * legible antes de tocar la red, pero el `check` de Postgres sigue siendo
+ * la validación que de verdad no se puede saltear.
+ */
+export const esquemaCampo = z.object({
+  titulo: z.string().min(1, 'Ingresá un título'),
+  hectareas: z.coerce.number().positive('Debe ser mayor a 0'),
+  provincia: z.string().min(1, 'Ingresá una provincia'),
+  localidad: z.string().min(1, 'Ingresá una localidad'),
+  latitud: z.coerce.number().min(-90).max(90),
+  longitud: z.coerce.number().min(-180).max(180),
+  publicado: z.coerce.boolean(),
+});
+
+export type Campo = z.infer<typeof esquemaCampo>;
