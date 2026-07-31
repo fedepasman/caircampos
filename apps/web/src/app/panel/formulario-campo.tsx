@@ -8,6 +8,10 @@ import { esquemaCampo, type z } from '@cair/schemas';
 import { clienteNavegador } from '@/lib/supabase/client';
 import { SelectorUbicacion } from '@/components/selector-ubicacion';
 import { env } from '@/lib/env';
+import { FormField } from '@cair/ui/FormField';
+import { FormTextarea } from '@cair/ui/FormTextarea';
+import { FormCheckbox } from '@cair/ui/FormCheckbox';
+import { Button } from '@cair/ui/Button';
 import type { Tables } from '@cair/supabase';
 
 const esquemaCamposFormulario = esquemaCampo.omit({ latitud: true, longitud: true });
@@ -41,6 +45,7 @@ export function FormularioCampo({
     defaultValues: campoExistente
       ? {
           titulo: campoExistente.titulo,
+          descripcion: campoExistente.descripcion ?? '',
           hectareas: campoExistente.hectareas,
           provincia: campoExistente.provincia,
           localidad: campoExistente.localidad,
@@ -99,11 +104,16 @@ export function FormularioCampo({
       return;
     }
 
+    // `descripcion` es opcional en el formulario (`undefined` si se deja
+    // vacío) pero la columna es `text | null` — nunca `undefined` en el
+    // payload que recibe Supabase.
+    const datosAGuardar = { ...validado.data, descripcion: validado.data.descripcion ?? null };
+
     const supabase = clienteNavegador();
 
     const { error } = campoExistente
-      ? await supabase.from('campos').update(validado.data).eq('id', campoExistente.id)
-      : await supabase.from('campos').insert({ ...validado.data, socio_id: socioId });
+      ? await supabase.from('campos').update(datosAGuardar).eq('id', campoExistente.id)
+      : await supabase.from('campos').insert({ ...datosAGuardar, socio_id: socioId });
 
     if (error) {
       setErrorGeneral('No se pudo guardar el campo. Intentá de nuevo.');
@@ -131,59 +141,36 @@ export function FormularioCampo({
 
   return (
     <form onSubmit={(event) => void handleSubmit(alEnviar)(event)} className="mt-6 flex flex-col gap-4">
-      <div className="flex flex-col gap-1">
-        <label htmlFor="titulo" className="text-sm font-semibold text-neutral-950">
-          Título
-        </label>
-        <input
-          id="titulo"
-          type="text"
-          className="rounded-sm border border-neutral-700 bg-neutral-50 px-3 py-2 text-base text-neutral-950"
-          {...register('titulo')}
-        />
-        {errors.titulo && <p className="text-sm text-danger">{errors.titulo.message}</p>}
-      </div>
+      <FormField label="Título" type="text" error={errors.titulo?.message} {...register('titulo')} />
 
-      <div className="flex flex-col gap-1">
-        <label htmlFor="hectareas" className="text-sm font-semibold text-neutral-950">
-          Hectáreas
-        </label>
-        <input
-          id="hectareas"
-          type="number"
-          step="any"
-          className="rounded-sm border border-neutral-700 bg-neutral-50 px-3 py-2 text-base text-neutral-950"
-          {...register('hectareas')}
-        />
-        {errors.hectareas && <p className="text-sm text-danger">{errors.hectareas.message}</p>}
-      </div>
+      <FormTextarea
+        label="Descripción (opcional)"
+        error={errors.descripcion?.message}
+        {...register('descripcion')}
+      />
+
+      <FormField
+        label="Hectáreas"
+        type="number"
+        step="any"
+        error={errors.hectareas?.message}
+        {...register('hectareas')}
+      />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div className="flex flex-col gap-1">
-          <label htmlFor="provincia" className="text-sm font-semibold text-neutral-950">
-            Provincia
-          </label>
-          <input
-            id="provincia"
-            type="text"
-            className="rounded-sm border border-neutral-700 bg-neutral-50 px-3 py-2 text-base text-neutral-950"
-            {...register('provincia')}
-          />
-          {errors.provincia && <p className="text-sm text-danger">{errors.provincia.message}</p>}
-        </div>
+        <FormField
+          label="Provincia"
+          type="text"
+          error={errors.provincia?.message}
+          {...register('provincia')}
+        />
 
-        <div className="flex flex-col gap-1">
-          <label htmlFor="localidad" className="text-sm font-semibold text-neutral-950">
-            Localidad
-          </label>
-          <input
-            id="localidad"
-            type="text"
-            className="rounded-sm border border-neutral-700 bg-neutral-50 px-3 py-2 text-base text-neutral-950"
-            {...register('localidad')}
-          />
-          {errors.localidad && <p className="text-sm text-danger">{errors.localidad.message}</p>}
-        </div>
+        <FormField
+          label="Localidad"
+          type="text"
+          error={errors.localidad?.message}
+          {...register('localidad')}
+        />
       </div>
 
       <div className="flex flex-col gap-1">
@@ -204,21 +191,14 @@ export function FormularioCampo({
         </div>
       </div>
 
-      <label className="flex items-center gap-2 text-sm font-semibold text-neutral-950">
-        <input type="checkbox" className="accent-brand-900" {...register('publicado')} />
-        Publicar este campo
-      </label>
+      <FormCheckbox label="Publicar este campo" {...register('publicado')} />
 
       {errorGeneral && <p className="text-sm text-danger">{errorGeneral}</p>}
 
       <div className="mt-2 flex items-center gap-4">
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="rounded-sm bg-accent-400 px-6 py-3 text-base font-semibold text-brand-900 disabled:opacity-60"
-        >
+        <Button type="submit" disabled={isSubmitting}>
           {isSubmitting ? 'Guardando…' : 'Guardar'}
-        </button>
+        </Button>
 
         {campoExistente && (
           <button

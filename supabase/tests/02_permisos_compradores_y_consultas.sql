@@ -25,13 +25,13 @@ select ok(
   'anon no debe poder hacer SELECT sobre public.consultas'
 );
 
--- authenticated puede leer y actualizar su propia fila de compradores
--- (acotado por RLS), pero el alta es manual (Studio): sin INSERT.
+-- authenticated puede leer, actualizar e insertar su propia fila de
+-- compradores (acotado por RLS): registro de autoservicio, no alta manual.
 select ok(
   has_table_privilege('authenticated', 'public.compradores', 'SELECT')
     and has_table_privilege('authenticated', 'public.compradores', 'UPDATE')
-    and not has_table_privilege('authenticated', 'public.compradores', 'INSERT'),
-  'authenticated debe poder SELECT/UPDATE pero no INSERT sobre public.compradores'
+    and has_table_privilege('authenticated', 'public.compradores', 'INSERT'),
+  'authenticated debe poder SELECT/UPDATE/INSERT sobre public.compradores'
 );
 
 -- authenticated puede insertar y leer consultas (acotado por RLS a las
@@ -80,9 +80,10 @@ select set_eq(
   $$
     values
       ('El comprador ve su fila, o el socio del campo consultado', '{authenticated}'),
-      ('El comprador actualiza su propia fila', '{authenticated}')
+      ('El comprador actualiza su propia fila', '{authenticated}'),
+      ('El comprador se registra a sí mismo', '{authenticated}')
   $$,
-  'public.compradores debe tener exactamente las dos políticas esperadas, con sus roles'
+  'public.compradores debe tener exactamente las tres políticas esperadas, con sus roles'
 );
 
 -- Las políticas de consultas existen con los roles esperados. Ninguna

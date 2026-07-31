@@ -36,7 +36,7 @@ export default async function EditarCampoPage({ params }: { params: Promise<{ id
   }
 
   return (
-    <main className="mx-auto max-w-2xl px-6 py-16">
+    <main className="mx-auto max-w-2xl">
       <h1 className="font-display text-2xl font-semibold text-neutral-950">Editar campo</h1>
       <FormularioCampo socioId={socio.id} campoExistente={campo} />
     </main>

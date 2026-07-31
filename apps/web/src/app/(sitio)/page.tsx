@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import { clienteServidor } from '@/lib/supabase/server';
 import { MapaCampos } from '@/components/mapa-campos';
 
@@ -116,21 +117,23 @@ export default async function Home() {
         {campos && campos.length > 0 ? (
           <ul className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-3">
             {campos.map((campo) => (
-              <li
-                key={campo.id}
-                className="overflow-hidden rounded-md border border-neutral-600 bg-neutral-50"
-              >
-                {/* Sin foto: campos no tiene columna de imagen todavía. */}
-                <div className="h-40 bg-gradient-to-br from-brand-700 to-brand-900" aria-hidden />
-                <div className="flex flex-col gap-1 p-4">
-                  <p className="font-display text-lg font-semibold text-neutral-950">
-                    {campo.titulo}
-                  </p>
-                  <p className="text-sm text-neutral-800">
-                    {campo.localidad}, {campo.provincia}
-                  </p>
-                  <p className="text-sm text-neutral-800">{campo.hectareas} ha</p>
-                </div>
+              <li key={campo.id}>
+                <Link
+                  href={`/campos/${campo.id}`}
+                  className="block overflow-hidden rounded-md border border-neutral-600 bg-neutral-50 hover:border-brand-900"
+                >
+                  {/* Sin foto: campos no tiene columna de imagen todavía. */}
+                  <div className="h-40 bg-gradient-to-br from-brand-700 to-brand-900" aria-hidden />
+                  <div className="flex flex-col gap-1 p-4">
+                    <p className="font-display text-lg font-semibold text-neutral-950">
+                      {campo.titulo}
+                    </p>
+                    <p className="text-sm text-neutral-800">
+                      {campo.localidad}, {campo.provincia}
+                    </p>
+                    <p className="text-sm text-neutral-800">{campo.hectareas} ha</p>
+                  </div>
+                </Link>
               </li>
             ))}
           </ul>

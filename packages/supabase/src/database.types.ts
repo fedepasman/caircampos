@@ -17,6 +17,7 @@ export type Database = {
       campos: {
         Row: {
           created_at: string;
+          descripcion: string | null;
           hectareas: number;
           id: string;
           latitud: number;
@@ -30,6 +31,7 @@ export type Database = {
         };
         Insert: {
           created_at?: string;
+          descripcion?: string | null;
           hectareas: number;
           id?: string;
           latitud: number;
@@ -43,6 +45,7 @@ export type Database = {
         };
         Update: {
           created_at?: string;
+          descripcion?: string | null;
           hectareas?: number;
           id?: string;
           latitud?: number;

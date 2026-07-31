@@ -35,7 +35,7 @@ export function MapaCampos({ campos }: { campos: CampoParaMapa[] }) {
         .setLngLat([campo.longitud, campo.latitud])
         .setPopup(
           new mapboxgl.Popup().setHTML(
-            `<strong>${campo.titulo}</strong><br />${String(campo.hectareas)} ha`,
+            `<strong>${campo.titulo}</strong><br />${String(campo.hectareas)} ha<br /><a href="/campos/${campo.id}">Ver más</a>`,
           ),
         )
         .addTo(mapa),

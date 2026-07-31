@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CAIR - Dashboard del Inversor</title>
+<!-- Fonts: Libre Caslon Text & Hanken Grotesk -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&amp;family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-container": "#afb0b0",
+                    "tertiary-fixed": "#e2e2e2",
+                    "on-secondary-fixed-variant": "#544600",
+                    "on-tertiary-fixed": "#1a1c1c",
+                    "inverse-surface": "#303030",
+                    "on-error-container": "#93000a",
+                    "on-primary-container": "#98b984",
+                    "secondary-container": "#fee171",
+                    "background": "#fcf9f8",
+                    "inverse-on-surface": "#f3f0ef",
+                    "error-container": "#ffdad6",
+                    "on-surface": "#1b1c1c",
+                    "tertiary": "#2b2d2d",
+                    "surface-dim": "#dcd9d9",
+                    "on-tertiary-fixed-variant": "#454747",
+                    "on-background": "#1b1c1c",
+                    "outline-variant": "#c3c8bb",
+                    "tertiary-fixed-dim": "#c6c6c7",
+                    "secondary-fixed": "#fee171",
+                    "outline": "#74796e",
+                    "on-secondary-fixed": "#221b00",
+                    "surface-container-high": "#eae7e7",
+                    "on-primary-fixed-variant": "#324e23",
+                    "secondary-fixed-dim": "#e1c559",
+                    "primary-fixed-dim": "#aed099",
+                    "on-secondary": "#ffffff",
+                    "surface-container-low": "#f6f3f2",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary-container": "#414343",
+                    "surface-bright": "#fcf9f8",
+                    "on-primary": "#ffffff",
+                    "surface-tint": "#496639",
+                    "surface": "#fcf9f8",
+                    "on-secondary-container": "#776300",
+                    "on-error": "#ffffff",
+                    "surface-container": "#f0eded",
+                    "primary-container": "#2e4a20",
+                    "surface-container-highest": "#e5e2e1",
+                    "primary-fixed": "#caedb3",
+                    "primary": "#18330c",
+                    "surface-variant": "#e5e2e1",
+                    "on-surface-variant": "#43483f",
+                    "on-primary-fixed": "#072100",
+                    "error": "#ba1a1a",
+                    "secondary": "#705d00",
+                    "on-tertiary": "#ffffff",
+                    "inverse-primary": "#aed099"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Libre Caslon Text"],
+                    "display": ["Libre Caslon Text"],
+                    "body": ["Hanken Grotesk"],
+                    "label": ["Hanken Grotesk"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Hanken Grotesk', sans-serif; background-color: #fcf9f8; }
+        .font-headline { font-family: 'Libre Caslon Text', serif; }
+    </style>
+</head>
+<body class="text-on-surface">
+<div class="flex min-h-screen">
+<!-- Sidebar Navigation (JSON: SideNavBar) -->
+<aside class="h-full w-64 fixed left-0 top-0 bg-surface-container-low border-r border-outline-variant flex flex-col p-4 gap-2 z-50">
+<div class="mb-8 px-2 flex items-center gap-3">
+<div class="w-10 h-10 bg-primary flex items-center justify-center rounded">
+<span class="material-symbols-outlined text-on-primary" style="font-variation-settings: 'FILL' 1;">agriculture</span>
+</div>
+<div>
+<h1 class="font-headline text-title-md font-semibold text-primary leading-tight">CAIR</h1>
+<p class="font-body text-[10px] uppercase tracking-widest text-on-surface-variant">Member Portal</p>
+</div>
+</div>
+<nav class="flex flex-col gap-1 flex-1">
+<!-- Dashboard (Active) -->
+<a class="flex items-center gap-3 bg-primary-container text-on-primary-container rounded-lg px-4 py-3 cursor-pointer active:opacity-80 transition-all" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-body text-label-sm uppercase tracking-wider">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-high rounded-lg px-4 py-3 cursor-pointer transition-all" href="#">
+<span class="material-symbols-outlined">favorite</span>
+<span class="font-body text-label-sm uppercase tracking-wider">Saved Properties</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-high rounded-lg px-4 py-3 cursor-pointer transition-all" href="#">
+<span class="material-symbols-outlined">agriculture</span>
+<span class="font-body text-label-sm uppercase tracking-wider">My Fields</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-high rounded-lg px-4 py-3 cursor-pointer transition-all" href="#">
+<span class="material-symbols-outlined">chat_bubble</span>
+<span class="font-body text-label-sm uppercase tracking-wider">Inquiries</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-high rounded-lg px-4 py-3 cursor-pointer transition-all" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-body text-label-sm uppercase tracking-wider">Market Reports</span>
+</a>
+</nav>
+<div class="mt-auto pt-4 border-t border-outline-variant flex flex-col gap-1">
+<button class="w-full bg-primary text-on-primary font-body text-label-sm uppercase tracking-widest py-3 rounded mb-4 hover:opacity-90 transition-opacity">
+                    List New Property
+                </button>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-high rounded-lg px-4 py-3 cursor-pointer transition-all" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-body text-label-sm uppercase tracking-wider">Support</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-high rounded-lg px-4 py-3 cursor-pointer transition-all" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-body text-label-sm uppercase tracking-wider">Sign Out</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 ml-64 p-8 lg:p-12 max-w-[1280px] mx-auto w-full">
+<!-- Dashboard Header -->
+<header class="mb-10 flex justify-between items-end">
+<div>
+<h2 class="font-headline text-headline-lg text-primary">Bienvenido, Juan Pérez</h2>
+<p class="text-on-surface-variant mt-1 font-body">Resumen de actividad institucional y gestión de activos rurales.</p>
+</div>
+<div class="flex items-center gap-4 text-on-surface-variant">
+<button class="p-2 hover:bg-surface-container-high rounded-full transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="w-10 h-10 rounded-full border border-outline-variant bg-surface-container-highest overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Professional portrait of a middle-aged male investor, Juan Pérez, wearing a clean white shirt against a soft bokeh background of an Argentine countryside ranch at dusk. The lighting is warm and institutional, reflecting a high-status corporate rural professional style with sharp focus and cinematic depth." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAmmx0QUgx4jElN3WKP-w_e5BzBkQ2ol8Edz75pNX7q-ruKAuLBjN4-aDMuOd6Ck2RbJ81on9aHKH0NR4ti4SenCoj8wCpcgCtCJ0ny4bjI_HJTmxvkoHAYoXKR88Pmgtz0vu7fC0QAPsBQ5mEdiORJH-W-uuL9Ucrew4LAL5GAX3uyDM3RplI1aHERdf-wRDg8zJm_nE6H736Fin_UmYpmYanw8DSxdMYDBmla-L1NhdvU4wCMOPEtnA"/>
+</div>
+</div>
+</header>
+<!-- Metrics / Actividad Reciente -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+<div class="bg-surface-container-lowest p-6 border border-outline-variant rounded-lg">
+<div class="flex justify-between items-start mb-4">
+<span class="material-symbols-outlined text-primary text-3xl">favorite</span>
+<span class="text-label-sm text-on-surface-variant uppercase tracking-widest font-semibold">Campos Guardados</span>
+</div>
+<p class="text-4xl font-headline font-bold text-primary">24</p>
+<p class="text-label-sm text-primary mt-2 flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">trending_up</span> +3 este mes
+                    </p>
+</div>
+<div class="bg-surface-container-lowest p-6 border border-outline-variant rounded-lg">
+<div class="flex justify-between items-start mb-4">
+<span class="material-symbols-outlined text-primary text-3xl">chat_bubble</span>
+<span class="text-label-sm text-on-surface-variant uppercase tracking-widest font-semibold">Consultas Activas</span>
+</div>
+<p class="text-4xl font-headline font-bold text-primary">08</p>
+<p class="text-label-sm text-error mt-2 flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">priority_high</span> 2 pendientes
+                    </p>
+</div>
+<div class="bg-surface-container-lowest p-6 border border-outline-variant rounded-lg">
+<div class="flex justify-between items-start mb-4">
+<span class="material-symbols-outlined text-primary text-3xl">sell</span>
+<span class="text-label-sm text-on-surface-variant uppercase tracking-widest font-semibold">Campos Publicados</span>
+</div>
+<p class="text-4xl font-headline font-bold text-primary">12</p>
+<p class="text-label-sm text-on-surface-variant mt-2">Gestionados por CAIR</p>
+</div>
+</section>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Left Column: My Fields & Recent Consultations -->
+<div class="lg:col-span-8 space-y-12">
+<!-- Mis Campos Section -->
+<section>
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline text-title-md text-primary">Mis Campos</h3>
+<button class="text-primary font-label text-label-sm uppercase hover:underline">Ver todos</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Field Card 1 -->
+<div class="group bg-surface-container-lowest border border-outline-variant rounded-lg overflow-hidden transition-all hover:shadow-lg hover:shadow-primary/5">
+<div class="relative h-48 overflow-hidden">
+<div class="absolute top-3 right-3 z-10 bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider">
+                                        Publicado
+                                    </div>
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="A vast aerial landscape of a fertile Argentine agricultural field in Buenos Aires province. Golden soy crops stretch to the horizon under a clear blue sky, with a cluster of eucalyptus trees and a traditional windmill in the far distance. High resolution, professional rural real estate photography with deep green and harvest gold tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDKpb5gcLWPzzktf5by8pPpuDI0bGN-i26RFEQGMqdSebS_EGJoJaqZBoFNRp92MsngBDpldWSs_GgMrfLD5ld6RvxoxEUcsrOGE0TD1B6Xy_9dzVNwmW12toO_qKlFE_1jWr6JzqrFestIk-2HfkeQkpTfyh25Q7s4CJYAj2Lud3_JT2PsnJR39_Smn3WFqUejJSGtEebeSF3XOye7CD6NMRzTCeq5CoNH8UlYGOBuCbD6lSAOX-6AtQ"/>
+</div>
+<div class="p-5">
+<div class="flex justify-between items-start mb-2">
+<h4 class="font-headline text-body-lg text-on-surface font-semibold">Estancia La Posta</h4>
+<p class="font-body text-primary font-bold">USD 4.5M</p>
+</div>
+<div class="flex items-center gap-4 text-on-surface-variant text-body-md mb-4">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">square_foot</span>
+<span>1,200 Ha</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+<span>Balcarce, BA</span>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="flex-1 border border-outline-variant py-2 text-label-sm uppercase tracking-widest hover:bg-surface-container-high transition-colors">Editar</button>
+<button class="flex-1 bg-primary text-on-primary py-2 text-label-sm uppercase tracking-widest hover:opacity-90 transition-opacity">Estadísticas</button>
+</div>
+</div>
+</div>
+<!-- Field Card 2 -->
+<div class="group bg-surface-container-lowest border border-outline-variant rounded-lg overflow-hidden transition-all hover:shadow-lg hover:shadow-primary/5">
+<div class="relative h-48 overflow-hidden">
+<div class="absolute top-3 right-3 z-10 bg-surface-container-highest text-on-surface-variant px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider border border-outline-variant">
+                                        Borrador
+                                    </div>
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Dramatic wide shot of a cattle ranch in the Patagonia region of Argentina. Rugged mountains with snow-capped peaks form the background, while a lush green valley with grazing livestock and a mountain stream dominates the foreground. Cinematic natural lighting, cool tones mixed with deep earthy greens, professional institutional photography style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCTM66pS_0EfKLNkz4A2soEuzXUhOrhJs9HcXkCCNlpHLjj_9Z870kufEtSVA3vRP6299QBQe33atu8uosH_XcW_CCy9jgunUn4qILbTKicnSw4Dx8O7PcTfSQIYl3Rq2ldrtRHKEYSLkqpURkB6FJNR4EZ9pUkYtmAszimIDuQDN9Y3CpKiI4X51Bm_Yh8LL_lQvo2H-wU6bnqI125vcdjBzZamyqnxjEgibN7u1kpcRjzh_GsXHERHg"/>
+</div>
+<div class="p-5">
+<div class="flex justify-between items-start mb-2">
+<h4 class="font-headline text-body-lg text-on-surface font-semibold">Valle Nevado</h4>
+<p class="font-body text-on-surface-variant font-bold">A definir</p>
+</div>
+<div class="flex items-center gap-4 text-on-surface-variant text-body-md mb-4">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">square_foot</span>
+<span>3,500 Ha</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+<span>Río Negro</span>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="w-full border border-outline-variant py-2 text-label-sm uppercase tracking-widest hover:bg-surface-container-high transition-colors">Continuar Publicación</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Consultas Recientes Table -->
+<section>
+<h3 class="font-headline text-title-md text-primary mb-6">Consultas Recientes</h3>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant">
+<th class="p-4 text-label-sm uppercase tracking-widest text-on-surface-variant font-semibold">Propiedad</th>
+<th class="p-4 text-label-sm uppercase tracking-widest text-on-surface-variant font-semibold">Interesado</th>
+<th class="p-4 text-label-sm uppercase tracking-widest text-on-surface-variant font-semibold">Fecha</th>
+<th class="p-4 text-label-sm uppercase tracking-widest text-on-surface-variant font-semibold text-right">Estado</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<tr class="hover:bg-surface-container transition-colors cursor-pointer">
+<td class="p-4 font-headline text-body-md text-primary">Estancia La Posta</td>
+<td class="p-4 font-body text-body-md text-on-surface">Ricardo Gomez</td>
+<td class="p-4 font-body text-body-sm text-on-surface-variant">12 Oct 2023</td>
+<td class="p-4 text-right">
+<span class="bg-primary/10 text-primary px-3 py-1 rounded text-[11px] font-bold uppercase">Respondida</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container transition-colors cursor-pointer">
+<td class="p-4 font-headline text-body-md text-primary">Campo San Ignacio</td>
+<td class="p-4 font-body text-body-md text-on-surface">AgroFinanzas S.A.</td>
+<td class="p-4 font-body text-body-sm text-on-surface-variant">15 Oct 2023</td>
+<td class="p-4 text-right">
+<span class="bg-error/10 text-error px-3 py-1 rounded text-[11px] font-bold uppercase">Pendiente</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container transition-colors cursor-pointer">
+<td class="p-4 font-headline text-body-md text-primary">La Vanguardia</td>
+<td class="p-4 font-body text-body-md text-on-surface">Marta Silveira</td>
+<td class="p-4 font-body text-body-sm text-on-surface-variant">16 Oct 2023</td>
+<td class="p-4 text-right">
+<span class="bg-error/10 text-error px-3 py-1 rounded text-[11px] font-bold uppercase">Pendiente</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</div>
+<!-- Right Column: Mis Datos (Profile Card) -->
+<div class="lg:col-span-4">
+<section class="sticky top-24">
+<h3 class="font-headline text-title-md text-primary mb-6">Mis Datos</h3>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg overflow-hidden shadow-sm">
+<div class="h-24 bg-primary relative">
+<div class="absolute -bottom-10 left-6 w-20 h-20 rounded border-4 border-white bg-surface-container-highest overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Close up professional portrait of a business executive for a corporate member portal. The subject is an Argentine male with a confident expression, wearing a tailored navy blazer. Clean, bright studio lighting with a neutral gray background. High quality and sharp detailing." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtE5JI-tbKN3Hptm2SRuaI78fmsvGMAhpNwKm-YQrcgF16zNdKhYNs67a8-ZpT8rx_syaZGoZrbr9uE1N-zPbPwh9E2lP-LYBN0pRgoiPB6hLN-PqTBXJRkJiL-4-5X503Fjn2xAdebyLcQJzQbb628nSCOicWShNNtRRVxfJfTFx-yD9MbN46Zwq0t4K15ypSjvN2gV9DOsUH1eBnE0X9BICVog3FDZsnsEdkBv8_TZLSZSH7OPf9xA"/>
+</div>
+</div>
+<div class="pt-14 p-6">
+<div class="mb-6">
+<h4 class="font-headline text-headline-lg-mobile text-primary">Juan Pérez</h4>
+<p class="text-label-sm text-on-surface-variant uppercase tracking-widest font-semibold flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-sm" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+                                        Socio Institucional CAIR
+                                    </p>
+</div>
+<div class="space-y-4 mb-8">
+<div class="flex flex-col">
+<span class="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold">Email Institucional</span>
+<span class="font-body text-body-md">j.perez@agroinversiones.com.ar</span>
+</div>
+<div class="flex flex-col">
+<span class="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold">Teléfono de Contacto</span>
+<span class="font-body text-body-md">+54 11 4567-8901</span>
+</div>
+<div class="flex flex-col">
+<span class="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold">Membresía</span>
+<span class="font-body text-body-md">Premium (Vence: Ene 2025)</span>
+</div>
+</div>
+<button class="w-full border border-primary text-primary py-3 text-label-sm uppercase tracking-widest font-bold hover:bg-primary hover:text-on-primary transition-all">
+                                    Editar Perfil Completo
+                                </button>
+</div>
+</div>
+<!-- Secondary CTA Card -->
+<div class="mt-8 bg-secondary-container/30 border border-secondary p-6 rounded-lg">
+<h5 class="font-headline text-body-lg text-on-secondary-container mb-2">Reportes del Mercado</h5>
+<p class="text-body-md text-on-secondary-container/80 mb-4">Acceda a los últimos informes técnicos de valores de la tierra en la zona núcleo.</p>
+<a class="inline-flex items-center gap-2 text-primary font-bold text-label-sm uppercase tracking-widest group" href="#">
+                                Descargar Reporte Octubre
+                                <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+</div>
+</section>
+</div>
+</div>
+</main>
+</div>
+<!-- Footer (JSON: Footer) -->
+<footer class="bg-surface-container-highest border-t border-outline-variant mt-20">
+<div class="max-w-[1280px] mx-auto px-8 py-12 flex flex-col md:flex-row justify-between items-center gap-8">
+<div class="flex flex-col gap-2">
+<span class="font-headline text-body-lg font-bold text-primary">CAIR</span>
+<p class="font-body text-label-sm text-on-surface-variant">© 2024 Cámara Argentina de Inmobiliarias Rurales. All rights reserved.</p>
+</div>
+<div class="flex gap-8">
+<a class="font-body text-label-sm text-on-surface-variant hover:text-primary transition-all hover:underline" href="#">Legal Mentions</a>
+<a class="font-body text-label-sm text-on-surface-variant hover:text-primary transition-all hover:underline" href="#">Data Privacy</a>
+<a class="font-body text-label-sm text-on-surface-variant hover:text-primary transition-all hover:underline" href="#">Terms of Service</a>
+</div>
+</div>
+</footer>
+<script>
+        // Simple micro-interaction for active states or navigation hover
+        document.querySelectorAll('aside nav a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                document.querySelectorAll('aside nav a').forEach(l => {
+                    l.classList.remove('bg-primary-container', 'text-on-primary-container');
+                    l.classList.add('text-on-surface-variant', 'hover:bg-surface-container-high');
+                });
+                this.classList.add('bg-primary-container', 'text-on-primary-container');
+                this.classList.remove('text-on-surface-variant', 'hover:bg-surface-container-high');
+            });
+        });
+    </script>
+</body></html>

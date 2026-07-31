@@ -10,6 +10,7 @@ create table public.campos (
   id uuid primary key default gen_random_uuid(),
   socio_id uuid not null references public.socios (id) on delete cascade,
   titulo text not null,
+  descripcion text,
   hectareas numeric not null check (hectareas > 0),
   provincia text not null,
   localidad text not null,
@@ -96,3 +97,66 @@ grant insert, update, delete on public.campos to authenticated;
 -- Ver el comentario en 00_extensions.sql: revocado explícito además del
 -- cambio global de privilegios por defecto.
 revoke truncate, references, trigger, maintain on public.campos from anon, authenticated;
+
+-- Política de SELECT de `socios` que depende de esta tabla: vive acá y no
+-- en 01_socios.sql porque `campos` todavía no existe en ese punto de la
+-- aplicación ordenada de los esquemas. La ficha pública de un campo
+-- (apps/web/src/app/campos/[id]/page.tsx) necesita mostrar quién lo
+-- publicó. Se acota a socios con al menos un campo publicado: no expone la
+-- lista completa de socios, solo los que ya son visibles vía sus propios
+-- campos. La única columna no trivial que esto expone es `usuario_id`, un
+-- id opaco sin uso fuera de esta base.
+create policy "Cualquiera ve el socio dueño de un campo publicado"
+  on public.socios
+  for select
+  to anon
+  using (id in (select socio_id from public.campos where publicado = true));
+
+grant select on public.socios to anon;
+
+-- Misma condición, política aparte para `authenticated`: un comprador
+-- logueado (o cualquier otro usuario autenticado) tiene que poder ver el
+-- mismo socio que ya podía ver sin loguearse — las políticas de Postgres se
+-- evalúan por rol, y una política `to anon` no aplica una vez que la
+-- sesión pasa a ser `authenticated`. Sin esto, la ficha pública rompe con
+-- "Cannot read properties of null" apenas el visitante inicia sesión.
+--
+-- No puede ser una subquery directa como la de `anon`: la política de
+-- SELECT de `campos` para `authenticated` ya mira `socios` (para saber si
+-- el que pregunta es el dueño), así que una política de `socios` que
+-- mirara `campos` de vuelta formaría un ciclo — Postgres lo rechaza en
+-- tiempo de ejecución con "infinite recursion detected in policy for
+-- relation socios" (42P17), reproducido probando la ficha pública con una
+-- sesión real de comprador. SECURITY DEFINER rompe el ciclo: adentro de la
+-- función, la lectura de `campos` corre con el rol dueño de la función
+-- (bypasea RLS), así que no vuelve a disparar la política de `campos` que
+-- mira `socios`.
+create function private.socio_tiene_campo_publicado(socio_id_a_verificar uuid)
+returns boolean
+language sql
+security definer
+set search_path = ''
+as $$
+  select exists (
+    select 1
+    from public.campos
+    where socio_id = socio_id_a_verificar and publicado = true
+  );
+$$;
+
+-- Igual que en 05_estadisticas_cair.sql y private.socio_ve_comprador:
+-- Postgres otorga EXECUTE a PUBLIC por defecto en toda función nueva. El
+-- motor de `supabase db diff` descarta el REVOKE al generar la migración —
+-- hay que agregarlo a mano, confirmado con pg_proc.proacl.
+revoke execute on function private.socio_tiene_campo_publicado(uuid) from public;
+grant execute on function private.socio_tiene_campo_publicado(uuid) to authenticated;
+
+create policy "El socio ve su fila, CAIR ve todas, o el dueño publicado"
+  on public.socios
+  for select
+  to authenticated
+  using (
+    usuario_id = (select auth.uid())
+    or ((select auth.jwt()) -> 'app_metadata' ->> 'rol') = 'admin'
+    or private.socio_tiene_campo_publicado(id)
+  );

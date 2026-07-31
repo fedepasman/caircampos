@@ -21,21 +21,10 @@ create index socios_usuario_id_idx on public.socios (usuario_id);
 
 alter table public.socios enable row level security;
 
--- Una sola política de SELECT que combina los dos casos con OR, en vez de dos
--- políticas separadas: dos políticas permisivas para el mismo comando y rol
--- obligan a Postgres a evaluar ambas en cada consulta (advisor
--- `multiple_permissive_policies`). `(select auth.jwt())` va envuelto solo
--- alrededor de la llamada a la función, no de toda la cadena de `->`: es el
--- patrón que Postgres puede convertir en InitPlan (se ejecuta una vez, no por
--- fila) — envolver la expresión completa no lo logra igual.
-create policy "El socio ve su propia fila, o CAIR ve todas"
-  on public.socios
-  for select
-  to authenticated
-  using (
-    usuario_id = (select auth.uid())
-    or ((select auth.jwt()) -> 'app_metadata' ->> 'rol') = 'admin'
-  );
+-- Las políticas de SELECT (para `anon` y para `authenticated`) se crean en
+-- 02_campos.sql, no acá: ambas necesitan mirar `campos` para saber qué
+-- socio tiene al menos un campo publicado, y esa tabla todavía no existe en
+-- este punto de la aplicación ordenada de los esquemas.
 
 create policy "El socio actualiza su propia fila"
   on public.socios

@@ -9,7 +9,7 @@
 
 begin;
 
-select plan(6);
+select plan(9);
 
 -- anon puede ver campos publicados (la ficha pública)...
 select ok(
@@ -23,11 +23,11 @@ select ok(
   'anon no debe poder hacer INSERT sobre public.campos'
 );
 
--- anon no tiene ningún acceso a socios: no hay ficha pública de la
--- inmobiliaria en esta etapa, solo de sus campos.
+-- anon puede ver socios, acotado por RLS a los que tienen al menos un campo
+-- publicado: la ficha pública de un campo muestra quién lo publicó.
 select ok(
-  not has_table_privilege('anon', 'public.socios', 'SELECT'),
-  'anon no debe poder hacer SELECT sobre public.socios'
+  has_table_privilege('anon', 'public.socios', 'SELECT'),
+  'anon debe poder hacer SELECT sobre public.socios'
 );
 
 -- El socio autenticado administra sus propios campos.
@@ -44,6 +44,19 @@ select ok(
   has_table_privilege('authenticated', 'public.socios', 'UPDATE')
     and not has_table_privilege('authenticated', 'public.socios', 'INSERT'),
   'authenticated debe poder UPDATE pero no INSERT sobre public.socios'
+);
+
+-- anon nunca llega a la función auxiliar que usa la política de socios
+-- para authenticated (rompe el ciclo de recursión con campos).
+select ok(
+  not has_function_privilege('anon', 'private.socio_tiene_campo_publicado(uuid)', 'EXECUTE'),
+  'anon no debe poder ejecutar private.socio_tiene_campo_publicado'
+);
+
+-- authenticated sí, porque la política de SELECT de socios la invoca.
+select ok(
+  has_function_privilege('authenticated', 'private.socio_tiene_campo_publicado(uuid)', 'EXECUTE'),
+  'authenticated debe poder ejecutar private.socio_tiene_campo_publicado'
 );
 
 -- Las cuatro políticas de campos existen con los roles esperados. No
@@ -66,6 +79,23 @@ select set_eq(
       ('El socio borra sus propios campos', '{authenticated}')
   $$,
   'public.campos debe tener exactamente las cinco políticas esperadas, con sus roles'
+);
+
+-- Las políticas de socios existen con los roles esperados: la nueva de
+-- anon, más las dos de authenticated que ya había.
+select set_eq(
+  $$
+    select policyname, roles::text
+    from pg_policies
+    where schemaname = 'public' and tablename = 'socios'
+  $$,
+  $$
+    values
+      ('El socio ve su fila, CAIR ve todas, o el dueño publicado', '{authenticated}'),
+      ('El socio actualiza su propia fila', '{authenticated}'),
+      ('Cualquiera ve el socio dueño de un campo publicado', '{anon}')
+  $$,
+  'public.socios debe tener exactamente las tres políticas esperadas, con sus roles'
 );
 
 select * from finish();

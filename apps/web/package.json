@@ -17,6 +17,7 @@
     "@cair/tokens": "workspace:*",
     "@cair/ui": "workspace:*",
     "@hookform/resolvers": "catalog:",
+    "lucide-react": "catalog:",
     "mapbox-gl": "catalog:",
     "react-hook-form": "catalog:",
     "next": "catalog:",

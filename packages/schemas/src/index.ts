@@ -83,6 +83,7 @@ export type Ingreso = z.infer<typeof esquemaIngreso>;
  */
 export const esquemaCampo = z.object({
   titulo: z.string().min(1, 'Ingresá un título'),
+  descripcion: z.string().optional(),
   hectareas: z.coerce.number().positive('Debe ser mayor a 0'),
   provincia: z.string().min(1, 'Ingresá una provincia'),
   localidad: z.string().min(1, 'Ingresá una localidad'),
@@ -92,3 +93,27 @@ export const esquemaCampo = z.object({
 });
 
 export type Campo = z.infer<typeof esquemaCampo>;
+
+/**
+ * Registro de autoservicio de un comprador. `password` usa el mínimo
+ * configurado en Supabase Auth (`minimum_password_length` en
+ * `supabase/config.toml`) — un valor distinto ahí sin actualizar acá deja
+ * pasar contraseñas que el propio Auth va a rechazar igual, solo que con un
+ * error menos claro.
+ */
+export const esquemaRegistroComprador = z.object({
+  nombre: z.string().min(1, 'Ingresá tu nombre'),
+  apellido: z.string().min(1, 'Ingresá tu apellido'),
+  telefono: z.string().min(1, 'Ingresá un teléfono'),
+  email: z.email('Ingresá un email válido'),
+  password: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres'),
+});
+
+export type RegistroComprador = z.infer<typeof esquemaRegistroComprador>;
+
+/** Consulta de un comprador por un campo, desde la ficha pública. */
+export const esquemaConsulta = z.object({
+  mensaje: z.string().min(1, 'Escribí tu consulta'),
+});
+
+export type Consulta = z.infer<typeof esquemaConsulta>;

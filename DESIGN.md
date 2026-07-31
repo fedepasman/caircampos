@@ -168,30 +168,45 @@ si se agregan más adelante).
 
 ## Components
 
-Lo que existe hoy, construido en `apps/web/src/app/page.tsx`. No hay
-todavía una librería de componentes en `packages/ui` — esta sección se
-expande cuando la haya.
+Desde esta pasada, `packages/ui/src/components/` es la librería real
+(antes cada pantalla copiaba a mano el mismo patrón de input/botón/tarjeta).
+Se comparte entre `apps/web` y `apps/admin` — nunca `apps/mobile`, que
+depende de `StyleSheet` (ADR 0008).
 
-### Buttons
+### Button (`@cair/ui/Button`)
 
 - **Shape:** radio 2px (`rounded-sm`).
-- **Primary ("Buscar"):** fondo Harvest Gold Light, texto Field Green,
-  semibold. Es el único botón dorado de la página — ver The Scarcity Rule.
+- **`variant="primary"`:** fondo Harvest Gold, texto Field Green, semibold.
+  El único botón dorado por vista — ver The Scarcity Rule.
+- **`variant="secondary"`:** borde Field Green, transparente.
+- `buttonStyles(variant)` exporta las mismas clases como string, para los
+  casos donde el elemento visual es un `<Link>` de Next (navegación) y no
+  puede pasar por el componente `<button>`.
 
-### Cards (campos destacados)
+### FormField / FormTextarea / FormCheckbox (`@cair/ui`)
+
+- **Style:** borde 1px `neutral.700`, fondo blanco, radio 2px, label
+  semibold arriba, mensaje de error en `danger` abajo.
+- Un solo componente para los cinco formularios del sitio (ingreso,
+  registro, alta/edición de campo, consulta) — antes cada uno repetía el
+  mismo markup.
+- Todavía sin estado de foco diferenciado más allá del que da el navegador.
+
+### Card (`@cair/ui/Card`)
 
 - **Corner Style:** 4px (`rounded-md`).
 - **Background:** blanco (`neutral.50`), borde sutil `neutral.600`.
+- Base de las tarjetas de "Campos destacados", "Mis campos", las
+  estadísticas del panel, la ficha de contacto y "Otros campos publicados".
 - **Encabezado sin foto:** mientras `campos` no tenga columna de imagen ni
   haya carga a R2, el lugar de la foto es un degradé sólido
   `brand.700 → brand.900` — nunca una foto de stock haciéndose pasar por el
   campo real.
 
-### Inputs / Fields
+### Badge (`@cair/ui/Badge`)
 
-- **Style:** borde 1px `neutral.700`, fondo blanco, radio 2px.
-- Todavía sin estado de foco ni error diferenciados — el buscador del hero
-  no tiene lógica de validación todavía.
+- Pill Publicado/Borrador: `tone="brand"` (fondo `brand.900`) o
+  `tone="neutral"` (fondo `neutral.600`), siempre texto `neutral.50`.
 
 ### Hero search
 
@@ -216,12 +231,15 @@ expande cuando la haya.
   que el buscador del hero, es **puramente visual** — `campos` no tiene
   columna de región todavía, así que no filtra de verdad.
 
-### Header
+### Header (sitio público)
 
-- Barra simple arriba de cada página: wordmark "CAIR" a la izquierda, un
-  solo link a la derecha ("Ingresar" o "Mi panel", según haya sesión).
-  Server-rendered, no superpuesto sobre la foto del hero como en el comp
-  original de Stitch — simplificación deliberada de esta pasada.
+- Barra simple arriba de las páginas públicas: wordmark "CAIR" a la
+  izquierda, un solo link a la derecha ("Ingresar" o "Mi panel", según haya
+  sesión). Server-rendered, no superpuesto sobre la foto del hero como en
+  el comp original de Stitch — simplificación deliberada de esta pasada.
+  Vive en `apps/web/src/app/(sitio)/layout.tsx` — un Route Group separado
+  del panel, que tiene su propio chrome (ver abajo). Ninguno de los dos
+  Route Groups cambia las URLs.
 
 ### Formulario de ingreso
 
@@ -229,17 +247,64 @@ expande cuando la haya.
   2px). Un solo mensaje de error genérico si falla el login ("Email o
   contraseña incorrectos"): nunca decir cuál de los dos campos estuvo mal.
 
-### Panel de socios
+### Panel de socios (Operate, con sidebar propio)
 
-- Lista de "Mis campos" (con badge Publicado/Borrador en
-  `brand.900`/`neutral.600`, cada fila es un link a su edición) y
-  "Consultas recibidas" (con nombre, apellido y teléfono del comprador).
+- **Chrome:** `apps/web/src/app/panel/layout.tsx` reemplaza el header del
+  sitio público por un sidebar (wordmark adentro, no arriba de la
+  página) — así lo muestra el comp `cair_panel` de Stitch. Solo enlaza a lo
+  que existe de verdad: "Panel", "Mis campos" y "Consultas" son anclas
+  dentro de `/panel`, no rutas nuevas. Nada de "Saved Properties" ni
+  "Market Reports" del comp: esas funciones no existen.
+- **Estadísticas:** dos tarjetas (`Card` + ícono de `lucide-react`) con
+  conteos reales — "Campos publicados" y "Consultas recibidas". El comp
+  tiene una tercera ("Campos Guardados") y sub-métricas ("+3 este mes", "2
+  pendientes"): no hay favoritos ni estado de consulta en el schema, así
+  que se omiten en vez de inventarse.
+- **Mis campos:** tarjetas con el mismo tratamiento sin foto que "Campos
+  destacados" del home, badge `Publicado`/`Borrador`, cada una es un link
+  a su edición.
+- **Consultas recibidas:** tabla (Campo · Comprador · Teléfono · Fecha) en
+  vez de tarjetas sueltas — más escaneable para una superficie *Operate*.
+  Sin columna "Estado": no se trackea si una consulta fue respondida.
+- **Mis datos:** tarjeta chica con lo único que es real, `socios.nombre` y
+  el email de `auth.users` — sin foto, teléfono ni membresía, que el comp
+  muestra pero no existen en el schema.
 - **Alta y edición de campos:** mismo formulario para ambas
   (`apps/web/src/app/panel/formulario-campo.tsx`), con un selector de
   ubicación en mapa en vez de inputs de latitud/longitud — un clic coloca
   un pin arrastrable (`apps/web/src/components/selector-ubicacion.tsx`).
   Pedirle a una inmobiliaria que tipee grados decimales a mano produciría
-  datos basura; el mapa es la única fuente de esas dos columnas.
+  datos basura; el mapa es la única fuente de esas dos columnas. Incluye
+  también un campo de descripción libre, opcional.
+
+### Ficha pública de campo
+
+- `apps/web/src/app/(sitio)/campos/[id]/page.tsx`: barra de título
+  (nombre, ubicación), dos casilleros de datos reales (Superficie,
+  Ubicación) — el comp de Stitch tiene cinco (Aptitud, Mejoras, Riego,
+  Infraestructura), pero esas columnas no existen; una sección de
+  Descripción **solo si el socio la cargó** (`campos.descripcion`, nunca un
+  placeholder inventado); y un mapa de un solo pin (reutiliza
+  `MapaCampos`). Sin precio ni fotos — tampoco existen esas columnas.
+- **Tarjeta de contacto lateral (`sticky`):** nombre del socio y el
+  formulario de consulta — sin matrícula, teléfono ni WhatsApp del socio
+  (no hay esas columnas) y sin el sello "Aval de CAIR" del comp: sería una
+  afirmación institucional falsa, no hay moderación implementada todavía.
+  El bloque de "Consultar" cambia según la sesión: sin cuenta, links a
+  Ingresar/Registrarme; con cuenta de comprador, el formulario de una sola
+  pregunta ("Mensaje"); ya consultado, un mensaje de confirmación en vez
+  del formulario — nunca se puede mandar una segunda consulta duplicada
+  desde la misma ficha.
+- **Otros campos publicados:** hasta 3 campos reales de la misma
+  provincia, excluyendo el actual. Se omite la sección entera si no hay
+  ninguno — nunca un estado vacío forzado ni datos de relleno.
+
+### Formulario de registro (compradores)
+
+- Mismos campos y misma paleta que el resto de los formularios del sitio.
+  A diferencia de socios (alta manual en Studio), el comprador se registra
+  solo: es la única forma viable de que un sitio público reciba consultas
+  reales.
 
 ## Do's and Don'ts
 

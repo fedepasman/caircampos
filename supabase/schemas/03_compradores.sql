@@ -15,7 +15,7 @@ create table public.compradores (
 );
 
 comment on table public.compradores is
-  'Público general registrado para contactar socios. Alta manual en Studio. Sin acceso de CAIR a propósito.';
+  'Público general registrado para contactar socios. Alta de autoservicio. Sin acceso de CAIR a propósito.';
 
 -- FK y columna usada en las políticas de abajo.
 create index compradores_usuario_id_idx on public.compradores (usuario_id);
@@ -34,4 +34,14 @@ create policy "El comprador actualiza su propia fila"
   using (usuario_id = (select auth.uid()))
   with check (usuario_id = (select auth.uid()));
 
-grant select, update on public.compradores to authenticated;
+-- Registro de autoservicio: un sitio público real no puede depender de que
+-- alguien dé de alta a mano a cada visitante interesado en un campo. El
+-- alta de socios sigue siendo manual (son las contrapartes de negocio que
+-- CAIR administra); la de compradores no puede serlo.
+create policy "El comprador se registra a sí mismo"
+  on public.compradores
+  for insert
+  to authenticated
+  with check (usuario_id = (select auth.uid()));
+
+grant select, update, insert on public.compradores to authenticated;
