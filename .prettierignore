@@ -3,12 +3,17 @@
 # imposible verificar que el contenido sea el de upstream.
 .agents/
 
-# Archivo generado por el CLI de Supabase; se sobrescribe en cada regeneración.
-packages/supabase/src/database.types.ts
+# Nota: packages/supabase/src/database.types.ts NO se excluye. Es generado,
+# pero scripts/gen-types.mjs lo formatea como parte de la generación: si el
+# archivo escrito no coincidiera con el commiteado, `db:types:check` fallaría
+# en cada corrida y la verificación dejaría de significar algo.
 
 # Fixtures con violaciones deliberadas: se mantienen tal cual para que las
 # reglas de Semgrep sigan matcheando sobre la forma exacta esperada.
 .semgrep/fixtures/
+
+# Lo regenera Next.js en cada build; formatearlo solo produce diffs espurios.
+next-env.d.ts
 
 # Artefactos de build y dependencias.
 node_modules/
