@@ -4,7 +4,14 @@
       "Bash(git init *)",
       "Bash(git branch *)",
       "Bash(npm view *)",
-      "Bash(python3 -c \"import json,sys; v=json.load\\(sys.stdin\\); print\\([x for x in v if x.startswith\\(\\('6.','7.'\\)\\)][-12:]\\)\")"
+      "Bash(python3 -c \"import json,sys; v=json.load\\(sys.stdin\\); print\\([x for x in v if x.startswith\\(\\('6.','7.'\\)\\)][-12:]\\)\")",
+      "Bash(git remote *)",
+      "Bash(git push *)",
+      "Bash(supabase link *)",
+      "Bash(pnpm db:types)",
+      "Bash(pnpm db:reset)",
+      "Bash(pnpm db:start)",
+      "Bash(pnpm db:test)"
     ]
   }
 }

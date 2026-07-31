@@ -31,3 +31,19 @@ create extension if not exists postgis with schema extensions;
 -- estar aplicada pero no lo está es peor que no tenerla. La garantía se
 -- verifica en supabase/tests/00_guardrails_rls.sql, que sí corre en CI.
 create schema if not exists private;
+
+-- Privilegios por defecto de Supabase para toda tabla nueva de `public`: le
+-- otorgan a `anon` y `authenticated` TRUNCATE, REFERENCES, TRIGGER y
+-- MAINTAIN además de lo que cada GRANT explícito pida. El problema es que
+-- RLS no protege TRUNCATE — es un privilegio a nivel de tabla, no de fila —
+-- así que sin esto, cualquier tabla pública nueva le permitiría a un
+-- request anónimo vaciarla por completo sin que ninguna política lo evite.
+--
+-- Esto solo cambia el privilegio por defecto para tablas creadas DESPUÉS de
+-- este punto por el rol que corre las migraciones. No alcanza a tablas ya
+-- creadas: cada una revoca lo mismo explícitamente en su propio archivo de
+-- schema, por si el orden de aplicación cambiara.
+alter default privileges in schema public
+  revoke truncate, references, trigger, maintain
+  on tables
+  from anon, authenticated;

@@ -16,6 +16,7 @@
     "@cair/supabase": "workspace:*",
     "@cair/tokens": "workspace:*",
     "@cair/ui": "workspace:*",
+    "mapbox-gl": "catalog:",
     "next": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:"
