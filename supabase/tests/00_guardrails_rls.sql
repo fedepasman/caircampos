@@ -16,7 +16,7 @@
 
 begin;
 
-select plan(5);
+select plan(6);
 
 -- ───────────────────────────────────────────────────────────────────────────
 -- 1. Toda tabla de `public` tiene RLS habilitada.
@@ -56,15 +56,20 @@ select is_empty(
 );
 
 -- ───────────────────────────────────────────────────────────────────────────
--- 3. No hay funciones SECURITY DEFINER en `public`.
+-- 3. Ninguna función SECURITY DEFINER de `public` es ejecutable por `anon`.
 --
--- Postgres otorga EXECUTE a PUBLIC en toda función nueva, y `anon` hereda de
--- PUBLIC. Una función SECURITY DEFINER en `public` es, de hecho, un endpoint
--- público que corre con privilegios elevados y evade RLS.
+-- Postgres otorga EXECUTE a PUBLIC en toda función nueva por defecto, y
+-- `anon` hereda de PUBLIC. Una función SECURITY DEFINER en `public` que
+-- `anon` pudiera ejecutar sería, de hecho, un endpoint público anónimo que
+-- corre con privilegios elevados y evade RLS.
 --
--- Cuando hagan falta (por ejemplo, para un lookup interno dentro de una
--- política), van en el esquema `private`, con un chequeo explícito de
--- auth.uid() en el cuerpo y EXECUTE revocado.
+-- Esto NO prohíbe toda función SECURITY DEFINER en public sin excepción:
+-- hay una necesidad real que solo esto resuelve (ver
+-- 05_estadisticas_cair.sql) — Postgres no tiene RLS a nivel de columna, así
+-- que "CAIR ve el agregado de consultas pero no una fila cruda" no se puede
+-- expresar con una política. Lo que sí es innegociable es que `anon` nunca
+-- llegue a una de estas funciones, y que la propia función revise el rol de
+-- quien llama por `app_metadata` antes de devolver nada.
 -- ───────────────────────────────────────────────────────────────────────────
 select is_empty(
   $$
@@ -73,8 +78,9 @@ select is_empty(
     join pg_namespace n on n.oid = p.pronamespace
     where n.nspname = 'public'
       and p.prosecdef
+      and has_function_privilege('anon', p.oid, 'EXECUTE')
   $$,
-  'Las funciones SECURITY DEFINER no pueden vivir en public: usar el esquema private'
+  'Ninguna función SECURITY DEFINER de public puede ser ejecutable por anon'
 );
 
 -- ───────────────────────────────────────────────────────────────────────────
@@ -115,6 +121,27 @@ select is_empty(
       and has_schema_privilege(rolname, 'private', 'USAGE')
   $$,
   'Ni anon ni authenticated pueden tener USAGE sobre el esquema private'
+);
+
+-- ───────────────────────────────────────────────────────────────────────────
+-- 6. Ni `anon` ni `authenticated` tienen TRUNCATE, REFERENCES, TRIGGER o
+--    MAINTAIN sobre ninguna tabla de `public`.
+--
+-- RLS controla filas, no privilegios de tabla: TRUNCATE en particular no lo
+-- filtra ninguna política. Supabase otorga estos cuatro por defecto a toda
+-- tabla nueva (ver supabase/schemas/00_extensions.sql); sin este guardrail,
+-- una tabla nueva creada sin acordarse de revocarlos dejaría a `anon` con
+-- permiso para vaciarla por completo.
+-- ───────────────────────────────────────────────────────────────────────────
+select is_empty(
+  $$
+    select table_name || ': ' || grantee || ' ' || privilege_type
+    from information_schema.table_privileges
+    where table_schema = 'public'
+      and grantee in ('anon', 'authenticated')
+      and privilege_type in ('TRUNCATE', 'REFERENCES', 'TRIGGER', 'MAINTAIN')
+  $$,
+  'Ni anon ni authenticated pueden tener TRUNCATE/REFERENCES/TRIGGER/MAINTAIN en ninguna tabla de public'
 );
 
 select * from finish();

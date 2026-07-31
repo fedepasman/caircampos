@@ -14,13 +14,158 @@ export type Json = string | number | boolean | null | { [key: string]: Json | un
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never;
+      campos: {
+        Row: {
+          created_at: string;
+          hectareas: number;
+          id: string;
+          latitud: number;
+          localidad: string;
+          longitud: number;
+          provincia: string;
+          publicado: boolean;
+          socio_id: string;
+          titulo: string;
+          ubicacion: unknown;
+        };
+        Insert: {
+          created_at?: string;
+          hectareas: number;
+          id?: string;
+          latitud: number;
+          localidad: string;
+          longitud: number;
+          provincia: string;
+          publicado?: boolean;
+          socio_id: string;
+          titulo: string;
+          ubicacion?: unknown;
+        };
+        Update: {
+          created_at?: string;
+          hectareas?: number;
+          id?: string;
+          latitud?: number;
+          localidad?: string;
+          longitud?: number;
+          provincia?: string;
+          publicado?: boolean;
+          socio_id?: string;
+          titulo?: string;
+          ubicacion?: unknown;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'campos_socio_id_fkey';
+            columns: ['socio_id'];
+            isOneToOne: false;
+            referencedRelation: 'socios';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      compradores: {
+        Row: {
+          apellido: string;
+          created_at: string;
+          id: string;
+          nombre: string;
+          telefono: string;
+          usuario_id: string;
+        };
+        Insert: {
+          apellido: string;
+          created_at?: string;
+          id?: string;
+          nombre: string;
+          telefono: string;
+          usuario_id: string;
+        };
+        Update: {
+          apellido?: string;
+          created_at?: string;
+          id?: string;
+          nombre?: string;
+          telefono?: string;
+          usuario_id?: string;
+        };
+        Relationships: [];
+      };
+      consultas: {
+        Row: {
+          campo_id: string;
+          comprador_id: string;
+          created_at: string;
+          id: string;
+          mensaje: string | null;
+        };
+        Insert: {
+          campo_id: string;
+          comprador_id: string;
+          created_at?: string;
+          id?: string;
+          mensaje?: string | null;
+        };
+        Update: {
+          campo_id?: string;
+          comprador_id?: string;
+          created_at?: string;
+          id?: string;
+          mensaje?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'consultas_campo_id_fkey';
+            columns: ['campo_id'];
+            isOneToOne: false;
+            referencedRelation: 'campos';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'consultas_comprador_id_fkey';
+            columns: ['comprador_id'];
+            isOneToOne: false;
+            referencedRelation: 'compradores';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      socios: {
+        Row: {
+          created_at: string;
+          id: string;
+          nombre: string;
+          usuario_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          nombre: string;
+          usuario_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          nombre?: string;
+          usuario_id?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      estadisticas_consultas_por_campo: {
+        Args: never;
+        Returns: {
+          campo_id: string;
+          cantidad_consultas: number;
+          localidad: string;
+          provincia: string;
+          titulo: string;
+        }[];
+      };
     };
     Enums: {
       [_ in never]: never;
