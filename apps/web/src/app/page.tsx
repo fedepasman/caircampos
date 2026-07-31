@@ -1,6 +1,6 @@
 import Image from 'next/image';
-import Link from 'next/link';
 import { clienteServidor } from '@/lib/supabase/server';
+import { MapaCampos } from '@/components/mapa-campos';
 
 /**
  * Home pública. Server Component: la regla de SEO de CLAUDE.md exige que los
@@ -9,11 +9,10 @@ import { clienteServidor } from '@/lib/supabase/server';
  *
  * Identidad visual "Agro-Institutional Modernism", adoptada desde
  * Base_Stitch/agro_institutional_modernism/DESIGN.md — ver /DESIGN.md en la
- * raíz. Sigue el comp `cair_buscador_de_campos` con tres recortes
+ * raíz. Sigue el comp `cair_buscador_de_campos` con dos recortes
  * deliberados: sin fotos de campos (no hay columna de imagen ni R2
- * conectado todavía), sin el mapa interactivo (queda en /mapa-prueba hasta
- * la próxima pasada) y sin lógica de filtrado en el buscador (es forma
- * visual, no funcionalidad).
+ * conectado todavía) y sin lógica de filtrado en el buscador ni en el panel
+ * "Filtrar área" del mapa (es forma visual, no funcionalidad).
  */
 export default async function Home() {
   const supabase = await clienteServidor();
@@ -24,6 +23,11 @@ export default async function Home() {
     .eq('publicado', true)
     .order('created_at', { ascending: false })
     .limit(3);
+
+  const { data: camposParaMapa } = await supabase
+    .from('campos')
+    .select('id, titulo, hectareas, latitud, longitud')
+    .eq('publicado', true);
 
   return (
     <main>
@@ -81,9 +85,9 @@ export default async function Home() {
             </div>
           </div>
 
-          <Link href="/mapa-prueba" className="text-sm text-neutral-100 underline underline-offset-4">
+          <a href="#mapa-campos" className="text-sm text-neutral-100 underline underline-offset-4">
             Ver campos en el mapa
-          </Link>
+          </a>
         </div>
       </section>
 
@@ -133,6 +137,46 @@ export default async function Home() {
         ) : (
           <p className="mt-8 text-neutral-800">Todavía no hay campos publicados.</p>
         )}
+      </section>
+
+      {/* Búsqueda geográfica */}
+      <section id="mapa-campos" className="bg-neutral-200 px-6 py-16">
+        <div className="mx-auto max-w-5xl">
+          <h2 className="font-display text-center text-3xl font-semibold text-neutral-950">
+            Búsqueda geográfica
+          </h2>
+
+          {camposParaMapa && camposParaMapa.length > 0 ? (
+            <div className="relative mt-8 h-[420px] overflow-hidden rounded-lg border border-neutral-600 bg-neutral-50 shadow-lg md:h-[560px]">
+              <MapaCampos campos={camposParaMapa} />
+
+              {/* Panel visual: sin lógica de filtrado real todavía. */}
+              <div className="absolute top-4 left-4 z-10 w-56 rounded-md border border-neutral-600 bg-neutral-50 p-4 shadow-md">
+                <p className="font-display text-sm font-semibold text-neutral-950">
+                  Filtrar área
+                </p>
+                <div className="mt-3 flex flex-col gap-2 text-sm text-neutral-900">
+                  <label className="flex items-center gap-2">
+                    <input type="checkbox" defaultChecked className="accent-brand-900" />
+                    Pampa Húmeda
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <input type="checkbox" className="accent-brand-900" />
+                    Patagonia
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <input type="checkbox" className="accent-brand-900" />
+                    NEA / NOA
+                  </label>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <p className="mt-8 text-center text-neutral-800">
+              Todavía no hay campos publicados para mostrar en el mapa.
+            </p>
+          )}
+        </div>
       </section>
 
       {/* Footer */}

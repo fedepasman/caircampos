@@ -199,6 +199,23 @@ expande cuando la haya.
   `brand.900`. Componente puramente visual hoy — sin filtrado real
   conectado.
 
+### Búsqueda geográfica (mapa)
+
+- **Mapa real**, no un placeholder estático: Mapbox GL con un pin verde
+  (`brand.900`) por campo publicado, encuadrado automáticamente
+  (`fitBounds`) según las coordenadas reales — a diferencia del comp
+  original de Stitch, que usa una captura de pantalla con un pin dibujado
+  encima.
+- **Contenedor:** tarjeta blanca, borde `neutral.600`, radio 8px
+  (`rounded-lg`), sombra (`shadow-lg`), **altura fija** (`420px` / `560px`
+  en `md:`) — no `aspect-ratio`: en Safari el contenedor colapsaba a 0px de
+  alto con `aspect-video`, así que se usa el mismo patrón de altura
+  explícita que ya se había probado antes.
+- **Panel "Filtrar área":** superpuesto arriba a la izquierda, con
+  checkboxes por macro-región (Pampa Húmeda / Patagonia / NEA-NOA). Igual
+  que el buscador del hero, es **puramente visual** — `campos` no tiene
+  columna de región todavía, así que no filtra de verdad.
+
 ## Do's and Don'ts
 
 ### Do:
