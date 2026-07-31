@@ -64,3 +64,11 @@ export function parseOrThrow<T extends z.ZodType>(
   }
   return resultado.data;
 }
+
+/** Formulario de login, compartido por socios y (a futuro) compradores. */
+export const esquemaIngreso = z.object({
+  email: z.email('Ingresá un email válido'),
+  password: z.string().min(1, 'Ingresá tu contraseña'),
+});
+
+export type Ingreso = z.infer<typeof esquemaIngreso>;

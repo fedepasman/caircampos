@@ -22,11 +22,10 @@ create index compradores_usuario_id_idx on public.compradores (usuario_id);
 
 alter table public.compradores enable row level security;
 
-create policy "El comprador ve su propia fila"
-  on public.compradores
-  for select
-  to authenticated
-  using (usuario_id = (select auth.uid()));
+-- La política de SELECT (combinada con el acceso del socio dueño del campo
+-- consultado) se crea en 04_consultas.sql, no acá: depende de la tabla
+-- `consultas`, que todavía no existe en este punto de la aplicación
+-- ordenada de los esquemas.
 
 create policy "El comprador actualiza su propia fila"
   on public.compradores

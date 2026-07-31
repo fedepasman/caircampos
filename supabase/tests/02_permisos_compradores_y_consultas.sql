@@ -11,7 +11,7 @@
 
 begin;
 
-select plan(8);
+select plan(10);
 
 -- anon no toca ninguna de las dos tablas nuevas: ni compradores (dato
 -- personal) ni consultas (el mecanismo de contacto en sí).
@@ -57,6 +57,19 @@ select ok(
   'authenticated debe poder ejecutar estadisticas_consultas_por_campo'
 );
 
+-- anon nunca llega a la función auxiliar que usa la política de compradores.
+select ok(
+  not has_function_privilege('anon', 'private.socio_ve_comprador(uuid)', 'EXECUTE'),
+  'anon no debe poder ejecutar private.socio_ve_comprador'
+);
+
+-- authenticated sí, porque la política de SELECT de compradores la invoca
+-- para el lado del socio.
+select ok(
+  has_function_privilege('authenticated', 'private.socio_ve_comprador(uuid)', 'EXECUTE'),
+  'authenticated debe poder ejecutar private.socio_ve_comprador'
+);
+
 -- Las políticas de compradores existen con los roles esperados.
 select set_eq(
   $$
@@ -66,7 +79,7 @@ select set_eq(
   $$,
   $$
     values
-      ('El comprador ve su propia fila', '{authenticated}'),
+      ('El comprador ve su fila, o el socio del campo consultado', '{authenticated}'),
       ('El comprador actualiza su propia fila', '{authenticated}')
   $$,
   'public.compradores debe tener exactamente las dos políticas esperadas, con sus roles'

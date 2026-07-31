@@ -12,7 +12,10 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: ['/api/'],
+      // `/panel` y `/ingresar` son superficie autenticada: no aportan nada a
+      // la búsqueda. Esto es solo la señal a buscadores, no la protección
+      // real — esa vive en apps/web/src/proxy.ts y en RLS.
+      disallow: ['/api/', '/panel/', '/ingresar'],
     },
     sitemap: `${env.NEXT_PUBLIC_SITE_URL}/sitemap.xml`,
   };

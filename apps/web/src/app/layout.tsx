@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { Hanken_Grotesk, Libre_Caslon_Text } from 'next/font/google';
 import { env } from '../lib/env';
+import { clienteServidor } from '../lib/supabase/server';
 import './globals.css';
 
 // Self-hosted por Next (sin <link> a Google Fonts en runtime). Los nombres
@@ -34,12 +36,30 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const supabase = await clienteServidor();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   // lang="es-AR" no es cosmético: le indica a Google la variante regional y
   // al navegador cómo silabear y qué diccionario usar.
   return (
     <html lang="es-AR" className={`${libreCaslonText.variable} ${hankenGrotesk.variable}`}>
-      <body className="bg-neutral-100 font-body text-neutral-950 antialiased">{children}</body>
+      <body className="bg-neutral-100 font-body text-neutral-950 antialiased">
+        <header className="flex items-center justify-between px-6 py-4">
+          <Link href="/" className="font-display text-lg font-semibold text-brand-900">
+            CAIR
+          </Link>
+          <Link
+            href={user ? '/panel' : '/ingresar'}
+            className="text-sm font-semibold text-brand-900 underline underline-offset-4"
+          >
+            {user ? 'Mi panel' : 'Ingresar'}
+          </Link>
+        </header>
+        {children}
+      </body>
     </html>
   );
 }

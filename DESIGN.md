@@ -216,6 +216,26 @@ expande cuando la haya.
   que el buscador del hero, es **puramente visual** — `campos` no tiene
   columna de región todavía, así que no filtra de verdad.
 
+### Header
+
+- Barra simple arriba de cada página: wordmark "CAIR" a la izquierda, un
+  solo link a la derecha ("Ingresar" o "Mi panel", según haya sesión).
+  Server-rendered, no superpuesto sobre la foto del hero como en el comp
+  original de Stitch — simplificación deliberada de esta pasada.
+
+### Formulario de ingreso
+
+- Misma paleta de inputs que el resto del sitio (borde `neutral.700`, radio
+  2px). Un solo mensaje de error genérico si falla el login ("Email o
+  contraseña incorrectos"): nunca decir cuál de los dos campos estuvo mal.
+
+### Panel de socios
+
+- Lectura únicamente por ahora: lista de "Mis campos" (con badge
+  Publicado/Borrador en `brand.900`/`neutral.600`) y "Consultas recibidas"
+  (con nombre, apellido y teléfono del comprador). Sin alta ni edición de
+  campos todavía — próxima pasada.
+
 ## Do's and Don'ts
 
 ### Do:
