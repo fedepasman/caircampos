@@ -1,0 +1,16 @@
+# Vercel corre su propia instalación (pnpm install) durante el build: subir
+# node_modules o el caché de Turborepo solo infla la subida sin aportar nada
+# (llegó a pesar 10GB con .turbo incluido).
+node_modules
+.turbo
+.next
+.expo
+ios
+android
+
+# Material de referencia y de trabajo que no hace falta para el build.
+Base_Stitch
+Presupuestos
+borrar
+.agents
+docs

@@ -11,6 +11,8 @@
 *.mobileprovision
 *.keystore
 !debug.keystore
+.secretos-locales/
+.vercel/
 
 # ─── Dependencias ────────────────────────────────────────────────────────────
 node_modules/
