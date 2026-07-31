@@ -14,6 +14,7 @@ import { FormCheckbox } from '@cair/ui/FormCheckbox';
 import { FormSelect } from '@cair/ui/FormSelect';
 import { Button } from '@cair/ui/Button';
 import { ETIQUETAS_MODALIDAD_CAMPO, ETIQUETAS_TIPO_CAMPO } from '@cair/shared';
+import { SubidaFotos } from './subida-fotos';
 import type { Tables } from '@cair/supabase';
 
 const esquemaCamposFormulario = esquemaCampo.omit({ latitud: true, longitud: true });
@@ -27,9 +28,11 @@ type CamposFormulario = z.output<typeof esquemaCamposFormulario>;
 export function FormularioCampo({
   socioId,
   campoExistente,
+  fotos = [],
 }: {
   socioId: string;
   campoExistente?: Tables<'campos'>;
+  fotos?: Pick<Tables<'campo_fotos'>, 'id' | 'object_key' | 'orden'>[];
 }) {
   const router = useRouter();
   const [ubicacion, setUbicacion] = useState<{ latitud: number; longitud: number } | null>(
@@ -80,7 +83,9 @@ export function FormularioCampo({
       const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(consulta)}.json?access_token=${env.NEXT_PUBLIC_MAPBOX_TOKEN}&country=AR&limit=1`;
 
       fetch(url)
-        .then((respuesta) => respuesta.json() as Promise<{ features?: { center: [number, number] }[] }>)
+        .then(
+          (respuesta) => respuesta.json() as Promise<{ features?: { center: [number, number] }[] }>,
+        )
         .then((datos) => {
           const coordenadas = datos.features?.[0]?.center;
           if (coordenadas) {
@@ -123,16 +128,35 @@ export function FormularioCampo({
 
     const supabase = clienteNavegador();
 
-    const { error } = campoExistente
-      ? await supabase.from('campos').update(datosAGuardar).eq('id', campoExistente.id)
-      : await supabase.from('campos').insert({ ...datosAGuardar, socio_id: socioId });
+    if (campoExistente) {
+      const { error } = await supabase
+        .from('campos')
+        .update(datosAGuardar)
+        .eq('id', campoExistente.id);
+      if (error) {
+        setErrorGeneral('No se pudo guardar el campo. Intentá de nuevo.');
+        return;
+      }
+      router.push('/panel');
+      router.refresh();
+      return;
+    }
+
+    // Un campo nuevo no tiene id todavía, y las fotos necesitan uno (van a
+    // R2 bajo `campos/{campo_id}/...`) — por eso el alta redirige a editar
+    // en vez de al panel, para recién ahí habilitar la carga de fotos.
+    const { data: nuevoCampo, error } = await supabase
+      .from('campos')
+      .insert({ ...datosAGuardar, socio_id: socioId })
+      .select('id')
+      .single();
 
     if (error) {
       setErrorGeneral('No se pudo guardar el campo. Intentá de nuevo.');
       return;
     }
 
-    router.push('/panel');
+    router.push(`/panel/campos/${nuevoCampo.id}/editar`);
     router.refresh();
   }
 
@@ -152,8 +176,16 @@ export function FormularioCampo({
   }
 
   return (
-    <form onSubmit={(event) => void handleSubmit(alEnviar)(event)} className="mt-6 flex flex-col gap-4">
-      <FormField label="Título" type="text" error={errors.titulo?.message} {...register('titulo')} />
+    <form
+      onSubmit={(event) => void handleSubmit(alEnviar)(event)}
+      className="mt-6 flex flex-col gap-4"
+    >
+      <FormField
+        label="Título"
+        type="text"
+        error={errors.titulo?.message}
+        {...register('titulo')}
+      />
 
       <FormTextarea
         label="Descripción (opcional)"
@@ -197,11 +229,7 @@ export function FormularioCampo({
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <FormSelect
-          label="Modalidad"
-          error={errors.modalidad?.message}
-          {...register('modalidad')}
-        >
+        <FormSelect label="Modalidad" error={errors.modalidad?.message} {...register('modalidad')}>
           {MODALIDADES_CAMPO.map((modalidad) => (
             <option key={modalidad} value={modalidad}>
               {ETIQUETAS_MODALIDAD_CAMPO[modalidad]}
@@ -240,9 +268,11 @@ export function FormularioCampo({
         </div>
       </div>
 
+      {campoExistente && <SubidaFotos campoId={campoExistente.id} fotos={fotos} />}
+
       <FormCheckbox label="Publicar este campo" {...register('publicado')} />
 
-      {errorGeneral && <p className="text-sm text-danger">{errorGeneral}</p>}
+      {errorGeneral && <p className="text-danger text-sm">{errorGeneral}</p>}
 
       <div className="mt-2 flex items-center gap-4">
         <Button type="submit" disabled={isSubmitting}>
@@ -253,7 +283,7 @@ export function FormularioCampo({
           <button
             type="button"
             onClick={() => void alEliminar()}
-            className="text-sm text-danger underline underline-offset-4"
+            className="text-danger text-sm underline underline-offset-4"
           >
             Eliminar campo
           </button>

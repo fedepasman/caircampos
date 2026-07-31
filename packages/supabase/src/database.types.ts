@@ -14,6 +14,38 @@ export type Json = string | number | boolean | null | { [key: string]: Json | un
 export type Database = {
   public: {
     Tables: {
+      campo_fotos: {
+        Row: {
+          campo_id: string;
+          created_at: string;
+          id: string;
+          object_key: string;
+          orden: number;
+        };
+        Insert: {
+          campo_id: string;
+          created_at?: string;
+          id?: string;
+          object_key: string;
+          orden?: number;
+        };
+        Update: {
+          campo_id?: string;
+          created_at?: string;
+          id?: string;
+          object_key?: string;
+          orden?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'campo_fotos_campo_id_fkey';
+            columns: ['campo_id'];
+            isOneToOne: false;
+            referencedRelation: 'campos';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       campos: {
         Row: {
           created_at: string;

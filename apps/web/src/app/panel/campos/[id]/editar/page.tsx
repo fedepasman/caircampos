@@ -35,10 +35,15 @@ export default async function EditarCampoPage({ params }: { params: Promise<{ id
     notFound();
   }
 
+  const { data: fotos } = await supabase
+    .from('campo_fotos')
+    .select('id, object_key, orden')
+    .eq('campo_id', id);
+
   return (
     <main className="mx-auto max-w-2xl">
       <h1 className="font-display text-2xl font-semibold text-neutral-950">Editar campo</h1>
-      <FormularioCampo socioId={socio.id} campoExistente={campo} />
+      <FormularioCampo socioId={socio.id} campoExistente={campo} fotos={fotos ?? []} />
     </main>
   );
 }

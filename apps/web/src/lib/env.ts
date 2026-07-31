@@ -16,6 +16,10 @@ const esquema = z.object({
   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: z.string().min(1),
   NEXT_PUBLIC_SITE_URL: z.url('Debe ser una URL válida'),
   NEXT_PUBLIC_MAPBOX_TOKEN: z.string().min(1),
+  // Dominio público de lectura del bucket de R2 (r2.dev o dominio propio):
+  // solo arma la URL de una foto ya subida, nunca escribe — las credenciales
+  // de escritura viven exclusivamente en la Edge Function.
+  NEXT_PUBLIC_R2_PUBLIC_URL: z.url('Debe ser una URL válida'),
 });
 
 const resultado = esquema.safeParse({
@@ -23,6 +27,7 @@ const resultado = esquema.safeParse({
   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
   NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
   NEXT_PUBLIC_MAPBOX_TOKEN: process.env.NEXT_PUBLIC_MAPBOX_TOKEN,
+  NEXT_PUBLIC_R2_PUBLIC_URL: process.env.NEXT_PUBLIC_R2_PUBLIC_URL,
 });
 
 if (!resultado.success) {

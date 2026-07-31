@@ -6,10 +6,12 @@ import { MapaCampos } from '@/components/mapa-campos';
 import { buttonStyles } from '@cair/ui/Button';
 import { ETIQUETAS_MODALIDAD_CAMPO, ETIQUETAS_TIPO_CAMPO, formatearPrecioUsd } from '@cair/shared';
 import { MODALIDADES_CAMPO, TIPOS_CAMPO } from '@cair/schemas';
+import { env } from '@/lib/env';
 
 export const metadata: Metadata = {
   title: 'Campos en venta y arrendamiento',
-  description: 'Buscá campos agrícolas, ganaderos y mixtos en toda Argentina, filtrando por zona, precio y superficie.',
+  description:
+    'Buscá campos agrícolas, ganaderos y mixtos en toda Argentina, filtrando por zona, precio y superficie.',
   alternates: { canonical: '/campos' },
 };
 
@@ -44,6 +46,10 @@ function escaparParaFiltroOr(valor: string): string {
   return valor.replace(/[%,()]/g, (caracter) => encodeURIComponent(caracter));
 }
 
+function fotoPortada(fotos: { object_key: string; orden: number }[]): string | undefined {
+  return [...fotos].sort((a, b) => a.orden - b.orden)[0]?.object_key;
+}
+
 export default async function ResultadosCamposPage({
   searchParams,
 }: {
@@ -69,7 +75,9 @@ export default async function ResultadosCamposPage({
 
   let consulta = supabase
     .from('campos')
-    .select('id, titulo, hectareas, precio_usd, provincia, localidad, modalidad, tipo_campo, latitud, longitud')
+    .select(
+      'id, titulo, hectareas, precio_usd, provincia, localidad, modalidad, tipo_campo, latitud, longitud, campo_fotos(object_key, orden)',
+    )
     .eq('publicado', true);
 
   if (modalidad) consulta = consulta.eq('modalidad', modalidad);
@@ -80,7 +88,9 @@ export default async function ResultadosCamposPage({
   if (precioMax !== undefined) consulta = consulta.lte('precio_usd', precioMax);
   if (q) {
     const patron = `%${escaparParaFiltroOr(q)}%`;
-    consulta = consulta.or(`titulo.ilike.${patron},localidad.ilike.${patron},provincia.ilike.${patron}`);
+    consulta = consulta.or(
+      `titulo.ilike.${patron},localidad.ilike.${patron},provincia.ilike.${patron}`,
+    );
   }
 
   const { data: campos } = await consulta.order('created_at', { ascending: false });
@@ -97,11 +107,14 @@ export default async function ResultadosCamposPage({
     <main className="mx-auto flex max-w-7xl flex-col gap-8 px-6 py-10 lg:flex-row lg:items-start">
       <aside className="w-full shrink-0 lg:w-72">
         <h1 className="font-display text-2xl font-semibold text-neutral-950">Filtros</h1>
-        <div className="mt-2 h-1 w-12 bg-accent-400" />
+        <div className="bg-accent-400 mt-2 h-1 w-12" />
 
         <form action="/campos" className="mt-6 flex flex-col gap-6">
           <div className="flex flex-col gap-2">
-            <label htmlFor="q" className="text-xs font-semibold tracking-widest text-neutral-800 uppercase">
+            <label
+              htmlFor="q"
+              className="text-xs font-semibold tracking-widest text-neutral-800 uppercase"
+            >
               Ubicación
             </label>
             <input
@@ -138,7 +151,10 @@ export default async function ResultadosCamposPage({
           </div>
 
           <div className="flex flex-col gap-2">
-            <label htmlFor="modalidad" className="text-xs font-semibold tracking-widest text-neutral-800 uppercase">
+            <label
+              htmlFor="modalidad"
+              className="text-xs font-semibold tracking-widest text-neutral-800 uppercase"
+            >
               Modalidad
             </label>
             <select
@@ -202,7 +218,7 @@ export default async function ResultadosCamposPage({
 
           <button
             type="submit"
-            className="w-full rounded-sm bg-accent-400 py-3 text-sm font-semibold text-brand-900"
+            className="bg-accent-400 text-brand-900 w-full rounded-sm py-3 text-sm font-semibold"
           >
             Aplicar filtros
           </button>
@@ -217,68 +233,90 @@ export default async function ResultadosCamposPage({
         <div className="mt-6 flex flex-wrap items-baseline justify-between gap-2 border-b border-neutral-600 pb-4">
           <div>
             <h2 className="font-display text-xl font-semibold text-neutral-950">
-              Resultados{descripcionFiltros && <> para: <span className="font-normal">{descripcionFiltros}</span></>}
+              Resultados
+              {descripcionFiltros && (
+                <>
+                  {' '}
+                  para: <span className="font-normal">{descripcionFiltros}</span>
+                </>
+              )}
             </h2>
             <p className="text-sm text-neutral-800">
-              {campos?.length ?? 0} {campos?.length === 1 ? 'campo encontrado' : 'campos encontrados'}
+              {campos?.length ?? 0}{' '}
+              {campos?.length === 1 ? 'campo encontrado' : 'campos encontrados'}
             </p>
           </div>
         </div>
 
         {campos && campos.length > 0 ? (
           <ul className="mt-6 grid grid-cols-1 gap-6 xl:grid-cols-2">
-            {campos.map((campo) => (
-              <li
-                key={campo.id}
-                className="group flex flex-col overflow-hidden rounded-md border border-neutral-600 bg-neutral-50 transition-all duration-300 hover:border-brand-900 hover:shadow-xl"
-              >
-                <div className="h-64 bg-gradient-to-br from-brand-700 to-brand-900" aria-hidden />
-                <div className="flex flex-1 flex-col justify-between p-6">
-                  <div>
-                    <div className="flex items-start justify-between gap-2">
-                      <h3 className="font-display text-xl leading-tight font-semibold text-neutral-950">
-                        {campo.titulo}
-                      </h3>
-                      <span className="font-display text-lg font-semibold whitespace-nowrap text-brand-900">
-                        {formatearPrecioUsd(campo.precio_usd)}
-                      </span>
-                    </div>
-                    <p className="mt-2 flex items-center gap-2 text-neutral-800">
-                      <MapPin size={18} />
-                      {campo.localidad}, {campo.provincia}
-                    </p>
+            {campos.map((campo) => {
+              const objectKey = fotoPortada(campo.campo_fotos);
+              return (
+                <li
+                  key={campo.id}
+                  className="group hover:border-brand-900 flex flex-col overflow-hidden rounded-md border border-neutral-600 bg-neutral-50 transition-all duration-300 hover:shadow-xl"
+                >
+                  {objectKey ? (
+                    // eslint-disable-next-line @next/next/no-img-element -- URL externa (R2)
+                    <img
+                      src={`${env.NEXT_PUBLIC_R2_PUBLIC_URL}/${objectKey}`}
+                      alt=""
+                      className="h-64 w-full object-cover"
+                    />
+                  ) : (
+                    <div
+                      className="from-brand-700 to-brand-900 h-64 bg-gradient-to-br"
+                      aria-hidden
+                    />
+                  )}
+                  <div className="flex flex-1 flex-col justify-between p-6">
+                    <div>
+                      <div className="flex items-start justify-between gap-2">
+                        <h3 className="font-display text-xl leading-tight font-semibold text-neutral-950">
+                          {campo.titulo}
+                        </h3>
+                        <span className="font-display text-brand-900 text-lg font-semibold whitespace-nowrap">
+                          {formatearPrecioUsd(campo.precio_usd)}
+                        </span>
+                      </div>
+                      <p className="mt-2 flex items-center gap-2 text-neutral-800">
+                        <MapPin size={18} />
+                        {campo.localidad}, {campo.provincia}
+                      </p>
 
-                    <div className="mt-4 grid grid-cols-3 gap-4 border-y border-neutral-600/40 py-4">
-                      <div className="text-center">
-                        <Ruler className="mx-auto text-brand-900" size={22} />
-                        <p className="mt-1 text-xs font-semibold text-neutral-800">
-                          {campo.hectareas} Ha
-                        </p>
-                      </div>
-                      <div className="text-center">
-                        <Sprout className="mx-auto text-brand-900" size={22} />
-                        <p className="mt-1 text-xs font-semibold text-neutral-800">
-                          {ETIQUETAS_TIPO_CAMPO[campo.tipo_campo] ?? campo.tipo_campo}
-                        </p>
-                      </div>
-                      <div className="text-center">
-                        <Tag className="mx-auto text-brand-900" size={22} />
-                        <p className="mt-1 text-xs font-semibold text-neutral-800">
-                          {ETIQUETAS_MODALIDAD_CAMPO[campo.modalidad] ?? campo.modalidad}
-                        </p>
+                      <div className="mt-4 grid grid-cols-3 gap-4 border-y border-neutral-600/40 py-4">
+                        <div className="text-center">
+                          <Ruler className="text-brand-900 mx-auto" size={22} />
+                          <p className="mt-1 text-xs font-semibold text-neutral-800">
+                            {campo.hectareas} Ha
+                          </p>
+                        </div>
+                        <div className="text-center">
+                          <Sprout className="text-brand-900 mx-auto" size={22} />
+                          <p className="mt-1 text-xs font-semibold text-neutral-800">
+                            {ETIQUETAS_TIPO_CAMPO[campo.tipo_campo] ?? campo.tipo_campo}
+                          </p>
+                        </div>
+                        <div className="text-center">
+                          <Tag className="text-brand-900 mx-auto" size={22} />
+                          <p className="mt-1 text-xs font-semibold text-neutral-800">
+                            {ETIQUETAS_MODALIDAD_CAMPO[campo.modalidad] ?? campo.modalidad}
+                          </p>
+                        </div>
                       </div>
                     </div>
+
+                    <Link
+                      href={`/campos/${campo.id}`}
+                      className={`${buttonStyles('secondary')} hover:bg-brand-900 mt-6 w-full text-center hover:text-neutral-50`}
+                    >
+                      Ver Detalles
+                    </Link>
                   </div>
-
-                  <Link
-                    href={`/campos/${campo.id}`}
-                    className={`${buttonStyles('secondary')} mt-6 w-full text-center hover:bg-brand-900 hover:text-neutral-50`}
-                  >
-                    Ver Detalles
-                  </Link>
-                </div>
-              </li>
-            ))}
+                </li>
+              );
+            })}
           </ul>
         ) : (
           <p className="mt-8 text-neutral-800">No se encontraron campos con estos filtros.</p>

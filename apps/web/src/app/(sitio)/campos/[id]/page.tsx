@@ -7,7 +7,9 @@ import { MapaCampos } from '@/components/mapa-campos';
 import { BotonCerrarSesion } from '@/components/boton-cerrar-sesion';
 import { Card } from '@cair/ui/Card';
 import { Badge } from '@cair/ui/Badge';
+import { buttonStyles } from '@cair/ui/Button';
 import { ETIQUETAS_MODALIDAD_CAMPO, ETIQUETAS_TIPO_CAMPO, formatearPrecioUsd } from '@cair/shared';
+import { env } from '@/lib/env';
 import { FormularioConsulta } from './formulario-consulta';
 
 async function obtenerCampo(id: string) {
@@ -15,7 +17,7 @@ async function obtenerCampo(id: string) {
   const { data } = await supabase
     .from('campos')
     .select(
-      'id, titulo, descripcion, hectareas, precio_usd, provincia, localidad, modalidad, tipo_campo, latitud, longitud, socios(nombre)',
+      'id, titulo, descripcion, hectareas, precio_usd, provincia, localidad, modalidad, tipo_campo, latitud, longitud, socios(nombre), campo_fotos(id, object_key, orden)',
     )
     .eq('id', id)
     .eq('publicado', true)
@@ -70,50 +72,96 @@ export default async function FichaCampoPage({ params }: { params: Promise<{ id:
   // si no hay ninguno, en vez de forzar un estado vacío.
   const { data: otrosCampos } = await supabase
     .from('campos')
-    .select('id, titulo, localidad, hectareas')
+    .select('id, titulo, localidad, hectareas, precio_usd, campo_fotos(object_key, orden)')
     .eq('publicado', true)
     .eq('provincia', campo.provincia)
     .neq('id', campo.id)
     .limit(3);
 
   const redirectTo = `/campos/${id}`;
+  const [primeraFoto, segundaFoto, terceraFoto] = [...campo.campo_fotos].sort(
+    (a, b) => a.orden - b.orden,
+  );
 
   return (
     <main>
-      <section className="mx-auto max-w-5xl px-6 py-16">
+      <section className="mx-auto max-w-5xl px-6 pt-10">
+        {primeraFoto && (
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 sm:grid-rows-2 sm:[&>*:first-child]:row-span-2">
+            <div className="h-72 overflow-hidden rounded-lg shadow-lg sm:col-span-2 sm:row-span-2 sm:h-full">
+              {/* eslint-disable-next-line @next/next/no-img-element -- URL externa (R2), no pasa por el optimizador de imágenes de Next */}
+              <img
+                src={`${env.NEXT_PUBLIC_R2_PUBLIC_URL}/${primeraFoto.object_key}`}
+                alt={campo.titulo}
+                className="h-full w-full object-cover"
+              />
+            </div>
+            {segundaFoto && (
+              <div className="hidden h-full overflow-hidden rounded-lg sm:block">
+                {/* eslint-disable-next-line @next/next/no-img-element -- URL externa (R2) */}
+                <img
+                  src={`${env.NEXT_PUBLIC_R2_PUBLIC_URL}/${segundaFoto.object_key}`}
+                  alt=""
+                  className="h-full w-full object-cover"
+                />
+              </div>
+            )}
+            {terceraFoto && (
+              <div className="hidden h-full overflow-hidden rounded-lg sm:block">
+                {/* eslint-disable-next-line @next/next/no-img-element -- URL externa (R2) */}
+                <img
+                  src={`${env.NEXT_PUBLIC_R2_PUBLIC_URL}/${terceraFoto.object_key}`}
+                  alt=""
+                  className="h-full w-full object-cover"
+                />
+              </div>
+            )}
+          </div>
+        )}
+      </section>
+
+      <section className="mx-auto max-w-5xl px-6 py-10">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
           <div className="lg:col-span-2">
-            <div className="flex flex-wrap items-center gap-3">
-              <h1 className="font-display text-3xl font-semibold text-neutral-950 sm:text-4xl">
-                {campo.titulo}
-              </h1>
-              <Badge tone="brand">{ETIQUETAS_MODALIDAD_CAMPO[campo.modalidad] ?? campo.modalidad}</Badge>
-              <span className="font-display text-xl font-semibold text-brand-900">
-                {formatearPrecioUsd(campo.precio_usd)}
-              </span>
-            </div>
-            <p className="mt-2 flex items-center gap-2 text-neutral-800">
-              <MapPin size={18} />
-              {campo.localidad}, {campo.provincia}
-            </p>
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div>
+                <div className="flex flex-wrap items-center gap-3">
+                  <h1 className="font-display text-3xl font-semibold text-neutral-950 sm:text-4xl">
+                    {campo.titulo}
+                  </h1>
+                  <Badge tone="brand">
+                    {ETIQUETAS_MODALIDAD_CAMPO[campo.modalidad] ?? campo.modalidad}
+                  </Badge>
+                </div>
+                <p className="mt-2 flex items-center gap-2 text-neutral-800">
+                  <MapPin size={18} />
+                  {campo.localidad}, {campo.provincia}
+                </p>
+              </div>
 
-            <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3">
+              <div className="flex flex-col items-end gap-3">
+                <div className="text-right">
+                  <p className="text-xs font-semibold tracking-widest text-neutral-800 uppercase">
+                    Precio
+                  </p>
+                  <p className="font-display text-brand-900 text-2xl font-semibold">
+                    {formatearPrecioUsd(campo.precio_usd)}
+                  </p>
+                </div>
+                <a href="#consultar" className={buttonStyles('primary')}>
+                  Contactar
+                </a>
+              </div>
+            </div>
+
+            <div className="mt-8 grid grid-cols-3 gap-4">
               <Card className="flex flex-col items-center gap-2 p-4 text-center">
                 <Ruler className="text-brand-900" size={28} />
                 <span className="text-xs font-semibold tracking-widest text-neutral-800 uppercase">
                   Superficie
                 </span>
-                <span className="font-display text-lg font-semibold text-brand-900">
+                <span className="font-display text-brand-900 text-lg font-semibold">
                   {campo.hectareas} ha
-                </span>
-              </Card>
-              <Card className="flex flex-col items-center gap-2 p-4 text-center">
-                <MapPin className="text-brand-900" size={28} />
-                <span className="text-xs font-semibold tracking-widest text-neutral-800 uppercase">
-                  Ubicación
-                </span>
-                <span className="font-display text-lg font-semibold text-brand-900">
-                  {campo.localidad}
                 </span>
               </Card>
               <Card className="flex flex-col items-center gap-2 p-4 text-center">
@@ -121,23 +169,36 @@ export default async function FichaCampoPage({ params }: { params: Promise<{ id:
                 <span className="text-xs font-semibold tracking-widest text-neutral-800 uppercase">
                   Tipo
                 </span>
-                <span className="font-display text-lg font-semibold text-brand-900">
+                <span className="font-display text-brand-900 text-lg font-semibold">
                   {ETIQUETAS_TIPO_CAMPO[campo.tipo_campo] ?? campo.tipo_campo}
+                </span>
+              </Card>
+              <Card className="flex flex-col items-center gap-2 p-4 text-center">
+                <MapPin className="text-brand-900" size={28} />
+                <span className="text-xs font-semibold tracking-widest text-neutral-800 uppercase">
+                  Modalidad
+                </span>
+                <span className="font-display text-brand-900 text-lg font-semibold">
+                  {ETIQUETAS_MODALIDAD_CAMPO[campo.modalidad] ?? campo.modalidad}
                 </span>
               </Card>
             </div>
 
             {campo.descripcion && (
               <div className="mt-10">
-                <h2 className="font-display text-xl font-semibold text-neutral-950">
-                  Descripción
+                <h2 className="font-display flex items-center gap-2 text-xl font-semibold text-neutral-950">
+                  <span className="bg-accent-400 h-5 w-1" aria-hidden />
+                  Descripción General
                 </h2>
                 <p className="mt-3 leading-relaxed text-neutral-900">{campo.descripcion}</p>
               </div>
             )}
 
             <div className="mt-10">
-              <h2 className="font-display text-xl font-semibold text-neutral-950">Ubicación</h2>
+              <h2 className="font-display flex items-center gap-2 text-xl font-semibold text-neutral-950">
+                <span className="bg-accent-400 h-5 w-1" aria-hidden />
+                Ubicación Estratégica
+              </h2>
               <div className="mt-3 h-72 overflow-hidden rounded-lg border border-neutral-600 shadow-lg sm:h-96">
                 <MapaCampos campos={[campo]} />
               </div>
@@ -145,11 +206,19 @@ export default async function FichaCampoPage({ params }: { params: Promise<{ id:
           </div>
 
           <aside>
-            <Card className="sticky top-6 p-6">
-              <p className="text-sm text-neutral-800">Publicado por</p>
-              <p className="font-display text-lg font-semibold text-neutral-950">
-                {campo.socios.nombre}
-              </p>
+            <Card className="sticky top-24 scroll-mt-24 p-6" id="consultar">
+              <div className="flex items-center gap-3">
+                <div
+                  className="from-brand-700 to-brand-900 h-12 w-12 shrink-0 rounded-full bg-gradient-to-br"
+                  aria-hidden
+                />
+                <div>
+                  <p className="text-sm text-neutral-800">Publicado por</p>
+                  <p className="font-display text-lg font-semibold text-neutral-950">
+                    {campo.socios.nombre}
+                  </p>
+                </div>
+              </div>
 
               <div className="mt-6 border-t border-neutral-600 pt-6">
                 <h2 className="font-display text-xl font-semibold text-neutral-950">Consultar</h2>
@@ -162,13 +231,13 @@ export default async function FichaCampoPage({ params }: { params: Promise<{ id:
                     <div className="flex gap-4">
                       <Link
                         href={`/ingresar?redirectTo=${redirectTo}`}
-                        className="text-sm font-semibold text-brand-900 underline underline-offset-4"
+                        className="text-brand-900 text-sm font-semibold underline underline-offset-4"
                       >
                         Ingresar
                       </Link>
                       <Link
                         href={`/registrarse?redirectTo=${redirectTo}`}
-                        className="text-sm font-semibold text-brand-900 underline underline-offset-4"
+                        className="text-brand-900 text-sm font-semibold underline underline-offset-4"
                       >
                         Registrarme
                       </Link>
@@ -204,22 +273,41 @@ export default async function FichaCampoPage({ params }: { params: Promise<{ id:
         <section className="bg-neutral-200 px-6 py-16">
           <div className="mx-auto max-w-5xl">
             <h2 className="font-display text-2xl font-semibold text-neutral-950">
-              Otros campos publicados en {campo.provincia}
+              Campos similares en {campo.provincia}
             </h2>
             <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-3">
-              {otrosCampos.map((otro) => (
-                <Link key={otro.id} href={`/campos/${otro.id}`}>
-                  <Card className="overflow-hidden hover:border-brand-900">
-                    <div className="h-32 bg-gradient-to-br from-brand-700 to-brand-900" aria-hidden />
-                    <div className="p-4">
-                      <p className="font-display font-semibold text-neutral-950">{otro.titulo}</p>
-                      <p className="text-sm text-neutral-800">
-                        {otro.localidad} · {otro.hectareas} ha
-                      </p>
-                    </div>
-                  </Card>
-                </Link>
-              ))}
+              {otrosCampos.map((otro) => {
+                const objectKey = [...otro.campo_fotos].sort((a, b) => a.orden - b.orden)[0]
+                  ?.object_key;
+                return (
+                  <Link key={otro.id} href={`/campos/${otro.id}`}>
+                    <Card className="hover:border-brand-900 overflow-hidden">
+                      {objectKey ? (
+                        // eslint-disable-next-line @next/next/no-img-element -- URL externa (R2)
+                        <img
+                          src={`${env.NEXT_PUBLIC_R2_PUBLIC_URL}/${objectKey}`}
+                          alt=""
+                          className="h-32 w-full object-cover"
+                        />
+                      ) : (
+                        <div
+                          className="from-brand-700 to-brand-900 h-32 bg-gradient-to-br"
+                          aria-hidden
+                        />
+                      )}
+                      <div className="p-4">
+                        <p className="font-display font-semibold text-neutral-950">{otro.titulo}</p>
+                        <p className="text-sm text-neutral-800">
+                          {otro.localidad} · {otro.hectareas} ha
+                        </p>
+                        <p className="text-brand-900 mt-1 text-sm font-semibold">
+                          {formatearPrecioUsd(otro.precio_usd)}
+                        </p>
+                      </div>
+                    </Card>
+                  </Link>
+                );
+              })}
             </div>
           </div>
         </section>

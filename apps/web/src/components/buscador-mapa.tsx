@@ -7,7 +7,10 @@ import type { Tables } from '@cair/supabase';
 type CampoParaBusqueda = Pick<
   Tables<'campos'>,
   'id' | 'titulo' | 'hectareas' | 'latitud' | 'longitud' | 'provincia' | 'localidad'
->;
+> & {
+  precio_usd?: number | null;
+  campo_fotos?: { object_key: string; orden: number }[];
+};
 
 /**
  * Filtro por zona geográfica y búsqueda directa sobre el mapa (punto 5 del

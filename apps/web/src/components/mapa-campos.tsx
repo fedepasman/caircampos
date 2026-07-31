@@ -1,15 +1,20 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import mapboxgl, { type MapMouseEvent } from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { env } from '@/lib/env';
+import { formatearPrecioUsd } from '@cair/shared';
 import type { Tables } from '@cair/supabase';
 
 type CampoParaMapa = Pick<
   Tables<'campos'>,
   'id' | 'titulo' | 'hectareas' | 'latitud' | 'longitud'
->;
+> & {
+  precio_usd?: number | null;
+  campo_fotos?: { object_key: string; orden: number }[];
+};
 
 // Centro de Argentina: encuadre de respaldo si todavía no hay campos
 // publicados para calcular un `fitBounds` real.
@@ -27,7 +32,7 @@ interface FeatureCollectionDePuntos {
   features: {
     type: 'Feature';
     geometry: { type: 'Point'; coordinates: [number, number] };
-    properties: { id: string; titulo: string; hectareas: number };
+    properties: PropiedadesCampo;
   }[];
 }
 
@@ -35,43 +40,79 @@ interface PropiedadesCampo {
   id: string;
   titulo: string;
   hectareas: number;
+  precioTexto: string;
+  fotoUrl: string;
 }
 
 function construirGeojson(campos: CampoParaMapa[]): FeatureCollectionDePuntos {
   return {
     type: 'FeatureCollection',
-    features: campos.map((campo) => ({
-      type: 'Feature',
-      geometry: { type: 'Point', coordinates: [campo.longitud, campo.latitud] },
-      properties: { id: campo.id, titulo: campo.titulo, hectareas: campo.hectareas },
-    })),
+    features: campos.map((campo) => {
+      const primeraFoto = [...(campo.campo_fotos ?? [])].sort((a, b) => a.orden - b.orden)[0];
+      return {
+        type: 'Feature',
+        geometry: { type: 'Point', coordinates: [campo.longitud, campo.latitud] },
+        properties: {
+          id: campo.id,
+          titulo: campo.titulo,
+          hectareas: campo.hectareas,
+          // Precalculadas como texto plano a propósito: el `cluster: true` de
+          // la fuente tilea las propiedades como si fueran de un vector tile,
+          // que solo admite valores planos — un `number | null` o un array
+          // anidado (las fotos) no sobreviven ese viaje de forma confiable.
+          precioTexto: formatearPrecioUsd(campo.precio_usd ?? null),
+          fotoUrl: primeraFoto ? `${env.NEXT_PUBLIC_R2_PUBLIC_URL}/${primeraFoto.object_key}` : '',
+        },
+      };
+    }),
   };
 }
 
-/** Contenido del popup armado con el DOM, no con HTML interpolado: `titulo`
- * lo carga el socio como texto libre, y un `.setHTML()` con ese valor
- * adentro sería una inyección de HTML/script directa en una página pública. */
-function construirPopup(titulo: string, hectareas: number, id: string): HTMLDivElement {
-  const contenedor = document.createElement('div');
+/** Tarjeta al estilo Airbnb que aparece al pasar el mouse sobre un pin:
+ * armada con el DOM, no con HTML interpolado — `titulo` lo carga el socio
+ * como texto libre, y un `.setHTML()` con ese valor adentro sería una
+ * inyección de HTML/script directa en una página pública. */
+function construirTarjetaHover(propiedades: PropiedadesCampo): HTMLDivElement {
+  const tarjeta = document.createElement('div');
+  tarjeta.className = 'w-56 cursor-pointer overflow-hidden';
 
-  const nombre = document.createElement('strong');
-  nombre.textContent = titulo;
-  contenedor.appendChild(nombre);
+  if (propiedades.fotoUrl) {
+    const imagen = document.createElement('img');
+    imagen.src = propiedades.fotoUrl;
+    imagen.alt = '';
+    imagen.className = 'h-28 w-full object-cover';
+    tarjeta.appendChild(imagen);
+  } else {
+    const relleno = document.createElement('div');
+    relleno.className = 'h-28 w-full bg-gradient-to-br from-brand-700 to-brand-900';
+    tarjeta.appendChild(relleno);
+  }
 
-  contenedor.appendChild(document.createElement('br'));
-  contenedor.appendChild(document.createTextNode(`${String(hectareas)} ha`));
-  contenedor.appendChild(document.createElement('br'));
+  const contenido = document.createElement('div');
+  contenido.className = 'flex flex-col gap-0.5 bg-neutral-50 p-3';
 
-  const link = document.createElement('a');
-  link.href = `/campos/${id}`;
-  link.textContent = 'Ver más';
-  contenedor.appendChild(link);
+  const titulo = document.createElement('p');
+  titulo.className = 'truncate text-sm font-semibold text-neutral-950';
+  titulo.textContent = propiedades.titulo;
+  contenido.appendChild(titulo);
 
-  return contenedor;
+  const hectareas = document.createElement('p');
+  hectareas.className = 'text-xs text-neutral-800';
+  hectareas.textContent = `${String(propiedades.hectareas)} ha`;
+  contenido.appendChild(hectareas);
+
+  const precio = document.createElement('p');
+  precio.className = 'mt-1 text-sm font-semibold text-brand-900';
+  precio.textContent = propiedades.precioTexto;
+  contenido.appendChild(precio);
+
+  tarjeta.appendChild(contenido);
+  return tarjeta;
 }
 
 export function MapaCampos({ campos }: { campos: CampoParaMapa[] }) {
   const contenedorRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
     if (!contenedorRef.current) return;
@@ -124,15 +165,32 @@ export function MapaCampos({ campos }: { campos: CampoParaMapa[] }) {
         idsVisibles.add(propiedades.id);
         if (marcadoresActivos.has(propiedades.id)) continue;
 
-        const marcador = new mapboxgl.Marker({ color: '#18330c' })
-          .setLngLat(feature.geometry.coordinates as [number, number])
-          .setPopup(
-            new mapboxgl.Popup().setDOMContent(
-              construirPopup(propiedades.titulo, propiedades.hectareas, propiedades.id),
-            ),
-          )
-          .addTo(mapa);
+        const coordenadas = feature.geometry.coordinates as [number, number];
+        const marcador = new mapboxgl.Marker({ color: '#18330c' }).setLngLat(coordenadas);
 
+        // Hover, no clic: la tarjeta se muestra al pasar el mouse (estilo
+        // Airbnb) y el clic navega directo a la ficha en vez de exigir un
+        // segundo clic sobre un "Ver más" dentro del popup.
+        const popup = new mapboxgl.Popup({
+          closeButton: false,
+          closeOnClick: false,
+          offset: 28,
+          className: 'popup-tarjeta-campo',
+        }).setDOMContent(construirTarjetaHover(propiedades));
+
+        const elemento = marcador.getElement();
+        elemento.style.cursor = 'pointer';
+        elemento.addEventListener('mouseenter', () => {
+          popup.setLngLat(coordenadas).addTo(mapa);
+        });
+        elemento.addEventListener('mouseleave', () => {
+          popup.remove();
+        });
+        elemento.addEventListener('click', () => {
+          router.push(`/campos/${propiedades.id}`);
+        });
+
+        marcador.addTo(mapa);
         marcadoresActivos.set(propiedades.id, marcador);
       }
 
@@ -212,7 +270,11 @@ export function MapaCampos({ campos }: { campos: CampoParaMapa[] }) {
       // mover/hacer zoom — así separan de la burbuja apenas Mapbox los
       // reporta como no-agrupados en el viewport actual.
       mapa.on('data', (evento) => {
-        if (evento.dataType === 'source' && evento.sourceId === FUENTE_CAMPOS && evento.isSourceLoaded) {
+        if (
+          evento.dataType === 'source' &&
+          evento.sourceId === FUENTE_CAMPOS &&
+          evento.isSourceLoaded
+        ) {
           actualizarMarcadoresIndividuales();
         }
       });
@@ -224,6 +286,7 @@ export function MapaCampos({ campos }: { campos: CampoParaMapa[] }) {
       for (const marcador of marcadoresActivos.values()) marcador.remove();
       mapa.remove();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- `router` es estable entre renders; solo `campos` debe reconstruir el mapa.
   }, [campos]);
 
   return <div ref={contenedorRef} className="h-full w-full" />;

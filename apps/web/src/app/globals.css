@@ -8,3 +8,16 @@
 /* Las fuentes del monorepo hay que declararlas como origen de clases, o
  * Tailwind no ve las que se usan dentro de packages/ui al hacer el tree-shake. */
 @source '../../../../packages/ui/src';
+
+/* Tarjeta hover de un pin en el mapa (mapa-campos.tsx): reemplaza el relleno
+ * y la flechita por defecto de Mapbox para que la tarjeta propia controle
+ * todo el estilo visual, al estilo Airbnb. */
+.popup-tarjeta-campo .mapboxgl-popup-content {
+  padding: 0;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 25px rgb(0 0 0 / 0.15);
+}
+.popup-tarjeta-campo .mapboxgl-popup-tip {
+  display: none;
+}
