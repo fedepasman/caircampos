@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { breakpoints, colors, fontSize, radius, spacing, tokens } from './index.js';
+import { breakpoints, colors, fontFamily, fontSize, radius, spacing, tokens } from './index.js';
 
 describe('tokens', () => {
   it('expone todos los grupos bajo un objeto único', () => {
     expect(Object.keys(tokens).sort()).toEqual([
       'breakpoints',
       'colors',
+      'fontFamily',
       'fontSize',
       'fontWeight',
       'radius',
@@ -15,7 +16,7 @@ describe('tokens', () => {
 
   it('define las escalas de color completas de 50 a 950', () => {
     const esperado = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950];
-    for (const escala of [colors.brand, colors.neutral]) {
+    for (const escala of [colors.brand, colors.accent, colors.neutral]) {
       expect(Object.keys(escala).map(Number)).toEqual(esperado);
     }
   });
@@ -23,10 +24,19 @@ describe('tokens', () => {
   it('usa colores hexadecimales de 6 dígitos en toda la paleta', () => {
     const hex = /^#[0-9a-f]{6}$/;
     const planos = [colors.success, colors.warning, colors.danger, colors.info];
-    const escalas = [...Object.values(colors.brand), ...Object.values(colors.neutral)];
+    const escalas = [
+      ...Object.values(colors.brand),
+      ...Object.values(colors.accent),
+      ...Object.values(colors.neutral),
+    ];
     for (const valor of [...planos, ...escalas]) {
       expect(valor).toMatch(hex);
     }
+  });
+
+  it('define las dos familias tipográficas', () => {
+    expect(fontFamily.display).toBe('Libre Caslon Text');
+    expect(fontFamily.body).toBe('Hanken Grotesk');
   });
 
   it('mantiene el espaciado en múltiplos de 4', () => {

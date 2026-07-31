@@ -24,6 +24,12 @@ const config: NextConfig = {
   // para quien busque vulnerabilidades conocidas de una versión concreta.
   poweredByHeader: false,
 
+  images: {
+    // Fotografía del hero mientras no hay banco de imágenes propio ni fotos
+    // reales de campos (sin columna en `campos`, sin R2 conectado todavía).
+    remotePatterns: [{ protocol: 'https', hostname: 'images.unsplash.com' }],
+  },
+
   async headers() {
     return [
       {

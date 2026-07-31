@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Estancia La Posta - CAIR | Cámara Argentina de Inmobiliarias Rurales</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:wght@400;700&amp;family=Hanken+Grotesk:wght@300;400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                "surface-container-lowest": "#ffffff",
+                "on-primary-fixed": "#072100",
+                "inverse-primary": "#aed099",
+                "on-tertiary-fixed": "#1a1c1c",
+                "inverse-surface": "#303030",
+                "surface": "#fcf9f8",
+                "primary-container": "#2e4a20",
+                "secondary-fixed-dim": "#e1c559",
+                "on-surface": "#1b1c1c",
+                "inverse-on-surface": "#f3f0ef",
+                "error": "#ba1a1a",
+                "tertiary-fixed-dim": "#c6c6c7",
+                "on-secondary-container": "#776300",
+                "background": "#fcf9f8",
+                "secondary": "#705d00",
+                "on-tertiary-container": "#afb0b0",
+                "on-surface-variant": "#43483f",
+                "on-error-container": "#93000a",
+                "on-secondary": "#ffffff",
+                "on-primary-fixed-variant": "#324e23",
+                "secondary-fixed": "#fee171",
+                "error-container": "#ffdad6",
+                "surface-tint": "#496639",
+                "surface-off-white": "#F7F7F7",
+                "surface-bright": "#fcf9f8",
+                "surface-container-high": "#eae7e7",
+                "on-tertiary": "#ffffff",
+                "harvest-gold": "#C8AE44",
+                "tertiary-container": "#414343",
+                "surface-dim": "#dcd9d9",
+                "on-background": "#1b1c1c",
+                "primary-fixed": "#caedb3",
+                "surface-container-highest": "#e5e2e1",
+                "secondary-container": "#fee171",
+                "on-tertiary-fixed-variant": "#454747",
+                "on-primary": "#ffffff",
+                "surface-container-low": "#f6f3f2",
+                "surface-container": "#f0eded",
+                "on-secondary-fixed-variant": "#544600",
+                "tertiary-fixed": "#e2e2e2",
+                "primary-fixed-dim": "#aed099",
+                "outline-variant": "#c3c8bb",
+                "field-green": "#2E4A20",
+                "tertiary": "#2b2d2d",
+                "surface-variant": "#e5e2e1",
+                "on-error": "#ffffff",
+                "on-primary-container": "#98b984",
+                "border-subtle": "#E0E0E0",
+                "primary": "#18330c",
+                "outline": "#74796e",
+                "on-secondary-fixed": "#221b00"
+            },
+            "borderRadius": {
+                "DEFAULT": "0.125rem",
+                "lg": "0.25rem",
+                "xl": "0.5rem",
+                "full": "0.75rem"
+            },
+            "spacing": {
+                "margin-mobile": "16px",
+                "section-gap": "80px",
+                "gutter": "24px",
+                "container-max": "1280px",
+                "base": "8px"
+            },
+            "fontFamily": {
+                "headline-lg": ["Libre Caslon Text"],
+                "label-sm": ["Hanken Grotesk"],
+                "body-lg": ["Hanken Grotesk"],
+                "title-md": ["Hanken Grotesk"],
+                "display-lg": ["Libre Caslon Text"],
+                "body-md": ["Hanken Grotesk"],
+                "headline-lg-mobile": ["Libre Caslon Text"]
+            },
+            "fontSize": {
+                "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                "label-sm": ["13px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                "title-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                "display-lg": ["56px", {"lineHeight": "64px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        display: inline-block;
+        line-height: 1;
+      }
+      .glass-effect {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+      }
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 4px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background-color: #2E4A20;
+        border-radius: 2px;
+      }
+      .image-zoom:hover img {
+        transform: scale(1.05);
+      }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md overflow-x-hidden">
+<!-- Header / TopNavBar -->
+<header class="fixed top-0 left-0 w-full z-50 bg-surface/90 backdrop-blur-md border-b border-border-subtle dark:border-outline-variant">
+<div class="flex justify-between items-center px-gutter py-4 w-full max-w-container-max mx-auto">
+<div class="font-headline-lg text-headline-lg font-bold text-primary dark:text-primary-fixed">
+                CAIR
+            </div>
+<nav class="hidden md:flex gap-8">
+<a class="text-primary dark:text-primary-fixed border-b-2 border-primary dark:border-primary-fixed pb-1 font-semibold" href="#">Propiedades</a>
+<a class="text-on-surface-variant dark:text-on-tertiary-container hover:text-primary dark:hover:text-primary-fixed transition-colors font-label-sm text-label-sm" href="#">Institucional</a>
+<a class="text-on-surface-variant dark:text-on-tertiary-container hover:text-primary dark:hover:text-primary-fixed transition-colors font-label-sm text-label-sm" href="#">Socios</a>
+<a class="text-on-surface-variant dark:text-on-tertiary-container hover:text-primary dark:hover:text-primary-fixed transition-colors font-label-sm text-label-sm" href="#">Mercado</a>
+<a class="text-on-surface-variant dark:text-on-tertiary-container hover:text-primary dark:hover:text-primary-fixed transition-colors font-label-sm text-label-sm" href="#">Contacto</a>
+</nav>
+<button class="bg-field-green text-on-primary px-6 py-2 rounded-lg font-label-sm text-label-sm hover:opacity-90 active:scale-[0.98] transition-all">
+                Ingresar
+            </button>
+</div>
+</header>
+<main class="mt-[72px]">
+<!-- Gallery Section -->
+<section class="w-full max-w-container-max mx-auto px-gutter py-base mt-4">
+<div class="grid grid-cols-1 md:grid-cols-4 grid-rows-2 gap-3 h-[400px] md:h-[600px]">
+<div class="md:col-span-3 md:row-span-2 relative overflow-hidden rounded-lg group">
+<img alt="Main property view of Estancia La Posta" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida/AP1WRLuyC-fkmAT18KZKVHS3ZZKS2geGs6ZbImWabLMNLj-deZwWttttoVnpzy9KSKKraSrkAik0hTMBFvR-4QPTnHixgYcWEY_Xgd4aofv8kKFATJZo_2F4pZG4e-f66Uk2Q7MqNXOWGu8JvRYZFckKQN0ibETHUhKjF0jan0uTb_g6cXi6Fl-LHTrultci3LV_7pUDg2kEr8Be9hsKaVos7VL_Knv_A7U1NrBDnzB1i1gPupEUoJox3M3q_IYn"/>
+<div class="absolute top-4 left-4 bg-harvest-gold text-field-green px-3 py-1 font-label-sm text-label-sm rounded uppercase tracking-wider font-bold">
+                        Destacado
+                    </div>
+</div>
+<div class="hidden md:block relative overflow-hidden rounded-lg group">
+<img alt="Additional view of the estancia landscape" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida/AP1WRLvI8sP78Ms7KPpXTUnwa8yq071MB0__CZ0mOD_g1L-WTs_ZkvZs-qMGBCTNT53RIjidN7s3ugjrERrcizIW-xl8qJMSyMMr5NlozaW14T5AzuGCxvKLl6xoEI4Hz9NX7O6DDPoN4R13UiS99tj2vQASppw3ba3Tv5SUZiiRQ-EfJI7FcCAT8I9Qb_YTMPjy0-XDTqNiGIf2zbpzXMuPQKfWzXilqH6ZtXXQ73nw_6YmLaJC90IPfkhzDv0b"/>
+</div>
+<div class="hidden md:block relative overflow-hidden rounded-lg group">
+<img alt="Historical infrastructure of the estancia" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida/AP1WRLvg7p3tRs54EZsXn692ghOnH1ZHj3WQ2pr11yuHymhyEXB9JgFyhcWi-Amdzg5-ovbSm9c-7QJEe2teMwGN9N5S5oMaZr3HT-gQVB5oFQCQLmfs2Bbmd828M74t8DrbLp7dSQZcGxNFo38sfhD4ngX3Fjfn6UyKNm-GtSY1myhvuHM5iIrvQ4cCnXALXkw9MpDAjp76n6H2EMjEYhLOyajh6igZpExcrqIpVxU1H3DykY1Nbyq67pzvmmng"/>
+<div class="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+<span class="text-white font-label-sm text-label-sm border border-white px-4 py-2 rounded">Ver 12 fotos</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Main Info Bar -->
+<section class="sticky top-[72px] z-40 border-b border-border-subtle bg-surface/95 backdrop-blur-sm">
+<div class="max-w-container-max mx-auto px-gutter py-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+<div>
+<h1 class="font-headline-lg text-headline-lg text-primary mb-1">Estancia La Posta</h1>
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">location_on</span>
+<p class="font-body-md text-body-md">San Antonio de Areco, Buenos Aires</p>
+</div>
+</div>
+<div class="flex items-center gap-6 w-full md:w-auto justify-between md:justify-end">
+<div class="text-right">
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Precio</p>
+<p class="font-headline-lg text-headline-lg text-field-green">USD 4.200.000</p>
+</div>
+<button class="bg-harvest-gold text-field-green px-8 py-4 rounded-lg font-title-md text-title-md font-bold hover:brightness-105 transition-all shadow-sm">
+                        Contactar
+                    </button>
+</div>
+</div>
+</section>
+<section class="max-w-container-max mx-auto px-gutter py-section-gap grid grid-cols-1 lg:grid-cols-3 gap-12">
+<!-- Left Content Column -->
+<div class="lg:col-span-2 space-y-12">
+<!-- Key Specs Grid -->
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+<div class="flex flex-col items-center p-4 bg-surface-container-low rounded-lg text-center">
+<span class="material-symbols-outlined text-field-green mb-2 text-[32px]">landscape</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Superficie</span>
+<span class="font-title-md text-title-md text-primary">1.200 Ha</span>
+</div>
+<div class="flex flex-col items-center p-4 bg-surface-container-low rounded-lg text-center">
+<span class="material-symbols-outlined text-field-green mb-2 text-[32px]">agriculture</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Aptitud</span>
+<span class="font-title-md text-title-md text-primary">100% Agrícola</span>
+</div>
+<div class="flex flex-col items-center p-4 bg-surface-container-low rounded-lg text-center">
+<span class="material-symbols-outlined text-field-green mb-2 text-[32px]">fort</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Mejoras</span>
+<span class="font-title-md text-title-md text-primary">Casco Hist.</span>
+</div>
+<div class="flex flex-col items-center p-4 bg-surface-container-low rounded-lg text-center">
+<span class="material-symbols-outlined text-field-green mb-2 text-[32px]">water_drop</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Riego</span>
+<span class="font-title-md text-title-md text-primary">C. Central</span>
+</div>
+<div class="flex flex-col items-center p-4 bg-surface-container-low rounded-lg text-center">
+<span class="material-symbols-outlined text-field-green mb-2 text-[32px]">wind_power</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Infraest.</span>
+<span class="font-title-md text-title-md text-primary">Molinos</span>
+</div>
+</div>
+<!-- Description -->
+<article class="space-y-6">
+<h2 class="font-headline-lg text-headline-lg text-primary border-l-4 border-harvest-gold pl-4">Descripción General</h2>
+<div class="space-y-4 text-on-surface-variant leading-relaxed font-body-lg text-body-lg">
+<p>
+                            Ubicada en el corazón productivo de San Antonio de Areco, <strong>Estancia La Posta</strong> representa una oportunidad excepcional tanto por su capacidad productiva como por su valor patrimonial. El campo cuenta con una extensión de 1.200 hectáreas de suelos Clase I y II, con un índice de productividad sumamente elevado para la zona.
+                        </p>
+<p>
+                            La propiedad se destaca por su <strong>Casco Histórico</strong> de finales del siglo XIX, preservado con maestría y rodeado por una arboleda añosa diseñada por paisajistas de renombre. La casa principal ofrece amplias galerías, techos altos y materiales originales que evocan la época dorada de la producción agropecuaria argentina.
+                        </p>
+<p>
+                            En términos operativos, el campo está equipado con tecnología de vanguardia, incluyendo un sistema de riego central de pivote, garantizando estabilidad en los rendimientos frente a variaciones climáticas. La infraestructura de trabajo es completa y funcional, diseñada para una gestión eficiente de grandes volúmenes de producción.
+                        </p>
+</div>
+</article>
+<!-- Technical Specs -->
+<div class="space-y-6">
+<h2 class="font-headline-lg text-headline-lg text-primary">Especificaciones Técnicas</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-12 border-t border-border-subtle pt-6">
+<div class="flex justify-between items-center py-2 border-b border-surface-container">
+<span class="text-on-surface-variant">Alambrado perimetral</span>
+<span class="font-semibold text-primary">7 hilos, perfecto estado</span>
+</div>
+<div class="flex justify-between items-center py-2 border-b border-surface-container">
+<span class="text-on-surface-variant">Galpones</span>
+<span class="font-semibold text-primary">3 (1.200 m² cubiertos)</span>
+</div>
+<div class="flex justify-between items-center py-2 border-b border-surface-container">
+<span class="text-on-surface-variant">Manga y Corrales</span>
+<span class="font-semibold text-primary">Completo con balanza</span>
+</div>
+<div class="flex justify-between items-center py-2 border-b border-surface-container">
+<span class="text-on-surface-variant">Casa de encargado</span>
+<span class="font-semibold text-primary">Excelente estado</span>
+</div>
+<div class="flex justify-between items-center py-2 border-b border-surface-container">
+<span class="text-on-surface-variant">Luz trifásica</span>
+<span class="font-semibold text-primary">Conectada</span>
+</div>
+<div class="flex justify-between items-center py-2 border-b border-surface-container">
+<span class="text-on-surface-variant">Acceso</span>
+<span class="font-semibold text-primary">Ruta Provincial</span>
+</div>
+</div>
+</div>
+<!-- Interactive Map Simulation -->
+<div class="space-y-6">
+<h2 class="font-headline-lg text-headline-lg text-primary">Ubicación Estratégica</h2>
+<div class="h-[400px] bg-surface-container-high rounded-xl relative overflow-hidden shadow-inner group">
+<div class="w-full h-full grayscale-[0.5] contrast-[1.2] opacity-80 bg-cover bg-center" data-alt="A detailed topographic map view of the San Antonio de Areco region in Argentina, showing the agricultural parcel of Estancia La Posta. The map features subtle green and beige tones reflecting the rural landscape, with clear markers for the property and surrounding access roads. The aesthetic is clean and professional, resembling a luxury real estate architectural plot map." data-location="San Antonio de Areco, Buenos Aires" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD2fbGAxJq9lfpu2JrFnfv7TYMCdymJ_kdn16YzvdNkk4JyF1W0FiJL0UDJvfrYZlVtoquGdws-GWejKSLYXAd5w3bO-eXVX9CeVibbtZ4tpCE6-YHBTvmTQXAXC0vSlAnw3asqX59Uyvaqrx4rKsBs7h8Fx7eGiEp8EMEMhtVIRa93nH23drPX7P7R1YlkTxWdKg0kxui_CUQn-6ovxvUEY4qxzZq9SfedErFEWJ0myjMLLQUX6hb8NA')"></div>
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+<div class="flex flex-col items-center">
+<span class="material-symbols-outlined text-field-green text-[48px]" style="font-variation-settings: 'FILL' 1;">location_on</span>
+<div class="bg-white px-4 py-2 rounded shadow-lg mt-2 font-label-sm text-label-sm text-field-green border border-field-green/20">
+                                    Estancia La Posta
+                                </div>
+</div>
+</div>
+<div class="absolute bottom-4 right-4 flex gap-2">
+<button class="bg-white/90 p-2 rounded shadow hover:bg-white transition-colors">
+<span class="material-symbols-outlined">zoom_in</span>
+</button>
+<button class="bg-white/90 p-2 rounded shadow hover:bg-white transition-colors">
+<span class="material-symbols-outlined">zoom_out</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Sticky Sidebar -->
+<aside class="lg:col-span-1">
+<div class="sticky top-40 space-y-6">
+<!-- Agent Card -->
+<div class="bg-surface-container-lowest border border-border-subtle rounded-xl p-6 shadow-sm">
+<div class="flex items-center gap-4 mb-6">
+<div class="w-16 h-16 rounded-full overflow-hidden bg-surface-container">
+<img alt="Luis Miguel Etchevehere" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/AP1WRLtdKO0qivVb84rhdKv86_1dUFnY3mNNNQB4VCnz915xuhsH5wcCpZ9OspWUJXNwcldM6qVtC55wUW8EI4ENSHUV0cVkAE3cJj_VRFcCNlCfLNXwgTgw2ATWg2-Q0Bq7PgVSM86rvuEpnyTx5Vq4N8mpYRULDKWKGJZ1bnlu_7q5ddd84TRsUpGpElRmdU3BH8Flz5ueiqkNBJJ9Zn8j-k5LoEiqeVqIQGwqWJV_fp6Upkxoucl04DvTILxJ"/>
+</div>
+<div>
+<p class="font-title-md text-title-md text-primary">Luis M. Etchevehere</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Corredor Mat. 266</p>
+</div>
+</div>
+<form class="space-y-4">
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1 ml-1">Nombre y Apellido</label>
+<input class="w-full px-4 py-3 bg-surface rounded-lg border border-border-subtle focus:ring-2 focus:ring-field-green focus:border-field-green outline-none transition-all" placeholder="Ej: Juan Pérez" type="text"/>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1 ml-1">Email</label>
+<input class="w-full px-4 py-3 bg-surface rounded-lg border border-border-subtle focus:ring-2 focus:ring-field-green focus:border-field-green outline-none transition-all" placeholder="juan@correo.com" type="email"/>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1 ml-1">Mensaje</label>
+<textarea class="w-full px-4 py-3 bg-surface rounded-lg border border-border-subtle focus:ring-2 focus:ring-field-green focus:border-field-green outline-none transition-all resize-none" placeholder="Estoy interesado en esta propiedad..." rows="4"></textarea>
+</div>
+<button class="w-full bg-field-green text-white py-4 rounded-lg font-title-md text-title-md hover:bg-primary transition-colors shadow-lg flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[20px]">send</span>
+                                Enviar Consulta
+                            </button>
+</form>
+<div class="mt-6 pt-6 border-t border-border-subtle flex flex-col gap-3">
+<button class="w-full flex items-center justify-center gap-2 py-2 text-field-green border border-field-green/20 rounded-lg hover:bg-field-green/5 transition-colors font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[18px]">phone</span>
+                                +54 9 11 4444 5555
+                            </button>
+<button class="w-full flex items-center justify-center gap-2 py-2 text-[#25D366] border border-[#25D366]/20 rounded-lg hover:bg-[#25D366]/5 transition-colors font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[18px]">chat</span>
+                                WhatsApp
+                            </button>
+</div>
+</div>
+<!-- Market Context Info -->
+<div class="bg-primary p-6 rounded-xl text-on-primary">
+<div class="flex items-center gap-3 mb-2">
+<span class="material-symbols-outlined text-harvest-gold">verified</span>
+<span class="font-title-md text-title-md">Aval de CAIR</span>
+</div>
+<p class="font-body-md text-body-md opacity-80 leading-snug">
+                            Esta propiedad ha sido verificada bajo los estándares de la Cámara Argentina de Inmobiliarias Rurales.
+                        </p>
+</div>
+</div>
+</aside>
+</section>
+<!-- Recommended / Similar Section Placeholder (Optional context) -->
+<section class="bg-surface-container-low py-section-gap">
+<div class="max-w-container-max mx-auto px-gutter">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-8">Campos similares en la zona</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Simple Item Simulation -->
+<div class="bg-white rounded-lg overflow-hidden border border-border-subtle hover:shadow-xl transition-shadow cursor-pointer">
+<div class="h-48 relative bg-cover bg-center" data-alt="A wide panoramic landscape of the Argentine Pampas during golden hour, featuring vast green fields under a clear sky. The lighting is soft and warm, emphasizing the fertility and scale of the agricultural land. The style is professional and institutional, consistent with high-end real estate photography." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCOqQcbsTfvabXGjJJ7Om6aHrv7sxigDcJYULfSRg-zA7h9_6T0PDMrU6wOx8p9_pwR8HxkrKGLlEivi5ijoWAHEZwDzxxtk0tLSQjaf2NMvSKvt7a96mxUG-GowzuwK4JuSxlpd1kK4xWdyESXGb6Coty8-Je7z9qdqvreKzC8QjTXS5t7lXe9TATGgawPKIfHf6qmlsftJDh8QVy7wxqnzSqLhvV3rioVgpEw6i0jkWrFHk-HuV6TMw')"></div>
+<div class="p-4">
+<h3 class="font-title-md text-title-md text-primary">Chacra Los Olmos</h3>
+<p class="text-on-surface-variant font-label-sm text-label-sm">San Antonio de Areco • 450 Ha</p>
+<p class="text-field-green font-bold mt-2">USD 1.850.000</p>
+</div>
+</div>
+<!-- End Item -->
+<div class="bg-white rounded-lg overflow-hidden border border-border-subtle hover:shadow-xl transition-shadow cursor-pointer">
+<div class="h-48 relative bg-cover bg-center" data-alt="A traditional Argentine estancia main house with white colonial architecture and dark wood accents, surrounded by lush green lawns and ancient trees. The scene is bright and airy, capturing a serene morning atmosphere. The visual tone is prestigious and peaceful." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC3uNu_EoG3kCjQZqka0Lj2C6_dreMsvpiSvZIb9v-TiKVhCiLh0gW2SHw9cGnKFooaJO-0drvlvbkcH3iS9Ugbo299FHP9zKMSxPVBg-fUvg5XoXKMV4fIETKTL_484hC9JJwrTpDWvUtTd81qRB8O_V6Jir0YG9tzZN_BXU_VrGiWC4Loyz_-MPQKD7HsnSMVVUuvNWLCpdMb3XeEFXDOBkFmTYmNlgEqYpzts0ZvvsDoGm_KqL01tg')"></div>
+<div class="p-4">
+<h3 class="font-title-md text-title-md text-primary">Fracción El Trébol</h3>
+<p class="text-on-surface-variant font-label-sm text-label-sm">Capilla del Señor • 800 Ha</p>
+<p class="text-field-green font-bold mt-2">USD 2.900.000</p>
+</div>
+</div>
+<div class="bg-white rounded-lg overflow-hidden border border-border-subtle hover:shadow-xl transition-shadow cursor-pointer">
+<div class="h-48 relative bg-cover bg-center" data-alt="A modern agricultural facility in Argentina, including large metal silos and clean equipment under a vast blue sky. The focus is on industrial efficiency and modern infrastructure within a rural setting. High contrast and clean lines dominate the composition." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDguledHV6wVzB0bu5mxFoCg-TG7dxn1nCBqQZ8GSMkAmEMedHN8X71iKJ_TAqGeVn7rrP0r89CCDXLrRFVQT2Vu_vtTA6T4YPwROPCw02oisbIYJZmOMFI-yXPupsP-vbMZNUVHUYsFD9HZQVkVaezprhfpsp69kIaEPDJP3elkvstDhuEs6_ToFzelEYDQ24I5s7iEqmzcKJ4YhlrLmKEsvhJPYxMfpEzSMOeHlsGkZ3ClkbaVm2JZw')"></div>
+<div class="p-4">
+<h3 class="font-title-md text-title-md text-primary">La Clarita Agro</h3>
+<p class="text-on-surface-variant font-label-sm text-label-sm">Giles • 1.100 Ha</p>
+<p class="text-field-green font-bold mt-2">USD 3.150.000</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-primary dark:bg-primary-container text-on-primary dark:text-on-primary-container w-full py-section-gap px-gutter flex flex-col md:flex-row justify-between items-start max-w-container-max mx-auto">
+<div class="mb-12 md:mb-0 space-y-6 max-w-sm">
+<div class="font-headline-lg text-headline-lg text-on-primary dark:text-on-primary-container font-bold">CAIR</div>
+<p class="font-body-md text-body-md opacity-80">
+                La Cámara Argentina de Inmobiliarias Rurales es la entidad líder que agrupa a los profesionales especializados en la intermediación de tierras agrícolas y ganaderas en todo el país.
+            </p>
+</div>
+<div class="grid grid-cols-2 gap-x-12 gap-y-8">
+<div class="flex flex-col gap-4">
+<p class="font-label-sm text-label-sm uppercase tracking-widest text-harvest-gold">Institucional</p>
+<a class="text-on-primary/80 dark:text-on-primary-container/80 hover:text-on-primary dark:hover:text-on-primary-container transition-colors font-label-sm text-label-sm hover:underline" href="#">Aviso Legal</a>
+<a class="text-on-primary/80 dark:text-on-primary-container/80 hover:text-on-primary dark:hover:text-on-primary-container transition-colors font-label-sm text-label-sm hover:underline" href="#">Política de Privacidad</a>
+<a class="text-on-primary/80 dark:text-on-primary-container/80 hover:text-on-primary dark:hover:text-on-primary-container transition-colors font-label-sm text-label-sm hover:underline" href="#">Términos y Condiciones</a>
+</div>
+<div class="flex flex-col gap-4">
+<p class="font-label-sm text-label-sm uppercase tracking-widest text-harvest-gold">Navegación</p>
+<a class="text-on-primary/80 dark:text-on-primary-container/80 hover:text-on-primary dark:hover:text-on-primary-container transition-colors font-label-sm text-label-sm hover:underline" href="#">Propiedades</a>
+<a class="text-on-primary/80 dark:text-on-primary-container/80 hover:text-on-primary dark:hover:text-on-primary-container transition-colors font-label-sm text-label-sm hover:underline" href="#">Mapa del Sitio</a>
+<a class="text-on-primary/80 dark:text-on-primary-container/80 hover:text-on-primary dark:hover:text-on-primary-container transition-colors font-label-sm text-label-sm hover:underline" href="#">Socios</a>
+</div>
+</div>
+<div class="w-full mt-12 pt-12 border-t border-on-primary/10 text-on-primary/60 font-label-sm text-label-sm text-center md:text-left">
+            © 2024 Cámara Argentina de Inmobiliarias Rurales. Todos los derechos reservados.
+        </div>
+</footer>
+<script>
+        // Micro-interactions
+        document.addEventListener('DOMContentLoaded', () => {
+            const galleryImages = document.querySelectorAll('.group img');
+            galleryImages.forEach(img => {
+                img.addEventListener('click', () => {
+                    console.log('Lightbox trigger');
+                });
+            });
+        });
+    </script>
+</body></html>

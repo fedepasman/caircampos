@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { colors, radius } from '@cair/tokens';
+import { colors, fontFamily, radius } from '@cair/tokens';
 
 /**
  * Tailwind 4 se configura con CSS y no puede leer un objeto de TypeScript en
@@ -27,10 +27,23 @@ describe('paridad entre @cair/tokens y el @theme de Tailwind', () => {
     }
   });
 
+  it('replica la escala de acento completa', () => {
+    for (const [paso, valor] of Object.entries(colors.accent)) {
+      expect(variableCss(`color-accent-${paso}`), `--color-accent-${paso}`).toBe(valor);
+    }
+  });
+
   it('replica la escala neutra completa', () => {
     for (const [paso, valor] of Object.entries(colors.neutral)) {
       expect(variableCss(`color-neutral-${paso}`), `--color-neutral-${paso}`).toBe(valor);
     }
+  });
+
+  it('replica las familias tipográficas: la variable de next/font primero, el nombre literal como fallback', () => {
+    expect(variableCss('font-display')).toBe(
+      `var(--font-libre-caslon-text), '${fontFamily.display}', serif`,
+    );
+    expect(variableCss('font-body')).toBe(`var(--font-hanken-grotesk), '${fontFamily.body}', sans-serif`);
   });
 
   it('replica los colores semánticos', () => {

@@ -8,44 +8,64 @@
  * leer un objeto de TypeScript en tiempo de build.
  *
  * Al cambiar un token hay que cambiarlo en los dos lados. El test
- * `tokens-en-css.test.ts` de este paquete compara ambos archivos y falla si
+ * `styles.test.ts` de este paquete compara ambos archivos y falla si
  * divergen, de modo que la duplicación no se convierta en deriva silenciosa.
  *
- * ⚠️ Valores provisorios: fijan la estructura, no la identidad visual. Los
- * reemplaza la etapa de diseño mediante el flujo `new-work` de `impeccable`.
+ * Identidad "Agro-Institutional Modernism" — ver /DESIGN.md en la raíz.
  */
 @theme {
-  --color-brand-50: #f2f8f2;
-  --color-brand-100: #e0efe0;
-  --color-brand-200: #c2dfc4;
-  --color-brand-300: #95c69a;
-  --color-brand-400: #63a66b;
-  --color-brand-500: #41894b;
-  --color-brand-600: #2f6d38;
-  --color-brand-700: #27572e;
-  --color-brand-800: #224628;
-  --color-brand-900: #1d3a23;
-  --color-brand-950: #0e2011;
+  --color-brand-50: #f1f7ed;
+  --color-brand-100: #dfeed3;
+  --color-brand-200: #c3dfb0;
+  --color-brand-300: #aed099;
+  --color-brand-400: #8ebd74;
+  --color-brand-500: #6ba04d;
+  --color-brand-600: #4a8030;
+  --color-brand-700: #2e4a20;
+  --color-brand-800: #223a18;
+  --color-brand-900: #18330c;
+  --color-brand-950: #0c1a06;
 
-  --color-neutral-50: #f8f8f7;
-  --color-neutral-100: #f0efed;
-  --color-neutral-200: #e0dedb;
-  --color-neutral-300: #c9c6c1;
-  --color-neutral-400: #a5a19a;
-  --color-neutral-500: #87837b;
-  --color-neutral-600: #6e6a63;
-  --color-neutral-700: #5a5651;
-  --color-neutral-800: #4c4945;
-  --color-neutral-900: #42403d;
-  --color-neutral-950: #22201e;
+  --color-accent-50: #fefbea;
+  --color-accent-100: #fef3c3;
+  --color-accent-200: #fee171;
+  --color-accent-300: #e1c559;
+  --color-accent-400: #c8ae44;
+  --color-accent-500: #ab9236;
+  --color-accent-600: #8a7629;
+  --color-accent-700: #705d00;
+  --color-accent-800: #574800;
+  --color-accent-900: #3d3300;
+  --color-accent-950: #221b00;
+
+  --color-neutral-50: #ffffff;
+  --color-neutral-100: #fcf9f8;
+  --color-neutral-200: #f6f3f2;
+  --color-neutral-300: #f0eded;
+  --color-neutral-400: #eae7e7;
+  --color-neutral-500: #e5e2e1;
+  --color-neutral-600: #dcd9d9;
+  --color-neutral-700: #c3c8bb;
+  --color-neutral-800: #74796e;
+  --color-neutral-900: #43483f;
+  --color-neutral-950: #1b1c1c;
 
   --color-success: #2f6d38;
   --color-warning: #b45309;
   --color-danger: #b42318;
   --color-info: #175cd3;
 
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
+  /*
+   * `var(--font-libre-caslon-text)`/`var(--font-hanken-grotesk)` los define
+   * `next/font/google` en cada app (self-hosted, ver apps/web/src/app/layout.tsx).
+   * El nombre literal después es el fallback si esa variable no está
+   * definida — por ejemplo, fuera de una app Next.js.
+   */
+  --font-display: var(--font-libre-caslon-text), 'Libre Caslon Text', serif;
+  --font-body: var(--font-hanken-grotesk), 'Hanken Grotesk', sans-serif;
+
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
 }
