@@ -5,6 +5,7 @@ import { MessageCircle, Tag } from 'lucide-react';
 import { clienteServidor } from '@/lib/supabase/server';
 import { Card } from '@cair/ui/Card';
 import { Badge, type BadgeTone } from '@cair/ui/Badge';
+import { ETIQUETAS_MODALIDAD_CAMPO, ETIQUETAS_TIPO_CAMPO } from '@cair/shared';
 
 function estadoCampo(campo: { publicado: boolean; revisado_por_cair: string }): {
   etiqueta: string;
@@ -54,7 +55,9 @@ export default async function PanelPage() {
 
   const { data: campos } = await supabase
     .from('campos')
-    .select('id, titulo, provincia, localidad, hectareas, publicado, revisado_por_cair')
+    .select(
+      'id, titulo, provincia, localidad, hectareas, modalidad, tipo_campo, publicado, revisado_por_cair',
+    )
     .order('created_at', { ascending: false });
 
   const { data: consultas } = await supabase
@@ -125,7 +128,9 @@ export default async function PanelPage() {
                           <div className="min-w-0 flex-1">
                             <p className="font-semibold text-neutral-950">{campo.titulo}</p>
                             <p className="text-sm text-neutral-800">
-                              {campo.localidad}, {campo.provincia} · {campo.hectareas} ha
+                              {campo.localidad}, {campo.provincia} · {campo.hectareas} ha ·{' '}
+                              {ETIQUETAS_MODALIDAD_CAMPO[campo.modalidad] ?? campo.modalidad} ·{' '}
+                              {ETIQUETAS_TIPO_CAMPO[campo.tipo_campo] ?? campo.tipo_campo}
                             </p>
                           </div>
                           <Badge tone={tono} className="shrink-0 text-right whitespace-nowrap">

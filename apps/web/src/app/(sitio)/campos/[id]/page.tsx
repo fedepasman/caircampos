@@ -1,18 +1,22 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { MapPin, Ruler } from 'lucide-react';
+import { MapPin, Ruler, Sprout } from 'lucide-react';
 import { clienteServidor } from '@/lib/supabase/server';
 import { MapaCampos } from '@/components/mapa-campos';
 import { BotonCerrarSesion } from '@/components/boton-cerrar-sesion';
 import { Card } from '@cair/ui/Card';
+import { Badge } from '@cair/ui/Badge';
+import { ETIQUETAS_MODALIDAD_CAMPO, ETIQUETAS_TIPO_CAMPO, formatearPrecioUsd } from '@cair/shared';
 import { FormularioConsulta } from './formulario-consulta';
 
 async function obtenerCampo(id: string) {
   const supabase = await clienteServidor();
   const { data } = await supabase
     .from('campos')
-    .select('id, titulo, descripcion, hectareas, provincia, localidad, latitud, longitud, socios(nombre)')
+    .select(
+      'id, titulo, descripcion, hectareas, precio_usd, provincia, localidad, modalidad, tipo_campo, latitud, longitud, socios(nombre)',
+    )
     .eq('id', id)
     .eq('publicado', true)
     .maybeSingle();
@@ -79,15 +83,21 @@ export default async function FichaCampoPage({ params }: { params: Promise<{ id:
       <section className="mx-auto max-w-5xl px-6 py-16">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
           <div className="lg:col-span-2">
-            <h1 className="font-display text-3xl font-semibold text-neutral-950 sm:text-4xl">
-              {campo.titulo}
-            </h1>
+            <div className="flex flex-wrap items-center gap-3">
+              <h1 className="font-display text-3xl font-semibold text-neutral-950 sm:text-4xl">
+                {campo.titulo}
+              </h1>
+              <Badge tone="brand">{ETIQUETAS_MODALIDAD_CAMPO[campo.modalidad] ?? campo.modalidad}</Badge>
+              <span className="font-display text-xl font-semibold text-brand-900">
+                {formatearPrecioUsd(campo.precio_usd)}
+              </span>
+            </div>
             <p className="mt-2 flex items-center gap-2 text-neutral-800">
               <MapPin size={18} />
               {campo.localidad}, {campo.provincia}
             </p>
 
-            <div className="mt-8 grid grid-cols-2 gap-4">
+            <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3">
               <Card className="flex flex-col items-center gap-2 p-4 text-center">
                 <Ruler className="text-brand-900" size={28} />
                 <span className="text-xs font-semibold tracking-widest text-neutral-800 uppercase">
@@ -104,6 +114,15 @@ export default async function FichaCampoPage({ params }: { params: Promise<{ id:
                 </span>
                 <span className="font-display text-lg font-semibold text-brand-900">
                   {campo.localidad}
+                </span>
+              </Card>
+              <Card className="flex flex-col items-center gap-2 p-4 text-center">
+                <Sprout className="text-brand-900" size={28} />
+                <span className="text-xs font-semibold tracking-widest text-neutral-800 uppercase">
+                  Tipo
+                </span>
+                <span className="font-display text-lg font-semibold text-brand-900">
+                  {ETIQUETAS_TIPO_CAMPO[campo.tipo_campo] ?? campo.tipo_campo}
                 </span>
               </Card>
             </div>

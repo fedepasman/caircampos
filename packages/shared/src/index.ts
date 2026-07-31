@@ -51,6 +51,33 @@ export function requireEnv(nombre: string, valor: string | undefined): string {
 }
 
 /**
+ * Etiquetas legibles de `campos.modalidad`/`campos.tipo_campo`, usadas por
+ * web, admin y móvil. `Record<string, string>`, no un literal union: los
+ * tipos generados de Supabase tipan una columna `text` con `check` como
+ * `string` a secas, no como el enum que el `check` en realidad impone.
+ */
+export const ETIQUETAS_MODALIDAD_CAMPO: Record<string, string> = {
+  venta: 'Venta',
+  arrendamiento: 'Arrendamiento',
+};
+
+export const ETIQUETAS_TIPO_CAMPO: Record<string, string> = {
+  agricola: 'Agrícola',
+  ganadero: 'Ganadero',
+  mixto: 'Mixto',
+};
+
+/**
+ * Formatea `campos.precio_usd` para mostrarlo. `null` es un estado real del
+ * negocio ("precio a consultar"), no un dato faltante — se muestra como tal
+ * en vez de ocultar el campo o mostrar "USD 0".
+ */
+export function formatearPrecioUsd(precioUsd: number | null): string {
+  if (precioUsd === null) return 'Consultar precio';
+  return `USD ${precioUsd.toLocaleString('es-AR')}`;
+}
+
+/**
  * Agrupa los elementos de una lista según una clave derivada.
  * Devuelve un `Map` en vez de un objeto para no chocar con claves heredadas
  * de `Object.prototype` (`__proto__`, `constructor`) si la clave viene de

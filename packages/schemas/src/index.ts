@@ -81,12 +81,24 @@ export type Ingreso = z.infer<typeof esquemaIngreso>;
  * legible antes de tocar la red, pero el `check` de Postgres sigue siendo
  * la validación que de verdad no se puede saltear.
  */
+export const MODALIDADES_CAMPO = ['venta', 'arrendamiento'] as const;
+export const TIPOS_CAMPO = ['agricola', 'ganadero', 'mixto'] as const;
+
 export const esquemaCampo = z.object({
   titulo: z.string().min(1, 'Ingresá un título'),
   descripcion: z.string().optional(),
   hectareas: z.coerce.number().positive('Debe ser mayor a 0'),
+  // `preprocess` antes de coercionar: un input vacío coerciona a `0` (no a
+  // `undefined`), y `.positive()` lo rechazaría aunque "vacío" deba ser
+  // válido acá — significa "sin precio publicado", no un dato faltante.
+  precio_usd: z.preprocess(
+    (valor) => (valor === '' || valor === undefined ? undefined : valor),
+    z.coerce.number().positive('Debe ser mayor a 0').optional(),
+  ),
   provincia: z.string().min(1, 'Ingresá una provincia'),
   localidad: z.string().min(1, 'Ingresá una localidad'),
+  modalidad: z.enum(MODALIDADES_CAMPO, 'Elegí una modalidad'),
+  tipo_campo: z.enum(TIPOS_CAMPO, 'Elegí un tipo de campo'),
   latitud: z.coerce.number().min(-90).max(90),
   longitud: z.coerce.number().min(-180).max(180),
   publicado: z.coerce.boolean(),

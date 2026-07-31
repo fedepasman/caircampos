@@ -4,14 +4,16 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { esquemaCampo, type z } from '@cair/schemas';
+import { esquemaCampo, MODALIDADES_CAMPO, TIPOS_CAMPO, type z } from '@cair/schemas';
 import { clienteNavegador } from '@/lib/supabase/client';
 import { SelectorUbicacion } from '@/components/selector-ubicacion';
 import { env } from '@/lib/env';
 import { FormField } from '@cair/ui/FormField';
 import { FormTextarea } from '@cair/ui/FormTextarea';
 import { FormCheckbox } from '@cair/ui/FormCheckbox';
+import { FormSelect } from '@cair/ui/FormSelect';
 import { Button } from '@cair/ui/Button';
+import { ETIQUETAS_MODALIDAD_CAMPO, ETIQUETAS_TIPO_CAMPO } from '@cair/shared';
 import type { Tables } from '@cair/supabase';
 
 const esquemaCamposFormulario = esquemaCampo.omit({ latitud: true, longitud: true });
@@ -47,11 +49,17 @@ export function FormularioCampo({
           titulo: campoExistente.titulo,
           descripcion: campoExistente.descripcion ?? '',
           hectareas: campoExistente.hectareas,
+          precio_usd: campoExistente.precio_usd ?? '',
           provincia: campoExistente.provincia,
           localidad: campoExistente.localidad,
+          // La columna es `text` con `check` en Postgres: el tipo generado
+          // por Supabase la ve como `string` a secas, no como el enum que el
+          // `check` en los hechos garantiza.
+          modalidad: campoExistente.modalidad as CamposFormularioEntrada['modalidad'],
+          tipo_campo: campoExistente.tipo_campo as CamposFormularioEntrada['tipo_campo'],
           publicado: campoExistente.publicado,
         }
-      : { publicado: false },
+      : { modalidad: 'venta', tipo_campo: 'agricola', publicado: false },
   });
 
   const provincia = useWatch({ control, name: 'provincia' });
@@ -104,10 +112,14 @@ export function FormularioCampo({
       return;
     }
 
-    // `descripcion` es opcional en el formulario (`undefined` si se deja
-    // vacío) pero la columna es `text | null` — nunca `undefined` en el
-    // payload que recibe Supabase.
-    const datosAGuardar = { ...validado.data, descripcion: validado.data.descripcion ?? null };
+    // `descripcion`/`precio_usd` son opcionales en el formulario
+    // (`undefined` si se dejan vacíos) pero las columnas son `| null` —
+    // nunca `undefined` en el payload que recibe Supabase.
+    const datosAGuardar = {
+      ...validado.data,
+      descripcion: validado.data.descripcion ?? null,
+      precio_usd: validado.data.precio_usd ?? null,
+    };
 
     const supabase = clienteNavegador();
 
@@ -149,13 +161,24 @@ export function FormularioCampo({
         {...register('descripcion')}
       />
 
-      <FormField
-        label="Hectáreas"
-        type="number"
-        step="any"
-        error={errors.hectareas?.message}
-        {...register('hectareas')}
-      />
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <FormField
+          label="Hectáreas"
+          type="number"
+          step="any"
+          error={errors.hectareas?.message}
+          {...register('hectareas')}
+        />
+
+        <FormField
+          label="Precio (USD, opcional)"
+          type="number"
+          step="any"
+          placeholder="Dejalo vacío para publicar sin precio"
+          error={errors.precio_usd?.message}
+          {...register('precio_usd')}
+        />
+      </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <FormField
@@ -171,6 +194,32 @@ export function FormularioCampo({
           error={errors.localidad?.message}
           {...register('localidad')}
         />
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <FormSelect
+          label="Modalidad"
+          error={errors.modalidad?.message}
+          {...register('modalidad')}
+        >
+          {MODALIDADES_CAMPO.map((modalidad) => (
+            <option key={modalidad} value={modalidad}>
+              {ETIQUETAS_MODALIDAD_CAMPO[modalidad]}
+            </option>
+          ))}
+        </FormSelect>
+
+        <FormSelect
+          label="Tipo de campo"
+          error={errors.tipo_campo?.message}
+          {...register('tipo_campo')}
+        >
+          {TIPOS_CAMPO.map((tipo) => (
+            <option key={tipo} value={tipo}>
+              {ETIQUETAS_TIPO_CAMPO[tipo]}
+            </option>
+          ))}
+        </FormSelect>
       </div>
 
       <div className="flex flex-col gap-1">

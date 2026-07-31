@@ -12,8 +12,13 @@ create table public.campos (
   titulo text not null,
   descripcion text,
   hectareas numeric not null check (hectareas > 0),
+  -- Nullable a propósito: "precio a consultar" es un estado real del
+  -- negocio inmobiliario rural, no un dato faltante.
+  precio_usd numeric check (precio_usd is null or precio_usd > 0),
   provincia text not null,
   localidad text not null,
+  modalidad text not null check (modalidad in ('venta', 'arrendamiento')),
+  tipo_campo text not null check (tipo_campo in ('agricola', 'ganadero', 'mixto')),
   latitud double precision not null check (latitud between -90 and 90),
   longitud double precision not null check (longitud between -180 and 180),
   ubicacion extensions.geography(point, 4326)
@@ -107,11 +112,13 @@ grant select on public.campos to anon, authenticated;
 -- mismo saltando la moderación de CAIR por completo. Solo cambia vía
 -- `public.moderar_campo()` (06_moderacion.sql), que verifica el rol adentro.
 grant insert (
-  titulo, descripcion, hectareas, provincia, localidad, latitud, longitud, publicado, socio_id
+  titulo, descripcion, hectareas, precio_usd, provincia, localidad, modalidad, tipo_campo,
+  latitud, longitud, publicado, socio_id
 ) on public.campos to authenticated;
 
 grant update (
-  titulo, descripcion, hectareas, provincia, localidad, latitud, longitud, publicado
+  titulo, descripcion, hectareas, precio_usd, provincia, localidad, modalidad, tipo_campo,
+  latitud, longitud, publicado
 ) on public.campos to authenticated;
 
 grant delete on public.campos to authenticated;

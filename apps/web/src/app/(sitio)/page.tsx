@@ -1,7 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { clienteServidor } from '@/lib/supabase/server';
-import { MapaCampos } from '@/components/mapa-campos';
+import { BuscadorMapa } from '@/components/buscador-mapa';
+import { MODALIDADES_CAMPO, TIPOS_CAMPO } from '@cair/schemas';
 
 /**
  * Home pública. Server Component: la regla de SEO de CLAUDE.md exige que los
@@ -10,10 +11,12 @@ import { MapaCampos } from '@/components/mapa-campos';
  *
  * Identidad visual "Agro-Institutional Modernism", adoptada desde
  * Base_Stitch/agro_institutional_modernism/DESIGN.md — ver /DESIGN.md en la
- * raíz. Sigue el comp `cair_buscador_de_campos` con dos recortes
- * deliberados: sin fotos de campos (no hay columna de imagen ni R2
- * conectado todavía) y sin lógica de filtrado en el buscador ni en el panel
- * "Filtrar área" del mapa (es forma visual, no funcionalidad).
+ * raíz. Sigue el comp `cair_buscador_de_campos` con un recorte deliberado:
+ * sin fotos de campos (no hay columna de imagen ni R2 conectado todavía). El
+ * buscador del hero es un `<form>` GET real (sin JS): navega a la landing de
+ * resultados `/campos?modalidad=...&tipo_campo=...&q=...`
+ * (`(sitio)/campos/page.tsx`), que filtra server-side — no al mapa embebido
+ * de esta misma página, que sigue siendo solo un preview rápido.
  */
 export default async function Home() {
   const supabase = await clienteServidor();
@@ -27,7 +30,7 @@ export default async function Home() {
 
   const { data: camposParaMapa } = await supabase
     .from('campos')
-    .select('id, titulo, hectareas, latitud, longitud')
+    .select('id, titulo, hectareas, latitud, longitud, provincia, localidad')
     .eq('publicado', true);
 
   return (
@@ -56,17 +59,32 @@ export default async function Home() {
             La red de inmobiliarias rurales que conecta el campo con quien lo busca.
           </p>
 
-          <div className="mt-2 w-full rounded-md bg-neutral-50 p-2 text-left shadow-lg">
+          <form
+            action="/campos"
+            className="mt-2 w-full rounded-md bg-neutral-50 p-2 text-left shadow-lg"
+          >
             <div className="flex gap-1 px-2 pt-1 pb-2">
-              <span className="border-b-[3px] border-brand-900 px-1 pb-1 text-sm font-semibold text-brand-900">
-                Comprar
-              </span>
-              <span className="px-1 pb-1 text-sm font-semibold text-neutral-800">Alquilar</span>
+              {MODALIDADES_CAMPO.map((valor, indice) => (
+                <label
+                  key={valor}
+                  className="cursor-pointer border-b-[3px] border-transparent px-1 pb-1 text-sm font-semibold text-neutral-800 has-[:checked]:border-brand-900 has-[:checked]:text-brand-900"
+                >
+                  <input
+                    type="radio"
+                    name="modalidad"
+                    value={valor}
+                    defaultChecked={indice === 0}
+                    className="sr-only"
+                  />
+                  {valor === 'venta' ? 'Comprar' : 'Alquilar'}
+                </label>
+              ))}
             </div>
             <div className="flex flex-col gap-2 p-2 sm:flex-row">
               <select
+                name="tipo_campo"
                 className="flex-1 rounded-sm border border-neutral-700 bg-neutral-50 px-3 py-3 text-base text-neutral-950"
-                defaultValue="agricola"
+                defaultValue={TIPOS_CAMPO[0]}
               >
                 <option value="agricola">Agrícola</option>
                 <option value="ganadero">Ganadero</option>
@@ -74,17 +92,18 @@ export default async function Home() {
               </select>
               <input
                 type="text"
+                name="q"
                 placeholder="Ej: Pergamino, Buenos Aires"
                 className="flex-[2] rounded-sm border border-neutral-700 bg-neutral-50 px-3 py-3 text-base text-neutral-950 placeholder:text-neutral-700"
               />
               <button
-                type="button"
+                type="submit"
                 className="rounded-sm bg-accent-400 px-6 py-3 text-base font-semibold text-brand-900"
               >
                 Buscar
               </button>
             </div>
-          </div>
+          </form>
 
           <a href="#mapa-campos" className="text-sm text-neutral-100 underline underline-offset-4">
             Ver campos en el mapa
@@ -150,30 +169,7 @@ export default async function Home() {
           </h2>
 
           {camposParaMapa && camposParaMapa.length > 0 ? (
-            <div className="relative mt-8 h-[420px] overflow-hidden rounded-lg border border-neutral-600 bg-neutral-50 shadow-lg md:h-[560px]">
-              <MapaCampos campos={camposParaMapa} />
-
-              {/* Panel visual: sin lógica de filtrado real todavía. */}
-              <div className="absolute top-2 left-2 z-10 w-36 rounded-md border border-neutral-600 bg-neutral-50 p-3 shadow-md sm:top-4 sm:left-4 sm:w-56 sm:p-4">
-                <p className="font-display text-sm font-semibold text-neutral-950">
-                  Filtrar área
-                </p>
-                <div className="mt-3 flex flex-col gap-2 text-sm text-neutral-900">
-                  <label className="flex items-center gap-2">
-                    <input type="checkbox" defaultChecked className="accent-brand-900" />
-                    Pampa Húmeda
-                  </label>
-                  <label className="flex items-center gap-2">
-                    <input type="checkbox" className="accent-brand-900" />
-                    Patagonia
-                  </label>
-                  <label className="flex items-center gap-2">
-                    <input type="checkbox" className="accent-brand-900" />
-                    NEA / NOA
-                  </label>
-                </div>
-              </div>
-            </div>
+            <BuscadorMapa campos={camposParaMapa} />
           ) : (
             <p className="mt-8 text-center text-neutral-800">
               Todavía no hay campos publicados para mostrar en el mapa.
