@@ -25,6 +25,7 @@ export type Database = {
           longitud: number;
           provincia: string;
           publicado: boolean;
+          revisado_por_cair: string;
           socio_id: string;
           titulo: string;
           ubicacion: unknown;
@@ -39,6 +40,7 @@ export type Database = {
           longitud: number;
           provincia: string;
           publicado?: boolean;
+          revisado_por_cair?: string;
           socio_id: string;
           titulo: string;
           ubicacion?: unknown;
@@ -53,6 +55,7 @@ export type Database = {
           longitud?: number;
           provincia?: string;
           publicado?: boolean;
+          revisado_por_cair?: string;
           socio_id?: string;
           titulo?: string;
           ubicacion?: unknown;
@@ -168,6 +171,10 @@ export type Database = {
           provincia: string;
           titulo: string;
         }[];
+      };
+      moderar_campo: {
+        Args: { campo_id_a_moderar: string; nuevo_estado: string };
+        Returns: undefined;
       };
     };
     Enums: {

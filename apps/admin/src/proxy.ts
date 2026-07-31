@@ -3,15 +3,11 @@ import { crearClienteServidor } from '@cair/supabase/server';
 import { configSupabase } from './lib/env';
 
 /**
- * Intercepta cada request del panel para renovar la sesión de Supabase.
+ * Intercepta cada request del panel para renovar la sesión de Supabase y
+ * proteger las rutas del panel.
  *
  * En Next 16 este archivo se llama `proxy.ts` y exporta `proxy`: reemplaza al
  * antiguo `middleware.ts`, que quedó deprecado.
- *
- * Por qué hace falta: los Server Components no pueden escribir cookies. Si el
- * token vence durante un render, el refresh no se puede persistir y el usuario
- * queda deslogueado de forma intermitente. Este proxy corre antes, donde sí se
- * pueden escribir cookies, y deja la sesión fresca.
  *
  * ⚠️ Qué NO es este archivo: la única defensa del panel. Es la primera de tres
  * capas independientes, y la más frágil, porque un error de matcher o un
@@ -49,11 +45,26 @@ export async function proxy(request: NextRequest) {
   // `getUser()` y no `getSession()`: valida el token contra el servidor de
   // Auth. `getSession()` solo lee la cookie, y la cookie la controla el
   // cliente, así que confiar en ella es confiar en el atacante.
-  //
-  // El resultado todavía no se usa para redirigir: las rutas del panel no
-  // existen. La llamada igual es necesaria, porque es la que dispara el
-  // refresh del token.
-  await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  // El rol vive en app_metadata, nunca en user_metadata (ver CLAUDE.md §5):
+  // ese es editable por el propio usuario y aparece en el JWT igual.
+  const esAdmin = user?.app_metadata.rol === 'admin';
+  const { pathname } = request.nextUrl;
+
+  if (pathname !== '/ingresar' && !esAdmin) {
+    const destino = request.nextUrl.clone();
+    destino.pathname = '/ingresar';
+    return NextResponse.redirect(destino);
+  }
+
+  if ((pathname === '/ingresar' || pathname === '/') && esAdmin) {
+    const destino = request.nextUrl.clone();
+    destino.pathname = '/moderacion';
+    return NextResponse.redirect(destino);
+  }
 
   return respuesta;
 }

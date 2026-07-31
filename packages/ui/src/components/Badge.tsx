@@ -1,10 +1,11 @@
 import type { HTMLAttributes } from 'react';
 
-export type BadgeTone = 'brand' | 'neutral';
+export type BadgeTone = 'brand' | 'neutral' | 'danger';
 
 const ESTILOS_POR_TONO: Record<BadgeTone, string> = {
   brand: 'bg-brand-900 text-neutral-50',
   neutral: 'bg-neutral-600 text-neutral-50',
+  danger: 'bg-danger text-neutral-50',
 };
 
 export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {

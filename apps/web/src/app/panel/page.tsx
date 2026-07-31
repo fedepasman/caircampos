@@ -4,7 +4,17 @@ import { redirect } from 'next/navigation';
 import { MessageCircle, Tag } from 'lucide-react';
 import { clienteServidor } from '@/lib/supabase/server';
 import { Card } from '@cair/ui/Card';
-import { Badge } from '@cair/ui/Badge';
+import { Badge, type BadgeTone } from '@cair/ui/Badge';
+
+function estadoCampo(campo: { publicado: boolean; revisado_por_cair: string }): {
+  etiqueta: string;
+  tono: BadgeTone;
+} {
+  if (!campo.publicado) return { etiqueta: 'Borrador', tono: 'neutral' };
+  if (campo.revisado_por_cair === 'aprobado') return { etiqueta: 'Publicado', tono: 'brand' };
+  if (campo.revisado_por_cair === 'rechazado') return { etiqueta: 'Rechazado', tono: 'danger' };
+  return { etiqueta: 'Pendiente de aprobación', tono: 'neutral' };
+}
 
 export const metadata: Metadata = {
   title: 'Mi panel',
@@ -44,7 +54,7 @@ export default async function PanelPage() {
 
   const { data: campos } = await supabase
     .from('campos')
-    .select('id, titulo, provincia, localidad, hectareas, publicado')
+    .select('id, titulo, provincia, localidad, hectareas, publicado, revisado_por_cair')
     .order('created_at', { ascending: false });
 
   const { data: consultas } = await supabase
@@ -52,7 +62,8 @@ export default async function PanelPage() {
     .select('id, mensaje, created_at, campos(titulo), compradores(nombre, apellido, telefono)')
     .order('created_at', { ascending: false });
 
-  const cantidadPublicados = campos?.filter((campo) => campo.publicado).length ?? 0;
+  const cantidadPublicados =
+    campos?.filter((campo) => campo.publicado && campo.revisado_por_cair === 'aprobado').length ?? 0;
 
   return (
     <main className="mx-auto max-w-5xl">
@@ -105,23 +116,26 @@ export default async function PanelPage() {
             </div>
             {campos && campos.length > 0 ? (
               <ul className="mt-4 flex flex-col gap-3">
-                {campos.map((campo) => (
-                  <li key={campo.id}>
-                    <Link href={`/panel/campos/${campo.id}/editar`}>
-                      <Card className="flex items-center justify-between gap-3 p-4 hover:border-brand-900">
-                        <div className="min-w-0 flex-1">
-                          <p className="font-semibold text-neutral-950">{campo.titulo}</p>
-                          <p className="text-sm text-neutral-800">
-                            {campo.localidad}, {campo.provincia} · {campo.hectareas} ha
-                          </p>
-                        </div>
-                        <Badge tone={campo.publicado ? 'brand' : 'neutral'} className="shrink-0">
-                          {campo.publicado ? 'Publicado' : 'Borrador'}
-                        </Badge>
-                      </Card>
-                    </Link>
-                  </li>
-                ))}
+                {campos.map((campo) => {
+                  const { etiqueta, tono } = estadoCampo(campo);
+                  return (
+                    <li key={campo.id}>
+                      <Link href={`/panel/campos/${campo.id}/editar`}>
+                        <Card className="flex items-center justify-between gap-3 p-4 hover:border-brand-900">
+                          <div className="min-w-0 flex-1">
+                            <p className="font-semibold text-neutral-950">{campo.titulo}</p>
+                            <p className="text-sm text-neutral-800">
+                              {campo.localidad}, {campo.provincia} · {campo.hectareas} ha
+                            </p>
+                          </div>
+                          <Badge tone={tono} className="shrink-0 text-right whitespace-nowrap">
+                            {etiqueta}
+                          </Badge>
+                        </Card>
+                      </Link>
+                    </li>
+                  );
+                })}
               </ul>
             ) : (
               <p className="mt-4 text-neutral-800">Todavía no tenés campos cargados.</p>

@@ -9,7 +9,7 @@
 
 begin;
 
-select plan(9);
+select plan(12);
 
 -- anon puede ver campos publicados (la ficha pública)...
 select ok(
@@ -30,10 +30,12 @@ select ok(
   'anon debe poder hacer SELECT sobre public.socios'
 );
 
--- El socio autenticado administra sus propios campos.
+-- El socio autenticado administra sus propios campos. INSERT/UPDATE son
+-- column-level (revisado_por_cair queda afuera, ver más abajo), así que
+-- `has_table_privilege` no alcanza — solo ve privilegios de tabla entera.
 select ok(
-  has_table_privilege('authenticated', 'public.campos', 'INSERT')
-    and has_table_privilege('authenticated', 'public.campos', 'UPDATE')
+  has_column_privilege('authenticated', 'public.campos', 'titulo', 'INSERT')
+    and has_column_privilege('authenticated', 'public.campos', 'titulo', 'UPDATE')
     and has_table_privilege('authenticated', 'public.campos', 'DELETE'),
   'authenticated debe poder INSERT/UPDATE/DELETE sobre public.campos (acotado por RLS a sus propios campos)'
 );
@@ -44,6 +46,27 @@ select ok(
   has_table_privilege('authenticated', 'public.socios', 'UPDATE')
     and not has_table_privilege('authenticated', 'public.socios', 'INSERT'),
   'authenticated debe poder UPDATE pero no INSERT sobre public.socios'
+);
+
+-- Un socio no puede aprobarse a sí mismo: `revisado_por_cair` queda afuera
+-- del GRANT de columnas de UPDATE (02_campos.sql). El único camino para
+-- cambiarla es `public.moderar_campo()`, chequeado abajo.
+select ok(
+  not has_column_privilege('authenticated', 'public.campos', 'revisado_por_cair', 'UPDATE'),
+  'authenticated no debe poder hacer UPDATE directo de public.campos.revisado_por_cair'
+);
+
+-- anon nunca llega a la función de moderación.
+select ok(
+  not has_function_privilege('anon', 'public.moderar_campo(uuid, text)', 'EXECUTE'),
+  'anon no debe poder ejecutar public.moderar_campo'
+);
+
+-- authenticated sí puede llamarla (el chequeo de rol admin vive adentro del
+-- cuerpo, no en el GRANT: ver 06_moderacion.sql).
+select ok(
+  has_function_privilege('authenticated', 'public.moderar_campo(uuid, text)', 'EXECUTE'),
+  'authenticated debe poder ejecutar public.moderar_campo'
 );
 
 -- anon nunca llega a la función auxiliar que usa la política de socios

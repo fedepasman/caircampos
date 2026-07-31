@@ -16,10 +16,12 @@
     "@cair/supabase": "workspace:*",
     "@cair/tokens": "workspace:*",
     "@cair/ui": "workspace:*",
+    "@hookform/resolvers": "catalog:",
     "@tanstack/react-table": "catalog:",
     "next": "catalog:",
     "react": "catalog:",
-    "react-dom": "catalog:"
+    "react-dom": "catalog:",
+    "react-hook-form": "catalog:"
   },
   "devDependencies": {
     "@cair/config": "workspace:*",

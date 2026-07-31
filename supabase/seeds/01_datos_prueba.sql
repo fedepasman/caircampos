@@ -48,6 +48,11 @@ insert into public.socios (id, usuario_id, nombre) values (
   'Inmobiliaria Rural de Prueba'
 );
 
+-- Sin `revisado_por_cair` en el insert: el trigger
+-- `antes_de_guardar_campo` (02_campos.sql) fuerza 'pendiente' en todo
+-- alta con `publicado = true`, así que ponerlo acá no serviría de nada —
+-- los dos que deben quedar aprobados se actualizan aparte, más abajo (un
+-- UPDATE que no toca `publicado` no dispara el reset del trigger).
 insert into public.campos
   (socio_id, titulo, hectareas, provincia, localidad, latitud, longitud, publicado)
 values
@@ -80,4 +85,20 @@ values
     -35.8058,
     -61.8912,
     false
+  ),
+  (
+    -- Publicado y sin revisar todavía: el que le da contenido a la cola de
+    -- moderación del panel de admin apenas se siembra la base.
+    '22222222-2222-2222-2222-222222222222',
+    'Fracción sobre ruta 8, a la espera de aprobación',
+    900,
+    'Córdoba',
+    'Río Cuarto',
+    -33.1301,
+    -64.3499,
+    true
   );
+
+update public.campos
+set revisado_por_cair = 'aprobado'
+where titulo in ('Campo mixto zona núcleo', 'Campo agrícola sobre ruta');

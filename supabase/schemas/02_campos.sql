@@ -21,6 +21,13 @@ create table public.campos (
       extensions.st_setsrid(extensions.st_makepoint(longitud, latitud), 4326)::extensions.geography
     ) stored,
   publicado boolean not null default false,
+  -- El socio pide publicar (`publicado = true`); CAIR aprueba o rechaza acá.
+  -- Sin esto, `publicado` por sí solo pondría el campo en línea sin que CAIR
+  -- interviniera — el pliego dice explícitamente que el admin "aprueba
+  -- publicaciones". El trigger de más abajo la resetea a 'pendiente' cada
+  -- vez que un campo pasa a `publicado = true`.
+  revisado_por_cair text not null default 'pendiente'
+    check (revisado_por_cair in ('pendiente', 'aprobado', 'rechazado')),
   created_at timestamptz not null default now()
 );
 
@@ -47,7 +54,7 @@ create policy "Cualquiera ve los campos publicados"
   on public.campos
   for select
   to anon
-  using (publicado = true);
+  using (publicado = true and revisado_por_cair = 'aprobado');
 
 -- Acá sí una sola política con OR para el resto de los casos: dos políticas
 -- separadas para el mismo rol y comando forzarían a Postgres a evaluar ambas
@@ -59,7 +66,7 @@ create policy "El socio ve sus campos, o CAIR ve todos"
   for select
   to authenticated
   using (
-    publicado = true
+    (publicado = true and revisado_por_cair = 'aprobado')
     or socio_id in (select id from public.socios where usuario_id = (select auth.uid()))
     or ((select auth.jwt()) -> 'app_metadata' ->> 'rol') = 'admin'
   );
@@ -92,7 +99,22 @@ create policy "El socio borra sus propios campos"
   );
 
 grant select on public.campos to anon, authenticated;
-grant insert, update, delete on public.campos to authenticated;
+
+-- Column-level, no de tabla completa: `revisado_por_cair` queda afuera de
+-- las dos listas a propósito. Un `grant insert, update` de tabla entera le
+-- daría a cualquier socio escritura sobre esa columna vía un PATCH directo
+-- a la Data API, aunque el formulario nunca la muestre — se aprobaría a sí
+-- mismo saltando la moderación de CAIR por completo. Solo cambia vía
+-- `public.moderar_campo()` (06_moderacion.sql), que verifica el rol adentro.
+grant insert (
+  titulo, descripcion, hectareas, provincia, localidad, latitud, longitud, publicado, socio_id
+) on public.campos to authenticated;
+
+grant update (
+  titulo, descripcion, hectareas, provincia, localidad, latitud, longitud, publicado
+) on public.campos to authenticated;
+
+grant delete on public.campos to authenticated;
 
 -- Ver el comentario en 00_extensions.sql: revocado explícito además del
 -- cambio global de privilegios por defecto.
@@ -110,7 +132,12 @@ create policy "Cualquiera ve el socio dueño de un campo publicado"
   on public.socios
   for select
   to anon
-  using (id in (select socio_id from public.campos where publicado = true));
+  using (
+    id in (
+      select socio_id from public.campos
+      where publicado = true and revisado_por_cair = 'aprobado'
+    )
+  );
 
 grant select on public.socios to anon;
 
@@ -140,7 +167,9 @@ as $$
   select exists (
     select 1
     from public.campos
-    where socio_id = socio_id_a_verificar and publicado = true
+    where socio_id = socio_id_a_verificar
+      and publicado = true
+      and revisado_por_cair = 'aprobado'
   );
 $$;
 
@@ -160,3 +189,27 @@ create policy "El socio ve su fila, CAIR ve todas, o el dueño publicado"
     or ((select auth.jwt()) -> 'app_metadata' ->> 'rol') = 'admin'
     or private.socio_tiene_campo_publicado(id)
   );
+
+-- Cada vez que un campo pasa a `publicado = true` (alta nueva, o un
+-- borrador/rechazado que el socio vuelve a mandar) vuelve a 'pendiente' —
+-- así CAIR siempre revisa antes de que algo llegue al público, sin
+-- depender de que el cliente (esta app, o cualquier otra a futuro) mande
+-- el valor correcto. Si un campo ya aprobado se edita sin tocar
+-- `publicado`, no se re-revisa: simplificación deliberada de esta pasada.
+create function private.resetear_revision_al_publicar()
+returns trigger
+language plpgsql
+set search_path = ''
+as $$
+begin
+  if new.publicado and (tg_op = 'INSERT' or not old.publicado) then
+    new.revisado_por_cair := 'pendiente';
+  end if;
+  return new;
+end;
+$$;
+
+create trigger antes_de_guardar_campo
+  before insert or update on public.campos
+  for each row
+  execute function private.resetear_revision_al_publicar();
