@@ -275,6 +275,18 @@ export type Database = {
           titulo: string;
         }[];
       };
+      estadisticas_resumen_cair: {
+        Args: never;
+        Returns: {
+          campos_nuevos_mes: number;
+          campos_pendientes: number;
+          campos_publicados: number;
+          consultas_mes_actual: number;
+          consultas_total: number;
+          socios_nuevos_mes: number;
+          socios_vigentes: number;
+        }[];
+      };
       moderar_campo: {
         Args: { campo_id_a_moderar: string; nuevo_estado: string };
         Returns: undefined;

@@ -11,7 +11,7 @@
 
 begin;
 
-select plan(10);
+select plan(12);
 
 -- anon no toca ninguna de las dos tablas nuevas: ni compradores (dato
 -- personal) ni consultas (el mecanismo de contacto en sí).
@@ -55,6 +55,18 @@ select ok(
 select ok(
   has_function_privilege('authenticated', 'public.estadisticas_consultas_por_campo()', 'EXECUTE'),
   'authenticated debe poder ejecutar estadisticas_consultas_por_campo'
+);
+
+-- Mismo patrón para el resumen del dashboard: anon nunca llega...
+select ok(
+  not has_function_privilege('anon', 'public.estadisticas_resumen_cair()', 'EXECUTE'),
+  'anon no debe poder ejecutar estadisticas_resumen_cair'
+);
+
+-- ...authenticated sí (el filtro de admin vive adentro del cuerpo).
+select ok(
+  has_function_privilege('authenticated', 'public.estadisticas_resumen_cair()', 'EXECUTE'),
+  'authenticated debe poder ejecutar estadisticas_resumen_cair'
 );
 
 -- anon nunca llega a la función auxiliar que usa la política de compradores.

@@ -57,3 +57,39 @@ comment on function public.estadisticas_consultas_por_campo() is
 -- "nunca editar una migración a mano" que anticipa CLAUDE.md sección 7.
 revoke execute on function public.estadisticas_consultas_por_campo() from public;
 grant execute on function public.estadisticas_consultas_por_campo() to authenticated;
+
+-- Resumen para el dashboard de CAIR (landing del panel de admin). Mismo
+-- criterio que la función de arriba: agregados solo, nunca una fila de
+-- `consultas`. Una sola función para las siete métricas en vez de siete
+-- queries sueltas — un solo lugar auditable para el chequeo de rol y el
+-- bypass de RLS sobre `consultas`.
+create function public.estadisticas_resumen_cair()
+returns table (
+  campos_pendientes bigint,
+  socios_vigentes bigint,
+  campos_publicados bigint,
+  consultas_mes_actual bigint,
+  socios_nuevos_mes bigint,
+  campos_nuevos_mes bigint,
+  consultas_total bigint
+)
+language sql
+security definer
+set search_path = ''
+as $$
+  select
+    (select count(*) from public.campos where publicado and revisado_por_cair = 'pendiente'),
+    (select count(*) from public.socios where publicado),
+    (select count(*) from public.campos where publicado and revisado_por_cair = 'aprobado'),
+    (select count(*) from public.consultas where created_at >= date_trunc('month', now())),
+    (select count(*) from public.socios where created_at >= date_trunc('month', now())),
+    (select count(*) from public.campos where created_at >= date_trunc('month', now())),
+    (select count(*) from public.consultas)
+  where ((select auth.jwt()) -> 'app_metadata' ->> 'rol') = 'admin';
+$$;
+
+comment on function public.estadisticas_resumen_cair() is
+  'Resumen agregado para el dashboard de CAIR. Nunca expone filas de consultas ni datos de compradores.';
+
+revoke execute on function public.estadisticas_resumen_cair() from public;
+grant execute on function public.estadisticas_resumen_cair() to authenticated;

@@ -132,6 +132,9 @@ importers:
       '@tanstack/react-table':
         specifier: 'catalog:'
         version: 8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      lucide-react:
+        specifier: 'catalog:'
+        version: 1.25.0(react@19.2.3)
       next:
         specifier: 'catalog:'
         version: 16.2.11(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@24.13.3)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
