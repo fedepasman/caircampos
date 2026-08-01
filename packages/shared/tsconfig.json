@@ -1,7 +1,13 @@
 {
   "extends": "@cair/config/tsconfig/library.json",
   "compilerOptions": {
-    "noEmit": true
+    "noEmit": true,
+    // Solo para el tipado ambiente de `fetch` (estándar, no específico de
+    // Node): lo usa `ubicacion-geografica.ts` para pedirle la lista de
+    // provincias/localidades a la API Georef. No es una dependencia real de
+    // APIs de Node — `fetch` es global también en el navegador y en React
+    // Native.
+    "types": ["node"]
   },
   "include": ["src/**/*", "*.config.ts"]
 }

@@ -1,12 +1,14 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { esquemaSocio, type z } from '@cair/schemas';
 import { clienteNavegador } from '@/lib/supabase/client';
 import { SelectorUbicacion } from '@cair/ui/SelectorUbicacion';
+import { EntradaCoordenadas } from '@cair/ui/EntradaCoordenadas';
+import { SelectorPaisProvinciaLocalidad } from '@cair/ui/SelectorPaisProvinciaLocalidad';
 import { env } from '@/lib/env';
 import { FormField } from '@cair/ui/FormField';
 import { FormCheckbox } from '@cair/ui/FormCheckbox';
@@ -36,6 +38,7 @@ export function FormularioSocio({ socioExistente }: { socioExistente?: Tables<'s
     register,
     handleSubmit,
     control,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<SocioFormularioEntrada, unknown, SocioFormulario>({
     resolver: zodResolver(esquemaSocioFormulario),
@@ -44,47 +47,21 @@ export function FormularioSocio({ socioExistente }: { socioExistente?: Tables<'s
           nombre: socioExistente.nombre,
           nro_socio: socioExistente.nro_socio ?? '',
           telefono: socioExistente.telefono ?? '',
+          pais: socioExistente.pais as SocioFormularioEntrada['pais'],
           provincia: socioExistente.provincia ?? '',
           localidad: socioExistente.localidad ?? '',
           publicado: socioExistente.publicado,
         }
-      : { publicado: true },
+      : { publicado: true, pais: 'Argentina' },
   });
 
+  const pais = useWatch({ control, name: 'pais' });
   const provincia = useWatch({ control, name: 'provincia' });
   const localidad = useWatch({ control, name: 'localidad' });
   const [centrarEn, setCentrarEn] = useState<{ lat: number; lng: number } | undefined>(undefined);
-
-  // Misma asistencia de cámara que en el alta de campos: acerca el mapa a
-  // la zona escrita en provincia/localidad. Nunca coloca el pin — eso lo
-  // define únicamente el clic de quien completa el formulario.
-  useEffect(() => {
-    if (ubicacion || !provincia || !localidad) return;
-
-    const idTimeout = setTimeout(() => {
-      const consulta = `${localidad}, ${provincia}, Argentina`;
-      const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(consulta)}.json?access_token=${env.NEXT_PUBLIC_MAPBOX_TOKEN}&country=AR&limit=1`;
-
-      fetch(url)
-        .then(
-          (respuesta) => respuesta.json() as Promise<{ features?: { center: [number, number] }[] }>,
-        )
-        .then((datos) => {
-          const coordenadas = datos.features?.[0]?.center;
-          if (coordenadas) {
-            setCentrarEn({ lng: coordenadas[0], lat: coordenadas[1] });
-          }
-        })
-        .catch(() => {
-          // Es solo una asistencia visual: si falla, el mapa se queda como
-          // está y se puede marcar el pin a mano igual.
-        });
-    }, 600);
-
-    return () => {
-      clearTimeout(idTimeout);
-    };
-  }, [provincia, localidad, ubicacion]);
+  const [posicionEscrita, setPosicionEscrita] = useState<{ lat: number; lng: number } | undefined>(
+    undefined,
+  );
 
   async function alEnviar(datos: SocioFormulario) {
     setErrorGeneral(null);
@@ -101,6 +78,7 @@ export function FormularioSocio({ socioExistente }: { socioExistente?: Tables<'s
     const datosAGuardar = {
       nombre: validado.data.nombre,
       telefono: validado.data.telefono ?? null,
+      pais: validado.data.pais,
       provincia: validado.data.provincia ?? null,
       localidad: validado.data.localidad ?? null,
       latitud: validado.data.latitud ?? null,
@@ -187,27 +165,36 @@ export function FormularioSocio({ socioExistente }: { socioExistente?: Tables<'s
         />
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <FormField
-          label="Provincia (opcional)"
-          type="text"
-          error={errors.provincia?.message}
-          {...register('provincia')}
-        />
-
-        <FormField
-          label="Localidad (opcional)"
-          type="text"
-          error={errors.localidad?.message}
-          {...register('localidad')}
-        />
-      </div>
+      <SelectorPaisProvinciaLocalidad
+        pais={pais}
+        provincia={provincia ?? ''}
+        localidad={localidad ?? ''}
+        errorPais={errors.pais?.message}
+        errorProvincia={errors.provincia?.message}
+        errorLocalidad={errors.localidad?.message}
+        onCambiarPais={(nuevoPais) => {
+          setValue('pais', nuevoPais as SocioFormularioEntrada['pais'], { shouldValidate: true });
+          setValue('provincia', '', { shouldValidate: true });
+          setValue('localidad', '', { shouldValidate: true });
+        }}
+        onCambiarProvincia={(nuevaProvincia) => {
+          setValue('provincia', nuevaProvincia, { shouldValidate: true });
+          setValue('localidad', '', { shouldValidate: true });
+        }}
+        onCambiarLocalidad={(nuevaLocalidad) => {
+          setValue('localidad', nuevaLocalidad, { shouldValidate: true });
+        }}
+        onCentrar={(lat, lng) => {
+          setCentrarEn({ lat, lng });
+        }}
+      />
 
       <div className="flex flex-col gap-1">
         <p className="text-sm font-semibold text-neutral-950">Ubicación (opcional)</p>
         <p className="text-sm text-neutral-800">
-          Hacé clic en el mapa para marcar dónde está la inmobiliaria — sin esto, no aparece en el
-          mapa público de "Inmobiliarias Rurales". Podés arrastrar el pin para ajustarlo.
+          Hacé clic en el mapa para marcar dónde está la inmobiliaria, o escribí las coordenadas
+          exactas más abajo — sin esto, no aparece en el mapa público de "Inmobiliarias Rurales".
+          Podés arrastrar el pin para ajustarlo.
         </p>
         <div className="mt-2 h-72 overflow-hidden rounded-md border border-neutral-600 sm:h-96">
           <SelectorUbicacion
@@ -215,8 +202,19 @@ export function FormularioSocio({ socioExistente }: { socioExistente?: Tables<'s
             latitud={ubicacion?.latitud}
             longitud={ubicacion?.longitud}
             centrarEn={centrarEn}
+            posicionEscrita={posicionEscrita}
             onCambiar={(latitud, longitud) => {
               setUbicacion({ latitud, longitud });
+            }}
+          />
+        </div>
+        <div className="mt-2">
+          <EntradaCoordenadas
+            latitud={ubicacion?.latitud}
+            longitud={ubicacion?.longitud}
+            onCambiar={(latitud, longitud) => {
+              setUbicacion({ latitud, longitud });
+              setPosicionEscrita({ lat: latitud, lng: longitud });
             }}
           />
         </div>

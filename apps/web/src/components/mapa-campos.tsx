@@ -8,13 +8,20 @@ import { env } from '@/lib/env';
 import { formatearPrecioUsd } from '@cair/shared';
 import type { Tables } from '@cair/supabase';
 
-type CampoParaMapa = Pick<
+export type CampoParaMapa = Pick<
   Tables<'campos'>,
   'id' | 'titulo' | 'hectareas' | 'latitud' | 'longitud'
 > & {
   precio_usd?: number | null;
   campo_fotos?: { object_key: string; orden: number }[];
 };
+
+/** Centro y radio (en km) de una zona de búsqueda, dibujada como círculo. */
+export interface ZonaBusqueda {
+  lat: number;
+  lng: number;
+  radioKm: number;
+}
 
 // Centro de Argentina: encuadre de respaldo si todavía no hay campos
 // publicados para calcular un `fitBounds` real.
@@ -23,6 +30,59 @@ const CENTRO_ARGENTINA: [number, number] = [-63.6167, -38.4161];
 const FUENTE_CAMPOS = 'campos';
 const CAPA_CLUSTERS = 'clusters';
 const CAPA_CONTEO = 'cluster-count';
+
+const FUENTE_ZONA = 'zona-busqueda';
+const CAPA_ZONA_RELLENO = 'zona-busqueda-relleno';
+const CAPA_ZONA_BORDE = 'zona-busqueda-borde';
+const RADIO_TIERRA_KM = 6371;
+
+interface FeatureCollectionDePoligonos {
+  type: 'FeatureCollection';
+  features: {
+    type: 'Feature';
+    geometry: { type: 'Polygon'; coordinates: [number, number][][] };
+    properties: Record<string, never>;
+  }[];
+}
+
+/**
+ * Círculo geodésico aproximado (64 puntos) alrededor de `lat`/`lng`, vía la
+ * fórmula de punto-destino sobre una esfera. Cálculo propio, ~15 líneas: no
+ * amerita sumar `@turf/turf` (no está en el catálogo) solo para esto.
+ */
+function construirCirculoGeojson(zona: ZonaBusqueda): FeatureCollectionDePoligonos {
+  const puntos = 64;
+  const anguloDistancia = zona.radioKm / RADIO_TIERRA_KM;
+  const latRad = (zona.lat * Math.PI) / 180;
+  const lngRad = (zona.lng * Math.PI) / 180;
+
+  const coordenadas: [number, number][] = [];
+  for (let i = 0; i <= puntos; i++) {
+    const rumbo = (i * 2 * Math.PI) / puntos;
+    const latDestino = Math.asin(
+      Math.sin(latRad) * Math.cos(anguloDistancia) +
+        Math.cos(latRad) * Math.sin(anguloDistancia) * Math.cos(rumbo),
+    );
+    const lngDestino =
+      lngRad +
+      Math.atan2(
+        Math.sin(rumbo) * Math.sin(anguloDistancia) * Math.cos(latRad),
+        Math.cos(anguloDistancia) - Math.sin(latRad) * Math.sin(latDestino),
+      );
+    coordenadas.push([(lngDestino * 180) / Math.PI, (latDestino * 180) / Math.PI]);
+  }
+
+  return {
+    type: 'FeatureCollection',
+    features: [
+      {
+        type: 'Feature',
+        geometry: { type: 'Polygon', coordinates: [coordenadas] },
+        properties: {},
+      },
+    ],
+  };
+}
 
 // Forma mínima propia en vez de depender del namespace global `GeoJSON`
 // (lo trae mapbox-gl transitivamente, pero no siempre queda visible según
@@ -110,9 +170,23 @@ function construirTarjetaHover(propiedades: PropiedadesCampo): HTMLDivElement {
   return tarjeta;
 }
 
-export function MapaCampos({ campos }: { campos: CampoParaMapa[] }) {
+export function MapaCampos({
+  campos,
+  zona,
+  onClicMapa,
+}: {
+  campos: CampoParaMapa[];
+  zona?: ZonaBusqueda | undefined;
+  onClicMapa?: ((lat: number, lng: number) => void) | undefined;
+}) {
   const contenedorRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const mapaRef = useRef<mapboxgl.Map | null>(null);
+  const onClicMapaRef = useRef(onClicMapa);
+
+  useEffect(() => {
+    onClicMapaRef.current = onClicMapa;
+  });
 
   useEffect(() => {
     if (!contenedorRef.current) return;
@@ -125,6 +199,7 @@ export function MapaCampos({ campos }: { campos: CampoParaMapa[] }) {
       center: CENTRO_ARGENTINA,
       zoom: 4,
     });
+    mapaRef.current = mapa;
 
     const primerCampo = campos[0];
     if (primerCampo) {
@@ -282,12 +357,62 @@ export function MapaCampos({ campos }: { campos: CampoParaMapa[] }) {
       actualizarMarcadoresIndividuales();
     });
 
+    // Clic genérico del mapa (no sobre un marcador ni un cluster): usado por
+    // el modo "buscar en una zona" para fijar el centro. Un marcador es un
+    // elemento DOM aparte con su propio listener, así que no compite con
+    // este; superponerse ocasionalmente con el clic de un cluster (que además
+    // hace zoom) es una superposición menor aceptable, no un caso a excluir.
+    function alHacerClicGeneral(evento: MapMouseEvent) {
+      onClicMapaRef.current?.(evento.lngLat.lat, evento.lngLat.lng);
+    }
+    mapa.on('click', alHacerClicGeneral);
+
     return () => {
+      mapa.off('click', alHacerClicGeneral);
       for (const marcador of marcadoresActivos.values()) marcador.remove();
       mapa.remove();
+      mapaRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- `router` es estable entre renders; solo `campos` debe reconstruir el mapa.
   }, [campos]);
+
+  useEffect(() => {
+    const mapa = mapaRef.current;
+    if (!mapa) return;
+
+    function aplicarZona() {
+      if (!mapa) return;
+      const datos: FeatureCollectionDePoligonos = zona
+        ? construirCirculoGeojson(zona)
+        : { type: 'FeatureCollection', features: [] };
+
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion -- mismo motivo que el cast de FUENTE_CAMPOS más arriba.
+      const fuente = mapa.getSource(FUENTE_ZONA) as mapboxgl.GeoJSONSource | undefined;
+      if (fuente) {
+        fuente.setData(datos);
+        return;
+      }
+      if (!zona) return;
+
+      mapa.addSource(FUENTE_ZONA, { type: 'geojson', data: datos });
+      mapa.addLayer({
+        id: CAPA_ZONA_RELLENO,
+        type: 'fill',
+        source: FUENTE_ZONA,
+        paint: { 'fill-color': '#18330c', 'fill-opacity': 0.12 },
+      });
+      mapa.addLayer({
+        id: CAPA_ZONA_BORDE,
+        type: 'line',
+        source: FUENTE_ZONA,
+        paint: { 'line-color': '#18330c', 'line-width': 2 },
+      });
+    }
+
+    if (mapa.isStyleLoaded()) aplicarZona();
+    else mapa.once('load', aplicarZona);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- deps por valor primitivo, no por identidad del objeto `zona` (se recrea en cada render del padre).
+  }, [zona?.lat, zona?.lng, zona?.radioKm]);
 
   return <div ref={contenedorRef} className="h-full w-full" />;
 }

@@ -9,7 +9,7 @@
 
 begin;
 
-select plan(13);
+select plan(17);
 
 -- anon puede ver campos publicados (la ficha pública)...
 select ok(
@@ -56,6 +56,21 @@ select ok(
   'authenticated debe poder INSERT/UPDATE sobre public.socios, pero no UPDATE directo de nro_socio'
 );
 
+-- `pais` es una columna nueva (país/provincia/localidad en cascada): debe
+-- quedar en el mismo GRANT column-level que el resto de los datos de
+-- ubicación, en las dos tablas.
+select ok(
+  has_column_privilege('authenticated', 'public.campos', 'pais', 'INSERT')
+    and has_column_privilege('authenticated', 'public.campos', 'pais', 'UPDATE'),
+  'authenticated debe poder INSERT/UPDATE sobre public.campos.pais'
+);
+
+select ok(
+  has_column_privilege('authenticated', 'public.socios', 'pais', 'INSERT')
+    and has_column_privilege('authenticated', 'public.socios', 'pais', 'UPDATE'),
+  'authenticated debe poder INSERT/UPDATE sobre public.socios.pais'
+);
+
 -- Un socio no puede aprobarse a sí mismo: `revisado_por_cair` queda afuera
 -- del GRANT de columnas de UPDATE (02_campos.sql). El único camino para
 -- cambiarla es `public.moderar_campo()`, chequeado abajo.
@@ -87,6 +102,23 @@ select ok(
 select ok(
   has_function_privilege('authenticated', 'public.asignar_numero_socio(uuid, integer)', 'EXECUTE'),
   'authenticated debe poder ejecutar public.asignar_numero_socio'
+);
+
+-- `campos_en_radio` no es security definer (RLS se aplica normal), así que
+-- tanto anon como authenticated pueden ejecutarla — el filtro de a quién le
+-- muestra qué sigue siendo enteramente cosa de las políticas de `campos`.
+select ok(
+  has_function_privilege(
+    'anon', 'public.campos_en_radio(double precision, double precision, double precision)', 'EXECUTE'
+  ),
+  'anon debe poder ejecutar public.campos_en_radio'
+);
+
+select ok(
+  has_function_privilege(
+    'authenticated', 'public.campos_en_radio(double precision, double precision, double precision)', 'EXECUTE'
+  ),
+  'authenticated debe poder ejecutar public.campos_en_radio'
 );
 
 -- Las cinco políticas de campos existen con los roles esperados. No

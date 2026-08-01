@@ -13,12 +13,23 @@ interface SelectorUbicacionProps {
   latitud?: number | undefined;
   longitud?: number | undefined;
   /**
-   * Coordenadas a las que acercar la cámara del mapa (p. ej. desde una
-   * geocodificación por provincia/localidad). Nunca coloca ni mueve el
-   * pin — la ubicación real la define únicamente el clic o el arrastre de
-   * quien completa el formulario.
+   * Coordenadas a las que acercar la cámara del mapa (p. ej. al elegir una
+   * provincia/localidad en el selector en cascada, usando su centroide).
+   * Nunca coloca ni mueve el pin — la ubicación real la define únicamente
+   * el clic, el arrastre, o `posicionEscrita`.
    */
   centrarEn?: { lat: number; lng: number } | undefined;
+  /**
+   * Coordenadas exactas tipeadas a mano (inputs de latitud/longitud), como
+   * alternativa a clickear el mapa. A diferencia de `centrarEn`, esto SÍ
+   * coloca el pin — acá el usuario especificó la ubicación exacta, no una
+   * aproximación por texto. Un canal separado y dedicado: si en cambio
+   * este efecto reaccionara a cualquier cambio de `latitud`/`longitud`
+   * (incluidos los que ya vienen del propio clic/arrastre), cada arrastre
+   * volvería a centrar la cámara con un `flyTo`, peleando con el gesto que
+   * el usuario recién hizo.
+   */
+  posicionEscrita?: { lat: number; lng: number } | undefined;
   onCambiar: (latitud: number, longitud: number) => void;
 }
 
@@ -41,15 +52,40 @@ export function SelectorUbicacion({
   latitud,
   longitud,
   centrarEn,
+  posicionEscrita,
   onCambiar,
 }: SelectorUbicacionProps) {
   const contenedorRef = useRef<HTMLDivElement>(null);
   const mapaRef = useRef<mapboxgl.Map | null>(null);
+  const marcadorRef = useRef<mapboxgl.Marker | null>(null);
   const onCambiarRef = useRef(onCambiar);
 
   useEffect(() => {
     onCambiarRef.current = onCambiar;
   });
+
+  // Nivel de componente (no local al efecto de montaje): la necesita
+  // también el efecto de `posicionEscrita`, más abajo.
+  function colocarMarcador(lng: number, lat: number) {
+    const mapa = mapaRef.current;
+    if (!mapa) return;
+
+    if (marcadorRef.current) {
+      marcadorRef.current.setLngLat([lng, lat]);
+      return;
+    }
+
+    const marcador = new mapboxgl.Marker({ color: '#18330c', draggable: true })
+      .setLngLat([lng, lat])
+      .addTo(mapa);
+
+    marcador.on('dragend', () => {
+      const posicion = marcador.getLngLat();
+      onCambiarRef.current(posicion.lat, posicion.lng);
+    });
+
+    marcadorRef.current = marcador;
+  }
 
   useEffect(() => {
     if (!contenedorRef.current) return;
@@ -72,24 +108,6 @@ export function SelectorUbicacion({
     // esto lo corrige apenas el estilo termina de cargar.
     mapa.on('load', () => mapa.resize());
 
-    let marcador: mapboxgl.Marker | null = null;
-
-    function colocarMarcador(lng: number, lat: number) {
-      if (marcador) {
-        marcador.setLngLat([lng, lat]);
-        return;
-      }
-
-      marcador = new mapboxgl.Marker({ color: '#18330c', draggable: true })
-        .setLngLat([lng, lat])
-        .addTo(mapa);
-
-      marcador.on('dragend', () => {
-        const posicion = marcador?.getLngLat();
-        if (posicion) onCambiarRef.current(posicion.lat, posicion.lng);
-      });
-    }
-
     if (hayUbicacionInicial) {
       colocarMarcador(longitud, latitud);
     }
@@ -104,7 +122,8 @@ export function SelectorUbicacion({
 
     return () => {
       mapa.off('click', alHacerClic);
-      marcador?.remove();
+      marcadorRef.current?.remove();
+      marcadorRef.current = null;
       mapa.remove();
       mapaRef.current = null;
     };
@@ -115,6 +134,13 @@ export function SelectorUbicacion({
     if (!centrarEn) return;
     mapaRef.current?.flyTo({ center: [centrarEn.lng, centrarEn.lat], zoom: 11 });
   }, [centrarEn]);
+
+  useEffect(() => {
+    if (!posicionEscrita) return;
+    colocarMarcador(posicionEscrita.lng, posicionEscrita.lat);
+    mapaRef.current?.flyTo({ center: [posicionEscrita.lng, posicionEscrita.lat], zoom: 12 });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- `colocarMarcador` se recrea en cada render pero solo lee refs; incluirlo dispararía este efecto en cada render del padre, no solo cuando cambian los inputs de coordenadas.
+  }, [posicionEscrita?.lat, posicionEscrita?.lng]);
 
   return <div ref={contenedorRef} className="h-full w-full" />;
 }

@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { MapPin } from 'lucide-react';
 import { clienteServidor } from '@/lib/supabase/server';
 import { BuscadorMapa } from '@/components/buscador-mapa';
+import { BuscadorLocalidad } from '@/components/buscador-localidad';
 import { MODALIDADES_CAMPO, TIPOS_CAMPO } from '@cair/schemas';
 import { formatearPrecioUsd } from '@cair/shared';
 import { env } from '@/lib/env';
@@ -124,11 +125,11 @@ export default async function Home() {
                 <option value="ganadero">Ganadero</option>
                 <option value="mixto">Mixto</option>
               </select>
-              <input
-                type="text"
+              <BuscadorLocalidad
                 name="q"
                 placeholder="Ej: Pergamino, Buenos Aires"
-                className="flex-[2] rounded-sm border border-neutral-700 bg-neutral-50 px-3 py-3 text-base text-neutral-950 placeholder:text-neutral-700"
+                wrapperClassName="flex-[2]"
+                className="w-full rounded-sm border border-neutral-700 bg-neutral-50 px-3 py-3 text-base text-neutral-950 placeholder:text-neutral-700"
               />
               <button
                 type="submit"

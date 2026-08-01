@@ -1,0 +1,12 @@
+ALTER TABLE public.campos ADD COLUMN pais text DEFAULT 'Argentina'::text NOT NULL;
+ALTER TABLE public.campos ADD CONSTRAINT campos_pais_check CHECK (pais = ANY (ARRAY['Argentina'::text, 'Uruguay'::text]));
+REVOKE INSERT (descripcion, hectareas, latitud, localidad, longitud, modalidad, precio_usd, provincia, publicado, socio_id, tipo_campo, titulo) ON public.campos FROM authenticated;
+REVOKE UPDATE (descripcion, hectareas, latitud, localidad, longitud, modalidad, precio_usd, provincia, publicado, tipo_campo, titulo) ON public.campos FROM authenticated;
+GRANT INSERT (descripcion, hectareas, latitud, localidad, longitud, modalidad, pais, precio_usd, provincia, publicado, socio_id, tipo_campo, titulo) ON public.campos TO authenticated;
+GRANT UPDATE (descripcion, hectareas, latitud, localidad, longitud, modalidad, pais, precio_usd, provincia, publicado, tipo_campo, titulo) ON public.campos TO authenticated;
+ALTER TABLE public.socios ADD COLUMN pais text DEFAULT 'Argentina'::text NOT NULL;
+ALTER TABLE public.socios ADD CONSTRAINT socios_pais_check CHECK (pais = ANY (ARRAY['Argentina'::text, 'Uruguay'::text]));
+REVOKE INSERT (latitud, localidad, longitud, nombre, nro_socio, provincia, publicado, telefono, usuario_id) ON public.socios FROM authenticated;
+REVOKE UPDATE (latitud, localidad, longitud, nombre, provincia, publicado, telefono, usuario_id) ON public.socios FROM authenticated;
+GRANT INSERT (latitud, localidad, longitud, nombre, nro_socio, pais, provincia, publicado, telefono, usuario_id) ON public.socios TO authenticated;
+GRANT UPDATE (latitud, localidad, longitud, nombre, pais, provincia, publicado, telefono, usuario_id) ON public.socios TO authenticated;

@@ -15,6 +15,7 @@ create table public.campos (
   -- Nullable a propósito: "precio a consultar" es un estado real del
   -- negocio inmobiliario rural, no un dato faltante.
   precio_usd numeric check (precio_usd is null or precio_usd > 0),
+  pais text not null default 'Argentina' check (pais in ('Argentina', 'Uruguay')),
   provincia text not null,
   localidad text not null,
   modalidad text not null check (modalidad in ('venta', 'arrendamiento')),
@@ -112,12 +113,12 @@ grant select on public.campos to anon, authenticated;
 -- mismo saltando la moderación de CAIR por completo. Solo cambia vía
 -- `public.moderar_campo()` (06_moderacion.sql), que verifica el rol adentro.
 grant insert (
-  titulo, descripcion, hectareas, precio_usd, provincia, localidad, modalidad, tipo_campo,
+  titulo, descripcion, hectareas, precio_usd, pais, provincia, localidad, modalidad, tipo_campo,
   latitud, longitud, publicado, socio_id
 ) on public.campos to authenticated;
 
 grant update (
-  titulo, descripcion, hectareas, precio_usd, provincia, localidad, modalidad, tipo_campo,
+  titulo, descripcion, hectareas, precio_usd, pais, provincia, localidad, modalidad, tipo_campo,
   latitud, longitud, publicado
 ) on public.campos to authenticated;
 
@@ -150,3 +151,37 @@ create trigger antes_de_guardar_campo
   before insert or update on public.campos
   for each row
   execute function private.resetear_revision_al_publicar();
+
+-- Filtro de zona en el mapa (punto 5 del pliego): reusa el índice GiST
+-- `campos_ubicacion_idx` de arriba, que existía desde el modelo inicial sin
+-- que nada lo usara todavía.
+--
+-- Deliberadamente SIN `security definer`: una función `language sql` corre
+-- por default con los privilegios de quien la llama, así que RLS de
+-- `campos` se sigue aplicando exactamente igual que en un `select` directo
+-- (anon solo ve publicados+aprobados, un socio ve además los suyos, admin
+-- ve todo) — no hace falta replicar ningún chequeo de rol adentro, a
+-- diferencia de `moderar_campo`/`asignar_numero_socio`, que si son
+-- `security definer` porque necesitan evadir RLS a propósito.
+create function public.campos_en_radio(
+  centro_lat double precision, centro_lng double precision, radio_metros double precision
+)
+returns setof public.campos
+language sql
+stable
+set search_path = ''
+as $$
+  select *
+  from public.campos
+  where extensions.st_dwithin(
+    ubicacion,
+    extensions.st_setsrid(extensions.st_makepoint(centro_lng, centro_lat), 4326)::extensions.geography,
+    radio_metros
+  );
+$$;
+
+comment on function public.campos_en_radio(double precision, double precision, double precision) is
+  'Campos dentro de un radio (en metros) de un punto. RLS se aplica normal: no es security definer.';
+
+grant execute on function public.campos_en_radio(double precision, double precision, double precision)
+  to anon, authenticated;

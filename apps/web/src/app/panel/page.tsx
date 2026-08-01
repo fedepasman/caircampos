@@ -40,7 +40,18 @@ export default async function PanelPage() {
   // `maybeSingle`, no `single`: el alta de socio es manual en Studio. Si el
   // usuario ya se registró pero CAIR todavía no le creó la fila, esto debe
   // devolver `null` en vez de tirar un error.
-  const { data: socio } = await supabase.from('socios').select('id, nombre').maybeSingle();
+  //
+  // El `.eq('usuario_id', ...)` es obligatorio: desde que el directorio
+  // público de /inmobiliarias amplió la política de SELECT a también
+  // `publicado = true`, un socio autenticado ve por RLS su propia fila más
+  // todas las publicadas. Sin este filtro, `.maybeSingle()` recibe más de
+  // una fila, falla, y el panel muestra "cuenta no vinculada" aunque el
+  // vínculo exista.
+  const { data: socio } = await supabase
+    .from('socios')
+    .select('id, nombre')
+    .eq('usuario_id', user.id)
+    .maybeSingle();
 
   if (!socio) {
     return (
@@ -53,11 +64,16 @@ export default async function PanelPage() {
     );
   }
 
+  // Mismo motivo que el filtro de arriba: la política de SELECT de `campos`
+  // también deja ver "los propios O los publicados y aprobados de
+  // cualquiera", así que sin este `.eq()` acá aparecerían mezclados los
+  // campos de otros socios.
   const { data: campos } = await supabase
     .from('campos')
     .select(
       'id, titulo, provincia, localidad, hectareas, modalidad, tipo_campo, publicado, revisado_por_cair',
     )
+    .eq('socio_id', socio.id)
     .order('created_at', { ascending: false });
 
   const { data: consultas } = await supabase

@@ -11,7 +11,10 @@
       "Bash(pnpm db:types)",
       "Bash(pnpm db:reset)",
       "Bash(pnpm db:start)",
-      "Bash(pnpm db:test)"
+      "Bash(pnpm db:test)",
+      "Bash(pnpm db:sync agregar_politica_socio_a_compradores)",
+      "Bash(node -e ' *)",
+      "Bash(pnpm db:sync)"
     ]
   }
 }
