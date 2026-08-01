@@ -1,6 +1,11 @@
 'use client';
 
-import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
+import {
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from '@tanstack/react-table';
 import { Badge, type BadgeTone } from '@cair/ui/Badge';
 import { BotonModerar } from './boton-moderar';
 
@@ -41,7 +46,9 @@ function construirColumnas(mostrarAcciones: boolean) {
       header: 'Estado',
       cell: (info) => {
         const estado = info.getValue();
-        return <Badge tone={TONO_ESTADO[estado] ?? 'neutral'}>{ETIQUETA_ESTADO[estado] ?? estado}</Badge>;
+        return (
+          <Badge tone={TONO_ESTADO[estado] ?? 'neutral'}>{ETIQUETA_ESTADO[estado] ?? estado}</Badge>
+        );
       },
     }),
     // Solo se agrega la columna de acciones cuando hace falta: incluirla

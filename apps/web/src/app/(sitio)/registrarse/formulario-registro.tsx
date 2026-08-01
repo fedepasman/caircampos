@@ -44,7 +44,9 @@ export function FormularioRegistro() {
     });
 
     if (errorComprador) {
-      setErrorGeneral('La cuenta se creó, pero no se pudieron guardar tus datos. Intentá de nuevo.');
+      setErrorGeneral(
+        'La cuenta se creó, pero no se pudieron guardar tus datos. Intentá de nuevo.',
+      );
       return;
     }
 
@@ -53,8 +55,16 @@ export function FormularioRegistro() {
   }
 
   return (
-    <form onSubmit={(event) => void handleSubmit(alEnviar)(event)} className="mt-6 flex flex-col gap-4">
-      <FormField label="Nombre" type="text" error={errors.nombre?.message} {...register('nombre')} />
+    <form
+      onSubmit={(event) => void handleSubmit(alEnviar)(event)}
+      className="mt-6 flex flex-col gap-4"
+    >
+      <FormField
+        label="Nombre"
+        type="text"
+        error={errors.nombre?.message}
+        {...register('nombre')}
+      />
 
       <FormField
         label="Apellido"
@@ -86,7 +96,7 @@ export function FormularioRegistro() {
         {...register('password')}
       />
 
-      {errorGeneral && <p className="text-sm text-danger">{errorGeneral}</p>}
+      {errorGeneral && <p className="text-danger text-sm">{errorGeneral}</p>}
 
       <Button type="submit" disabled={isSubmitting} className="mt-2">
         {isSubmitting ? 'Creando cuenta…' : 'Crear cuenta'}
