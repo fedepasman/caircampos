@@ -19,7 +19,15 @@ export default async function NuevoCampoPage() {
     redirect('/ingresar');
   }
 
-  const { data: socio } = await supabase.from('socios').select('id').maybeSingle();
+  // Filtro explícito por dueño: la política de SELECT de `socios` también
+  // deja ver todas las filas `publicado = true` (para el directorio
+  // público de /inmobiliarias), así que sin este `.eq()` `.maybeSingle()`
+  // recibe más de una fila y falla en silencio.
+  const { data: socio } = await supabase
+    .from('socios')
+    .select('id')
+    .eq('usuario_id', user.id)
+    .maybeSingle();
 
   if (!socio) {
     redirect('/panel');

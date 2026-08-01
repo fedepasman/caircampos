@@ -40,7 +40,18 @@ export default async function PanelPage() {
   // `maybeSingle`, no `single`: el alta de socio es manual en Studio. Si el
   // usuario ya se registró pero CAIR todavía no le creó la fila, esto debe
   // devolver `null` en vez de tirar un error.
-  const { data: socio } = await supabase.from('socios').select('id, nombre').maybeSingle();
+  //
+  // El `.eq('usuario_id', ...)` es obligatorio: desde que el directorio
+  // público de /inmobiliarias amplió la política de SELECT a también
+  // `publicado = true`, un socio autenticado ve por RLS su propia fila más
+  // todas las publicadas. Sin este filtro, `.maybeSingle()` recibe más de
+  // una fila, falla, y el panel muestra "cuenta no vinculada" aunque el
+  // vínculo exista.
+  const { data: socio } = await supabase
+    .from('socios')
+    .select('id, nombre')
+    .eq('usuario_id', user.id)
+    .maybeSingle();
 
   if (!socio) {
     return (
@@ -53,11 +64,16 @@ export default async function PanelPage() {
     );
   }
 
+  // Mismo motivo que el filtro de arriba: la política de SELECT de `campos`
+  // también deja ver "los propios O los publicados y aprobados de
+  // cualquiera", así que sin este `.eq()` acá aparecerían mezclados los
+  // campos de otros socios.
   const { data: campos } = await supabase
     .from('campos')
     .select(
       'id, titulo, provincia, localidad, hectareas, modalidad, tipo_campo, publicado, revisado_por_cair',
     )
+    .eq('socio_id', socio.id)
     .order('created_at', { ascending: false });
 
   const { data: consultas } = await supabase
@@ -66,7 +82,8 @@ export default async function PanelPage() {
     .order('created_at', { ascending: false });
 
   const cantidadPublicados =
-    campos?.filter((campo) => campo.publicado && campo.revisado_por_cair === 'aprobado').length ?? 0;
+    campos?.filter((campo) => campo.publicado && campo.revisado_por_cair === 'aprobado').length ??
+    0;
 
   return (
     <main className="mx-auto max-w-5xl">
@@ -87,7 +104,7 @@ export default async function PanelPage() {
               Campos publicados
             </span>
           </div>
-          <p className="mt-4 font-display text-4xl font-bold text-brand-900">
+          <p className="font-display text-brand-900 mt-4 text-4xl font-bold">
             {cantidadPublicados}
           </p>
         </Card>
@@ -99,7 +116,7 @@ export default async function PanelPage() {
               Consultas recibidas
             </span>
           </div>
-          <p className="mt-4 font-display text-4xl font-bold text-brand-900">
+          <p className="font-display text-brand-900 mt-4 text-4xl font-bold">
             {consultas?.length ?? 0}
           </p>
         </Card>
@@ -112,7 +129,7 @@ export default async function PanelPage() {
               <h2 className="font-display text-xl font-semibold text-neutral-950">Mis campos</h2>
               <Link
                 href="/panel/campos/nuevo"
-                className="text-sm font-semibold whitespace-nowrap text-brand-900 underline underline-offset-4"
+                className="text-brand-900 text-sm font-semibold whitespace-nowrap underline underline-offset-4"
               >
                 Cargar campo nuevo
               </Link>
@@ -124,7 +141,7 @@ export default async function PanelPage() {
                   return (
                     <li key={campo.id}>
                       <Link href={`/panel/campos/${campo.id}/editar`}>
-                        <Card className="flex items-center justify-between gap-3 p-4 hover:border-brand-900">
+                        <Card className="hover:border-brand-900 flex items-center justify-between gap-3 p-4">
                           <div className="min-w-0 flex-1">
                             <p className="font-semibold text-neutral-950">{campo.titulo}</p>
                             <p className="text-sm text-neutral-800">
@@ -173,7 +190,9 @@ export default async function PanelPage() {
                   <tbody className="divide-y divide-neutral-600">
                     {consultas.map((consulta) => (
                       <tr key={consulta.id}>
-                        <td className="p-3 font-display text-brand-900">{consulta.campos.titulo}</td>
+                        <td className="font-display text-brand-900 p-3">
+                          {consulta.campos.titulo}
+                        </td>
                         <td className="p-3 text-neutral-950">
                           {consulta.compradores.nombre} {consulta.compradores.apellido}
                         </td>

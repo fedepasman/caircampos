@@ -20,16 +20,32 @@ export default async function EditarCampoPage({ params }: { params: Promise<{ id
     redirect('/ingresar');
   }
 
-  const { data: socio } = await supabase.from('socios').select('id').maybeSingle();
+  // Filtro explícito por dueño: la política de SELECT de `socios` también
+  // deja ver todas las filas `publicado = true` (para el directorio
+  // público de /inmobiliarias), así que sin este `.eq()` `.maybeSingle()`
+  // recibe más de una fila y falla en silencio.
+  const { data: socio } = await supabase
+    .from('socios')
+    .select('id')
+    .eq('usuario_id', user.id)
+    .maybeSingle();
 
   if (!socio) {
     redirect('/panel');
   }
 
-  // RLS ya limita `campos` a los propios del socio (o a los publicados,
-  // irrelevante acá): si el campo no existe o es de otro socio, esto da
-  // `null` y no una fila ajena.
-  const { data: campo } = await supabase.from('campos').select('*').eq('id', id).maybeSingle();
+  // El `.eq('socio_id', ...)` es obligatorio, no redundante con RLS: la
+  // política de SELECT de `campos` también deja ver cualquier campo
+  // publicado y aprobado de otro socio (para /campos), así que sin este
+  // filtro un socio podría abrir el formulario de edición de un campo
+  // ajeno con solo conocer su id (BOLA/IDOR) — el guardado fallaría por la
+  // política de UPDATE, pero para entonces ya se filtraron sus datos.
+  const { data: campo } = await supabase
+    .from('campos')
+    .select('*')
+    .eq('id', id)
+    .eq('socio_id', socio.id)
+    .maybeSingle();
 
   if (!campo) {
     notFound();
