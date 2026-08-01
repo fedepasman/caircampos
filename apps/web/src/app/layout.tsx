@@ -43,7 +43,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   // panel/layout.tsx).
   return (
     <html lang="es-AR" className={`${libreCaslonText.variable} ${hankenGrotesk.variable}`}>
-      <body className="bg-neutral-100 font-body text-neutral-950 antialiased">{children}</body>
+      <body className="font-body bg-neutral-100 text-neutral-950 antialiased">{children}</body>
     </html>
   );
 }

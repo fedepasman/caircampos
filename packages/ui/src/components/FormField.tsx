@@ -32,7 +32,7 @@ export const FormField = forwardRef<HTMLInputElement, FormFieldProps>(function F
         }
         {...props}
       />
-      {error && <p className="text-sm text-danger">{error}</p>}
+      {error && <p className="text-danger text-sm">{error}</p>}
     </div>
   );
 });

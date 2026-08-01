@@ -39,7 +39,7 @@ una responsabilidad:
 ```
 
 Ningún proveedor conoce las credenciales de otro. Vercel solo tiene la clave
-*publicable* de Supabase (segura de exponer: RLS filtra igual). Las
+_publicable_ de Supabase (segura de exponer: RLS filtra igual). Las
 credenciales de escritura de R2 viven únicamente en una Edge Function de
 Supabase — ni las apps de Vercel ni el navegador las ven nunca.
 
@@ -64,14 +64,14 @@ reescriba tres veces. Ver [ADR 0001](docs/adr/0001-monorepo-pnpm-turborepo.md).
 
 ## 2. Cuentas y accesos
 
-| Servicio   | Identificador                                                        | Qué vive ahí                          |
-| ---------- | --------------------------------------------------------------------- | -------------------------------------- |
-| GitHub     | `fedepasman/caircampos`                                                | Código fuente, único repo              |
-| Vercel     | Team `fedes-projects-d0abb5ec` (`team_7jOQ6nG8lGGPAhP7zXDOmLhl`)        | Proyectos `cair-web` y `cair-admin`     |
-| Supabase   | Organización `etaunbjcsxmdbiphcgqw`                                    | Proyecto de producción y de staging futuro |
-| Supabase   | Proyecto `opzpixpwklaaprzkqzdf`, región `sa-east-1`                    | Base de producción, Auth, Edge Functions |
-| Cloudflare | Bucket R2 `cair-campos`                                                | Fotos de campos                        |
-| Mapbox     | Cuenta con el token público usado en ambos entornos                    | Mapas y geocoding                      |
+| Servicio   | Identificador                                                    | Qué vive ahí                               |
+| ---------- | ---------------------------------------------------------------- | ------------------------------------------ |
+| GitHub     | `fedepasman/caircampos`                                          | Código fuente, único repo                  |
+| Vercel     | Team `fedes-projects-d0abb5ec` (`team_7jOQ6nG8lGGPAhP7zXDOmLhl`) | Proyectos `cair-web` y `cair-admin`        |
+| Supabase   | Organización `etaunbjcsxmdbiphcgqw`                              | Proyecto de producción y de staging futuro |
+| Supabase   | Proyecto `opzpixpwklaaprzkqzdf`, región `sa-east-1`              | Base de producción, Auth, Edge Functions   |
+| Cloudflare | Bucket R2 `cair-campos`                                          | Fotos de campos                            |
+| Mapbox     | Cuenta con el token público usado en ambos entornos              | Mapas y geocoding                          |
 
 Para sumar a alguien nuevo: invitarlo al team de Vercel, a la organización
 de Supabase, y darle acceso a la cuenta de Cloudflare y al repo de GitHub.
@@ -88,13 +88,13 @@ o pasar a un plan pago.
 
 ## 3. Entornos
 
-|                  | Local                              | Producción                                  |
-| ---------------- | ----------------------------------- | -------------------------------------------- |
-| Dónde corre      | Docker, vía `supabase start`        | Supabase Cloud, `sa-east-1`                  |
-| Referencia       | —                                    | `opzpixpwklaaprzkqzdf`                       |
-| Datos            | `supabase/seeds/*.sql`              | Los que carguen socios reales                |
-| Apps             | `pnpm dev` (puertos 3000/3001)      | `cair-web.vercel.app` / `cair-admin.vercel.app` |
-| Edge Functions   | `supabase functions serve`          | `supabase functions deploy`                  |
+|                | Local                          | Producción                                      |
+| -------------- | ------------------------------ | ----------------------------------------------- |
+| Dónde corre    | Docker, vía `supabase start`   | Supabase Cloud, `sa-east-1`                     |
+| Referencia     | —                              | `opzpixpwklaaprzkqzdf`                          |
+| Datos          | `supabase/seeds/*.sql`         | Los que carguen socios reales                   |
+| Apps           | `pnpm dev` (puertos 3000/3001) | `cair-web.vercel.app` / `cair-admin.vercel.app` |
+| Edge Functions | `supabase functions serve`     | `supabase functions deploy`                     |
 
 Los dos entornos nunca se comunican entre sí. Comparten únicamente la
 **estructura** de la base (ver sección 4) — nunca los datos.
@@ -118,15 +118,15 @@ supabase/migrations/*.sql   (generado — nunca se edita a mano)
 
 **Comandos:**
 
-| Comando             | Qué hace                                                        |
-| -------------------- | ---------------------------------------------------------------- |
-| `pnpm db:start`      | Levanta Supabase local (Docker)                                  |
-| `pnpm db:reset`      | Recrea la base local desde cero, aplicando migraciones y seeds  |
-| `pnpm db:sync`       | Genera una migración nueva a partir del diff en `schemas/`      |
-| `pnpm db:types`      | Regenera `packages/supabase/src/database.types.ts`               |
-| `pnpm db:test`       | Corre los guardrails de RLS (pgTAP)                               |
-| `pnpm db:advisors`   | Corre los advisors de seguridad/rendimiento de Supabase           |
-| `supabase db push`   | Aplica las migraciones pendientes al proyecto remoto **linkeado** |
+| Comando            | Qué hace                                                          |
+| ------------------ | ----------------------------------------------------------------- |
+| `pnpm db:start`    | Levanta Supabase local (Docker)                                   |
+| `pnpm db:reset`    | Recrea la base local desde cero, aplicando migraciones y seeds    |
+| `pnpm db:sync`     | Genera una migración nueva a partir del diff en `schemas/`        |
+| `pnpm db:types`    | Regenera `packages/supabase/src/database.types.ts`                |
+| `pnpm db:test`     | Corre los guardrails de RLS (pgTAP)                               |
+| `pnpm db:advisors` | Corre los advisors de seguridad/rendimiento de Supabase           |
+| `supabase db push` | Aplica las migraciones pendientes al proyecto remoto **linkeado** |
 
 **Gap conocido:** el generador de diffs (`db:sync`) descarta las sentencias
 `GRANT`/`REVOKE` al crear la migración. Cada vez que un cambio depende de
@@ -171,22 +171,22 @@ configurado todavía.
 
 **`cair-web`:**
 
-| Variable                              | Para qué                                    |
-| --------------------------------------- | --------------------------------------------- |
-| `NEXT_PUBLIC_SUPABASE_URL`              | URL del proyecto de producción                |
-| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`  | Clave publicable (segura de exponer)          |
-| `NEXT_PUBLIC_SITE_URL`                  | `https://cair-web.vercel.app`                 |
-| `NEXT_PUBLIC_ADMIN_URL`                 | `https://cair-admin.vercel.app`               |
-| `NEXT_PUBLIC_MAPBOX_TOKEN`              | Token público de Mapbox                       |
-| `NEXT_PUBLIC_R2_PUBLIC_URL`             | Dominio público de lectura del bucket R2       |
+| Variable                               | Para qué                                 |
+| -------------------------------------- | ---------------------------------------- |
+| `NEXT_PUBLIC_SUPABASE_URL`             | URL del proyecto de producción           |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Clave publicable (segura de exponer)     |
+| `NEXT_PUBLIC_SITE_URL`                 | `https://cair-web.vercel.app`            |
+| `NEXT_PUBLIC_ADMIN_URL`                | `https://cair-admin.vercel.app`          |
+| `NEXT_PUBLIC_MAPBOX_TOKEN`             | Token público de Mapbox                  |
+| `NEXT_PUBLIC_R2_PUBLIC_URL`            | Dominio público de lectura del bucket R2 |
 
 **`cair-admin`:**
 
-| Variable                              | Para qué                             |
-| --------------------------------------- | --------------------------------------- |
-| `NEXT_PUBLIC_SUPABASE_URL`              | Mismo proyecto de producción           |
-| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`  | Misma clave publicable — el rol de admin lo decide `app_metadata`, no una clave distinta |
-| `NEXT_PUBLIC_ADMIN_URL`                 | `https://cair-admin.vercel.app`        |
+| Variable                               | Para qué                                                                                 |
+| -------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `NEXT_PUBLIC_SUPABASE_URL`             | Mismo proyecto de producción                                                             |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Misma clave publicable — el rol de admin lo decide `app_metadata`, no una clave distinta |
+| `NEXT_PUBLIC_ADMIN_URL`                | `https://cair-admin.vercel.app`                                                          |
 
 ### Proceso de deploy (manual, hoy)
 
@@ -236,12 +236,12 @@ supabase functions deploy subir-foto-campo
 
 **Secretos** (nunca en Vercel, nunca en el código de las apps):
 
-| Variable               | Dónde en local                        | Dónde en producción           |
-| ------------------------ | --------------------------------------- | -------------------------------- |
-| `R2_ACCOUNT_ID`          | `supabase/functions/.env` (gitignorado) | `supabase secrets set`           |
-| `R2_ACCESS_KEY_ID`       | ídem                                    | ídem                              |
-| `R2_SECRET_ACCESS_KEY`   | ídem                                    | ídem                              |
-| `R2_BUCKET_NAME`         | ídem                                    | ídem                              |
+| Variable               | Dónde en local                          | Dónde en producción    |
+| ---------------------- | --------------------------------------- | ---------------------- |
+| `R2_ACCOUNT_ID`        | `supabase/functions/.env` (gitignorado) | `supabase secrets set` |
+| `R2_ACCESS_KEY_ID`     | ídem                                    | ídem                   |
+| `R2_SECRET_ACCESS_KEY` | ídem                                    | ídem                   |
+| `R2_BUCKET_NAME`       | ídem                                    | ídem                   |
 
 ```bash
 # Local:
@@ -330,12 +330,12 @@ Production".
 
 ## 8. Troubleshooting conocido
 
-| Síntoma                                                          | Causa                                                      | Solución                                                                 |
-| ------------------------------------------------------------------ | ------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| `Runtime Error` / "module factory is not available" en dev         | Caché de Turbopack corrompido en un dev server que lleva rato corriendo | Matar el proceso, borrar `.next`, reiniciar `pnpm dev`                     |
-| Deploy de Vercel subiendo varios GB                                 | `.turbo/` sin excluir                                        | Confirmar que `.vercelignore` existe y corre `rm -rf .turbo` antes de deployar |
-| Subir fotos falla en producción pero funciona en local              | El dominio de producción no está en el CORS del bucket R2    | Agregar el origen en Cloudflare → R2 → bucket → CORS Policy               |
-| `supabase projects create` falla con "reached maximum limits"      | Límite de 2 proyectos free por organización                  | Borrar o pausar un proyecto existente antes de crear uno nuevo             |
+| Síntoma                                                       | Causa                                                                   | Solución                                                                       |
+| ------------------------------------------------------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| `Runtime Error` / "module factory is not available" en dev    | Caché de Turbopack corrompido en un dev server que lleva rato corriendo | Matar el proceso, borrar `.next`, reiniciar `pnpm dev`                         |
+| Deploy de Vercel subiendo varios GB                           | `.turbo/` sin excluir                                                   | Confirmar que `.vercelignore` existe y corre `rm -rf .turbo` antes de deployar |
+| Subir fotos falla en producción pero funciona en local        | El dominio de producción no está en el CORS del bucket R2               | Agregar el origen en Cloudflare → R2 → bucket → CORS Policy                    |
+| `supabase projects create` falla con "reached maximum limits" | Límite de 2 proyectos free por organización                             | Borrar o pausar un proyecto existente antes de crear uno nuevo                 |
 
 ---
 
