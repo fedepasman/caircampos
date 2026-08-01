@@ -48,7 +48,7 @@ export function BotonModerar({ campoId }: { campoId: string }) {
       >
         {enviando === 'rechazado' ? 'Rechazando…' : 'Rechazar'}
       </Button>
-      {error && <span className="text-sm text-danger">{error}</span>}
+      {error && <span className="text-danger text-sm">{error}</span>}
     </div>
   );
 }

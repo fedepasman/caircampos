@@ -20,7 +20,7 @@ export default function PanelLayout({ children }: { children: React.ReactNode })
       <aside className="flex items-center gap-2 border-b border-neutral-600 bg-neutral-200 p-4 sm:w-64 sm:flex-none sm:flex-col sm:items-stretch sm:border-r sm:border-b-0">
         <Link
           href="/panel"
-          className="font-display text-lg font-semibold text-brand-900 sm:mb-6 sm:px-2 sm:py-2"
+          className="font-display text-brand-900 text-lg font-semibold sm:mb-6 sm:px-2 sm:py-2"
         >
           CAIR
         </Link>

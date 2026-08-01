@@ -112,13 +112,14 @@ The design system is built for the Argentine Chamber of Rural Real Estate (CAIR)
 The target audience includes domestic and international investors, agricultural producers, and real estate professionals. The UI must evoke feelings of stability, heritage, and growth. To achieve this, the system uses high-contrast typography, generous whitespace to allow "room to breathe," and subtle tactile elements that hint at the physical nature of land ownership.
 
 Visual hallmarks include:
+
 - **High-Quality Imagery:** Use of full-width hero sections featuring high-resolution photography of the Pampas, Patagonia, and agricultural machinery.
 - **Institutional Weight:** Sharp alignment and structured layouts that reflect the official "Chamber" status.
 - **Modern Search UX:** A prominent, clean interface for data-heavy filtering without overwhelming the user.
 
 ## Colors
 
-The color palette is derived directly from the Argentine countryside and the CAIR institutional identity. 
+The color palette is derived directly from the Argentine countryside and the CAIR institutional identity.
 
 - **Primary (Field Green):** Used for navigation, primary buttons, and representing the land itself. It signifies growth and stability.
 - **Secondary (Harvest Gold):** Reserved for highlights, special icons, and premium "Featured Property" indicators. It suggests value and excellence.
@@ -151,7 +152,7 @@ To maintain a professional and clean aesthetic, this design system uses **Tonal 
 
 ## Shapes
 
-The shape language is **Soft** (roundedness 1). 
+The shape language is **Soft** (roundedness 1).
 
 Property cards, search inputs, and buttons use a 0.25rem (4px) radius. This subtle rounding maintains the professional "Institutional" look—avoiding the overly playful feel of high-radius "pill" shapes—while feeling more modern and approachable than sharp, 90-degree corners.
 
@@ -160,23 +161,28 @@ Large imagery containers may use a slightly larger radius (rounded-lg) to soften
 ## Components
 
 ### Buttons
+
 - **Primary:** Solid Field Green with white Hanken Grotesk text (Semibold). 4px radius. High contrast.
 - **Secondary:** Transparent background with Field Green border and text.
 - **Search Button:** Large, Harvest Gold background with Field Green text to create an immediate focal point in the hero section.
 
 ### Search Hero & Tabs
+
 - **Tabs:** Located above the search bar. Active tabs are underlined with a 3px Field Green stroke.
 - **Inputs:** Large text (18px), clear icons (e.g., location pin, price tag), and a "Search" button that spans the full width on mobile or sits integrated on desktop.
 
 ### Property Cards
+
 - **Image:** 16:9 aspect ratio at the top.
 - **Badges:** Small "Featured" or "New" badges in Harvest Gold with 13px bold text.
 - **Content:** Title in Libre Caslon Text, Price and Location in Hanken Grotesk.
 - **Details:** Use small icons for hectares, livestock capacity, or water access.
 
 ### Form Fields
-- Minimalist design: White background, 1px grey border, and clear floating labels. 
+
+- Minimalist design: White background, 1px grey border, and clear floating labels.
 - Focus state: Border changes to Field Green with a 2px thickness.
 
 ### Lists & Tables
+
 - For agricultural data or market reports, use clean tables with horizontal dividers only (no vertical lines) to maximize the feeling of space.

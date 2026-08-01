@@ -264,7 +264,7 @@ depende de `StyleSheet` (ADR 0008).
   destacados" del home, badge `Publicado`/`Borrador`, cada una es un link
   a su edición.
 - **Consultas recibidas:** tabla (Campo · Comprador · Teléfono · Fecha) en
-  vez de tarjetas sueltas — más escaneable para una superficie *Operate*.
+  vez de tarjetas sueltas — más escaneable para una superficie _Operate_.
   Sin columna "Estado": no se trackea si una consulta fue respondida.
 - **Mis datos:** tarjeta chica con lo único que es real, `socios.nombre` y
   el email de `auth.users` — sin foto, teléfono ni membresía, que el comp

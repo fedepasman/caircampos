@@ -9,7 +9,13 @@ import { clienteNavegador } from '@/lib/supabase/client';
 import { FormTextarea } from '@cair/ui/FormTextarea';
 import { Button } from '@cair/ui/Button';
 
-export function FormularioConsulta({ campoId, compradorId }: { campoId: string; compradorId: string }) {
+export function FormularioConsulta({
+  campoId,
+  compradorId,
+}: {
+  campoId: string;
+  compradorId: string;
+}) {
   const router = useRouter();
   const [errorGeneral, setErrorGeneral] = useState<string | null>(null);
 
@@ -35,10 +41,13 @@ export function FormularioConsulta({ campoId, compradorId }: { campoId: string; 
   }
 
   return (
-    <form onSubmit={(event) => void handleSubmit(alEnviar)(event)} className="mt-4 flex flex-col gap-3">
+    <form
+      onSubmit={(event) => void handleSubmit(alEnviar)(event)}
+      className="mt-4 flex flex-col gap-3"
+    >
       <FormTextarea label="Mensaje" error={errors.mensaje?.message} {...register('mensaje')} />
 
-      {errorGeneral && <p className="text-sm text-danger">{errorGeneral}</p>}
+      {errorGeneral && <p className="text-danger text-sm">{errorGeneral}</p>}
 
       <Button type="submit" disabled={isSubmitting}>
         {isSubmitting ? 'Enviando…' : 'Enviar consulta'}

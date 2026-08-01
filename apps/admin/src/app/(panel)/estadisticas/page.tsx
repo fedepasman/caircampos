@@ -25,9 +25,7 @@ export default async function EstadisticasPage() {
 
   return (
     <div>
-      <h1 className="font-display text-2xl font-semibold text-neutral-950">
-        Consultas por campo
-      </h1>
+      <h1 className="font-display text-2xl font-semibold text-neutral-950">Consultas por campo</h1>
 
       {estadisticas && estadisticas.length > 0 ? (
         <div className="mt-6 overflow-hidden rounded-md border border-neutral-600 bg-neutral-50">
@@ -48,7 +46,7 @@ export default async function EstadisticasPage() {
             <tbody className="divide-y divide-neutral-600">
               {estadisticas.map((fila) => (
                 <tr key={fila.campo_id}>
-                  <td className="p-3 font-display text-neutral-950">{fila.titulo}</td>
+                  <td className="font-display p-3 text-neutral-950">{fila.titulo}</td>
                   <td className="p-3 text-neutral-800">
                     {fila.localidad}, {fila.provincia}
                   </td>

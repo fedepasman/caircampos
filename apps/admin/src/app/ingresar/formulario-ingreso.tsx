@@ -47,7 +47,10 @@ export function FormularioIngreso() {
   }
 
   return (
-    <form onSubmit={(event) => void handleSubmit(alEnviar)(event)} className="mt-6 flex flex-col gap-4">
+    <form
+      onSubmit={(event) => void handleSubmit(alEnviar)(event)}
+      className="mt-6 flex flex-col gap-4"
+    >
       <FormField
         label="Email"
         type="email"
@@ -64,7 +67,7 @@ export function FormularioIngreso() {
         {...register('password')}
       />
 
-      {errorIngreso && <p className="text-sm text-danger">{errorIngreso}</p>}
+      {errorIngreso && <p className="text-danger text-sm">{errorIngreso}</p>}
 
       <Button type="submit" disabled={isSubmitting} className="mt-2">
         {isSubmitting ? 'Ingresando…' : 'Ingresar'}

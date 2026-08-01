@@ -43,7 +43,9 @@ describe('paridad entre @cair/tokens y el @theme de Tailwind', () => {
     expect(variableCss('font-display')).toBe(
       `var(--font-libre-caslon-text), '${fontFamily.display}', serif`,
     );
-    expect(variableCss('font-body')).toBe(`var(--font-hanken-grotesk), '${fontFamily.body}', sans-serif`);
+    expect(variableCss('font-body')).toBe(
+      `var(--font-hanken-grotesk), '${fontFamily.body}', sans-serif`,
+    );
   });
 
   it('replica los colores semánticos', () => {

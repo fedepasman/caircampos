@@ -26,7 +26,7 @@ export const FormTextarea = forwardRef<HTMLTextAreaElement, FormTextareaProps>(
           }
           {...props}
         />
-        {error && <p className="text-sm text-danger">{error}</p>}
+        {error && <p className="text-danger text-sm">{error}</p>}
       </div>
     );
   },
