@@ -60,9 +60,9 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(destino);
   }
 
-  if ((pathname === '/ingresar' || pathname === '/') && esAdmin) {
+  if (pathname === '/ingresar' && esAdmin) {
     const destino = request.nextUrl.clone();
-    destino.pathname = '/moderacion';
+    destino.pathname = '/';
     return NextResponse.redirect(destino);
   }
 

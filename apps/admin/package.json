@@ -18,6 +18,7 @@
     "@cair/ui": "workspace:*",
     "@hookform/resolvers": "catalog:",
     "@tanstack/react-table": "catalog:",
+    "lucide-react": "catalog:",
     "next": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
