@@ -181,20 +181,44 @@ export type Database = {
         Row: {
           created_at: string;
           id: string;
+          latitud: number | null;
+          localidad: string | null;
+          longitud: number | null;
           nombre: string;
-          usuario_id: string;
+          nro_socio: number | null;
+          provincia: string | null;
+          publicado: boolean;
+          telefono: string | null;
+          ubicacion: unknown;
+          usuario_id: string | null;
         };
         Insert: {
           created_at?: string;
           id?: string;
+          latitud?: number | null;
+          localidad?: string | null;
+          longitud?: number | null;
           nombre: string;
-          usuario_id: string;
+          nro_socio?: number | null;
+          provincia?: string | null;
+          publicado?: boolean;
+          telefono?: string | null;
+          ubicacion?: unknown;
+          usuario_id?: string | null;
         };
         Update: {
           created_at?: string;
           id?: string;
+          latitud?: number | null;
+          localidad?: string | null;
+          longitud?: number | null;
           nombre?: string;
-          usuario_id?: string;
+          nro_socio?: number | null;
+          provincia?: string | null;
+          publicado?: boolean;
+          telefono?: string | null;
+          ubicacion?: unknown;
+          usuario_id?: string | null;
         };
         Relationships: [];
       };
@@ -203,6 +227,10 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      asignar_numero_socio: {
+        Args: { numero: number; socio_id_a_actualizar: string };
+        Returns: undefined;
+      };
       estadisticas_consultas_por_campo: {
         Args: never;
         Returns: {

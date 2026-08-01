@@ -3,6 +3,7 @@
 Reglas de trabajo del proyecto. Cómo se construye.
 
 Qué se construye y para quién está en [PRODUCT.md](PRODUCT.md) — no se duplica acá.
+Cómo se despliega y se opera la infraestructura está en [OPERACIONES.md](OPERACIONES.md).
 
 ---
 

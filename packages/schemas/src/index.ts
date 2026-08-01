@@ -123,6 +123,31 @@ export const esquemaRegistroComprador = z.object({
 
 export type RegistroComprador = z.infer<typeof esquemaRegistroComprador>;
 
+/**
+ * Alta/edición de una inmobiliaria socia, desde el panel de admin de CAIR.
+ *
+ * `nro_socio` usa el mismo `preprocess` que `precio_usd` en `esquemaCampo`:
+ * un input vacío tiene que coaccionar a "sin cargar todavía", no a `0`.
+ * `latitud`/`longitud` son opcionales — una inmobiliaria puede existir en
+ * el directorio antes de tener ubicación exacta, y el mapa público
+ * simplemente omite la que no la tenga.
+ */
+export const esquemaSocio = z.object({
+  nombre: z.string().min(1, 'Ingresá un nombre'),
+  nro_socio: z.preprocess(
+    (valor) => (valor === '' || valor === undefined ? undefined : valor),
+    z.coerce.number().int().positive('Debe ser mayor a 0').optional(),
+  ),
+  telefono: z.string().optional(),
+  provincia: z.string().optional(),
+  localidad: z.string().optional(),
+  latitud: z.coerce.number().min(-90).max(90).optional(),
+  longitud: z.coerce.number().min(-180).max(180).optional(),
+  publicado: z.coerce.boolean(),
+});
+
+export type Socio = z.infer<typeof esquemaSocio>;
+
 /** Consulta de un comprador por un campo, desde la ficha pública. */
 export const esquemaConsulta = z.object({
   mensaje: z.string().min(1, 'Escribí tu consulta'),

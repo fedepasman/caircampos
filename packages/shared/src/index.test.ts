@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { assertNever, groupBy, isDefined, requireEnv } from './index.js';
+import { assertNever, escaparParaFiltroOr, groupBy, isDefined, requireEnv } from './index.js';
 
 describe('assertNever', () => {
   it('lanza al recibir un valor que el tipado daba por imposible', () => {
@@ -34,6 +34,18 @@ describe('requireEnv', () => {
       expect(mensaje).toContain('SUPABASE_SECRET_KEY');
       expect(mensaje).toContain('.env.example');
     }
+  });
+});
+
+describe('escaparParaFiltroOr', () => {
+  it('escapa los separadores de sintaxis de un filtro .or() de PostgREST', () => {
+    const escapado = escaparParaFiltroOr('zzz,titulo.ilike.*');
+    expect(escapado).not.toContain(',');
+    expect(escapado).toBe('zzz%2Ctitulo.ilike.*');
+  });
+
+  it('deja intacto un término sin caracteres especiales', () => {
+    expect(escaparParaFiltroOr('Pergamino')).toBe('Pergamino');
   });
 });
 

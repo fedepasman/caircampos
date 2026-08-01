@@ -3,20 +3,20 @@
 import { useEffect, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { env } from '@/lib/env';
 
 // Centro de Argentina: encuadre de respaldo cuando todavía no hay una
 // ubicación elegida.
 const CENTRO_ARGENTINA: [number, number] = [-63.6167, -38.4161];
 
 interface SelectorUbicacionProps {
+  tokenMapbox: string;
   latitud?: number | undefined;
   longitud?: number | undefined;
   /**
    * Coordenadas a las que acercar la cámara del mapa (p. ej. desde una
    * geocodificación por provincia/localidad). Nunca coloca ni mueve el
-   * pin — la ubicación real del campo la define únicamente el clic o el
-   * arrastre del socio.
+   * pin — la ubicación real la define únicamente el clic o el arrastre de
+   * quien completa el formulario.
    */
   centrarEn?: { lat: number; lng: number } | undefined;
   onCambiar: (latitud: number, longitud: number) => void;
@@ -26,12 +26,18 @@ interface SelectorUbicacionProps {
  * Mapa con un único pin arrastrable, para elegir latitud/longitud sin
  * tipearlas a mano. Un clic coloca o mueve el pin; arrastrarlo lo reubica.
  *
+ * Compartido por `apps/web` (formulario de campos) y `apps/admin`
+ * (formulario de socios) — por eso el token de Mapbox llega como prop en
+ * vez de leerse de `env`: un paquete de `packages/` no puede importar el
+ * módulo de entorno de una app puntual.
+ *
  * Las coordenadas iniciales solo se usan para el primer render del mapa —
  * de ahí en más la fuente de verdad es el propio pin, no las props. Volver
  * a centrar el mapa en cada cambio de estado del formulario (un cambio por
  * cada clic) sería contraproducente: pelearía con el propio arrastre.
  */
 export function SelectorUbicacion({
+  tokenMapbox,
   latitud,
   longitud,
   centrarEn,
@@ -48,7 +54,7 @@ export function SelectorUbicacion({
   useEffect(() => {
     if (!contenedorRef.current) return;
 
-    mapboxgl.accessToken = env.NEXT_PUBLIC_MAPBOX_TOKEN;
+    mapboxgl.accessToken = tokenMapbox;
 
     const hayUbicacionInicial = latitud !== undefined && longitud !== undefined;
 
@@ -102,7 +108,7 @@ export function SelectorUbicacion({
       mapa.remove();
       mapaRef.current = null;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- solo se usa el valor inicial de latitud/longitud; los cambios posteriores los maneja el clic/arrastre del propio pin, no un nuevo render.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- solo se usa el valor inicial de latitud/longitud/tokenMapbox; los cambios posteriores los maneja el clic/arrastre del propio pin, no un nuevo render.
   }, []);
 
   useEffect(() => {

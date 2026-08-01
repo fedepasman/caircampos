@@ -78,6 +78,18 @@ export function formatearPrecioUsd(precioUsd: number | null): string {
 }
 
 /**
+ * Escapa un término de búsqueda antes de interpolarlo en un `.or()` de
+ * PostgREST: esa sintaxis usa `,`/`(`/`)` como separadores de filtros, así
+ * que sin escapar, un valor como `zzz,titulo.ilike.*` inyecta una condición
+ * extra que matchea todo (probado empíricamente contra la base local: sin
+ * este escape, ese término devuelve todas las filas en vez de ninguna).
+ * Usado por las búsquedas de `/campos` y `/inmobiliarias`.
+ */
+export function escaparParaFiltroOr(valor: string): string {
+  return valor.replace(/[%,()]/g, (caracter) => encodeURIComponent(caracter));
+}
+
+/**
  * Agrupa los elementos de una lista según una clave derivada.
  * Devuelve un `Map` en vez de un objeto para no chocar con claves heredadas
  * de `Object.prototype` (`__proto__`, `constructor`) si la clave viene de

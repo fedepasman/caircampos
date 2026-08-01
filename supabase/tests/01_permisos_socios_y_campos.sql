@@ -9,7 +9,7 @@
 
 begin;
 
-select plan(12);
+select plan(13);
 
 -- anon puede ver campos publicados (la ficha pública)...
 select ok(
@@ -23,11 +23,16 @@ select ok(
   'anon no debe poder hacer INSERT sobre public.campos'
 );
 
--- anon puede ver socios, acotado por RLS a los que tienen al menos un campo
--- publicado: la ficha pública de un campo muestra quién lo publicó.
+-- anon ve el directorio público de socios publicados ("Inmobiliarias
+-- Rurales"), pero no puede escribir: el alta y la edición son de CAIR.
 select ok(
   has_table_privilege('anon', 'public.socios', 'SELECT'),
   'anon debe poder hacer SELECT sobre public.socios'
+);
+
+select ok(
+  not has_table_privilege('anon', 'public.socios', 'INSERT'),
+  'anon no debe poder hacer INSERT sobre public.socios'
 );
 
 -- El socio autenticado administra sus propios campos. INSERT/UPDATE son
@@ -40,12 +45,15 @@ select ok(
   'authenticated debe poder INSERT/UPDATE/DELETE sobre public.campos (acotado por RLS a sus propios campos)'
 );
 
--- El socio autenticado puede actualizar su propia fila de socios, pero el
--- alta es manual (Studio, service_role): sin política ni GRANT de INSERT.
+-- authenticated puede INSERT/UPDATE sobre socios (column-level, acotado
+-- por RLS: solo CAIR puede dar de alta, un socio solo puede tocar su
+-- propia fila), pero `nro_socio` queda afuera del UPDATE de columnas — es
+-- de asignación exclusiva de CAIR, ver `public.asignar_numero_socio()`.
 select ok(
-  has_table_privilege('authenticated', 'public.socios', 'UPDATE')
-    and not has_table_privilege('authenticated', 'public.socios', 'INSERT'),
-  'authenticated debe poder UPDATE pero no INSERT sobre public.socios'
+  has_column_privilege('authenticated', 'public.socios', 'nombre', 'INSERT')
+    and has_column_privilege('authenticated', 'public.socios', 'nombre', 'UPDATE')
+    and not has_column_privilege('authenticated', 'public.socios', 'nro_socio', 'UPDATE'),
+  'authenticated debe poder INSERT/UPDATE sobre public.socios, pero no UPDATE directo de nro_socio'
 );
 
 -- Un socio no puede aprobarse a sí mismo: `revisado_por_cair` queda afuera
@@ -69,20 +77,19 @@ select ok(
   'authenticated debe poder ejecutar public.moderar_campo'
 );
 
--- anon nunca llega a la función auxiliar que usa la política de socios
--- para authenticated (rompe el ciclo de recursión con campos).
+-- Mismo patrón para la asignación de número de socio: anon nunca llega...
 select ok(
-  not has_function_privilege('anon', 'private.socio_tiene_campo_publicado(uuid)', 'EXECUTE'),
-  'anon no debe poder ejecutar private.socio_tiene_campo_publicado'
+  not has_function_privilege('anon', 'public.asignar_numero_socio(uuid, integer)', 'EXECUTE'),
+  'anon no debe poder ejecutar public.asignar_numero_socio'
 );
 
--- authenticated sí, porque la política de SELECT de socios la invoca.
+-- ...authenticated sí (el chequeo de rol admin vive adentro del cuerpo).
 select ok(
-  has_function_privilege('authenticated', 'private.socio_tiene_campo_publicado(uuid)', 'EXECUTE'),
-  'authenticated debe poder ejecutar private.socio_tiene_campo_publicado'
+  has_function_privilege('authenticated', 'public.asignar_numero_socio(uuid, integer)', 'EXECUTE'),
+  'authenticated debe poder ejecutar public.asignar_numero_socio'
 );
 
--- Las cuatro políticas de campos existen con los roles esperados. No
+-- Las cinco políticas de campos existen con los roles esperados. No
 -- verifica el contenido del USING (eso lo prueba el comportamiento, no la
 -- forma) sino que nadie las borró, duplicó o les cambió el alcance sin
 -- querer. Una sola política de SELECT (en vez de una por caso) es a
@@ -104,8 +111,9 @@ select set_eq(
   'public.campos debe tener exactamente las cinco políticas esperadas, con sus roles'
 );
 
--- Las políticas de socios existen con los roles esperados: la nueva de
--- anon, más las dos de authenticated que ya había.
+-- Las políticas de socios existen con los roles esperados: directorio
+-- público (anon), y alta/edición acotada a CAIR o a la propia fila
+-- (authenticated).
 select set_eq(
   $$
     select policyname, roles::text
@@ -114,11 +122,12 @@ select set_eq(
   $$,
   $$
     values
-      ('El socio ve su fila, CAIR ve todas, o el dueño publicado', '{authenticated}'),
-      ('El socio actualiza su propia fila', '{authenticated}'),
-      ('Cualquiera ve el socio dueño de un campo publicado', '{anon}')
+      ('Cualquiera ve los socios publicados', '{anon}'),
+      ('El socio ve su fila, CAIR ve todas, o el resto ve publicadas', '{authenticated}'),
+      ('CAIR da de alta inmobiliarias', '{authenticated}'),
+      ('El socio o CAIR actualizan la fila', '{authenticated}')
   $$,
-  'public.socios debe tener exactamente las tres políticas esperadas, con sus roles'
+  'public.socios debe tener exactamente las cuatro políticas esperadas, con sus roles'
 );
 
 select * from finish();

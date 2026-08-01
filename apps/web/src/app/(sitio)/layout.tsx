@@ -11,10 +11,11 @@ import { AvisoCookies } from '@/components/aviso-cookies';
  * separados en vez de en el layout raíz. Ninguno de los dos cambia las URLs.
  *
  * Recortes deliberados frente al mockup: el logo es un ícono + wordmark de
- * texto, no la imagen del mockup (no hay un logo real todavía). "Entidades
- * Rurales" y "Noticias" no están: no existe ese contenido en el sitio. Y no
- * hay botón "Publicar" — publicar un campo es una acción de socio ya
- * logueado (`/panel`), no algo que se ofrezca a cualquier visitante.
+ * texto, no la imagen del mockup (no hay un logo real todavía). "Noticias"
+ * no está: no existe ese contenido en el sitio. Y no hay botón "Publicar"
+ * — publicar un campo es una acción de socio ya logueado (`/panel`), no
+ * algo que se ofrezca a cualquier visitante. "Entidades Rurales" sí tiene
+ * destino ahora: el directorio de inmobiliarias en `/inmobiliarias`.
  */
 export default async function SitioLayout({ children }: { children: React.ReactNode }) {
   const supabase = await clienteServidor();
@@ -46,6 +47,12 @@ export default async function SitioLayout({ children }: { children: React.ReactN
                 className="hover:text-brand-900 text-sm font-semibold text-neutral-800"
               >
                 Alquilar
+              </Link>
+              <Link
+                href="/inmobiliarias"
+                className="hover:text-brand-900 text-sm font-semibold text-neutral-800"
+              >
+                Entidades Rurales
               </Link>
             </div>
           </div>

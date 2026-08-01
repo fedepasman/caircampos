@@ -4,7 +4,12 @@ import { MapPin, Ruler, Sprout, Tag } from 'lucide-react';
 import { clienteServidor } from '@/lib/supabase/server';
 import { MapaCampos } from '@/components/mapa-campos';
 import { buttonStyles } from '@cair/ui/Button';
-import { ETIQUETAS_MODALIDAD_CAMPO, ETIQUETAS_TIPO_CAMPO, formatearPrecioUsd } from '@cair/shared';
+import {
+  ETIQUETAS_MODALIDAD_CAMPO,
+  ETIQUETAS_TIPO_CAMPO,
+  escaparParaFiltroOr,
+  formatearPrecioUsd,
+} from '@cair/shared';
 import { MODALIDADES_CAMPO, TIPOS_CAMPO } from '@cair/schemas';
 import { env } from '@/lib/env';
 
@@ -33,17 +38,6 @@ function comoNumeroValido(valor: string | undefined): number | undefined {
   if (!valor) return undefined;
   const numero = Number(valor);
   return Number.isFinite(numero) && numero > 0 ? numero : undefined;
-}
-
-/**
- * Escapa el término de búsqueda antes de interpolarlo en un `.or()` de
- * PostgREST: esa sintaxis usa `,`/`(`/`)` como separadores de filtros, así
- * que sin escapar, un valor como `zzz,titulo.ilike.*` inyecta una condición
- * extra que matchea todo (probado empíricamente contra la base local: sin
- * este escape, ese término devuelve todos los campos en vez de ninguno).
- */
-function escaparParaFiltroOr(valor: string): string {
-  return valor.replace(/[%,()]/g, (caracter) => encodeURIComponent(caracter));
 }
 
 function fotoPortada(fotos: { object_key: string; orden: number }[]): string | undefined {

@@ -42,10 +42,18 @@ insert into auth.users (
   ''
 );
 
-insert into public.socios (id, usuario_id, nombre) values (
+insert into public.socios (
+  id, usuario_id, nombre, nro_socio, telefono, provincia, localidad, latitud, longitud
+) values (
   '22222222-2222-2222-2222-222222222222',
   '11111111-1111-1111-1111-111111111111',
-  'Inmobiliaria Rural de Prueba'
+  'Inmobiliaria Rural de Prueba',
+  1,
+  '(011) 4444-5555',
+  'Buenos Aires',
+  'Pergamino',
+  -33.8952,
+  -60.5736
 );
 
 -- Sin `revisado_por_cair` en el insert: el trigger

@@ -6,7 +6,7 @@ import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { esquemaCampo, MODALIDADES_CAMPO, TIPOS_CAMPO, type z } from '@cair/schemas';
 import { clienteNavegador } from '@/lib/supabase/client';
-import { SelectorUbicacion } from '@/components/selector-ubicacion';
+import { SelectorUbicacion } from '@cair/ui/SelectorUbicacion';
 import { env } from '@/lib/env';
 import { FormField } from '@cair/ui/FormField';
 import { FormTextarea } from '@cair/ui/FormTextarea';
@@ -258,6 +258,7 @@ export function FormularioCampo({
         </p>
         <div className="mt-2 h-72 overflow-hidden rounded-md border border-neutral-600 sm:h-96">
           <SelectorUbicacion
+            tokenMapbox={env.NEXT_PUBLIC_MAPBOX_TOKEN}
             latitud={ubicacion?.latitud}
             longitud={ubicacion?.longitud}
             centrarEn={centrarEn}
