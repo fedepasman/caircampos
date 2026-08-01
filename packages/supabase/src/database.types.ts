@@ -56,6 +56,7 @@ export type Database = {
           localidad: string;
           longitud: number;
           modalidad: string;
+          pais: string;
           precio_usd: number | null;
           provincia: string;
           publicado: boolean;
@@ -74,6 +75,7 @@ export type Database = {
           localidad: string;
           longitud: number;
           modalidad: string;
+          pais?: string;
           precio_usd?: number | null;
           provincia: string;
           publicado?: boolean;
@@ -92,6 +94,7 @@ export type Database = {
           localidad?: string;
           longitud?: number;
           modalidad?: string;
+          pais?: string;
           precio_usd?: number | null;
           provincia?: string;
           publicado?: boolean;
@@ -186,6 +189,7 @@ export type Database = {
           longitud: number | null;
           nombre: string;
           nro_socio: number | null;
+          pais: string;
           provincia: string | null;
           publicado: boolean;
           telefono: string | null;
@@ -200,6 +204,7 @@ export type Database = {
           longitud?: number | null;
           nombre: string;
           nro_socio?: number | null;
+          pais?: string;
           provincia?: string | null;
           publicado?: boolean;
           telefono?: string | null;
@@ -214,6 +219,7 @@ export type Database = {
           longitud?: number | null;
           nombre?: string;
           nro_socio?: number | null;
+          pais?: string;
           provincia?: string | null;
           publicado?: boolean;
           telefono?: string | null;
@@ -230,6 +236,34 @@ export type Database = {
       asignar_numero_socio: {
         Args: { numero: number; socio_id_a_actualizar: string };
         Returns: undefined;
+      };
+      campos_en_radio: {
+        Args: { centro_lat: number; centro_lng: number; radio_metros: number };
+        Returns: {
+          created_at: string;
+          descripcion: string | null;
+          hectareas: number;
+          id: string;
+          latitud: number;
+          localidad: string;
+          longitud: number;
+          modalidad: string;
+          pais: string;
+          precio_usd: number | null;
+          provincia: string;
+          publicado: boolean;
+          revisado_por_cair: string;
+          socio_id: string;
+          tipo_campo: string;
+          titulo: string;
+          ubicacion: unknown;
+        }[];
+        SetofOptions: {
+          from: '*';
+          to: 'campos';
+          isOneToOne: false;
+          isSetofReturn: true;
+        };
       };
       estadisticas_consultas_por_campo: {
         Args: never;

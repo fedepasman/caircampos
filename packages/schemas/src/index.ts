@@ -84,6 +84,13 @@ export type Ingreso = z.infer<typeof esquemaIngreso>;
 export const MODALIDADES_CAMPO = ['venta', 'arrendamiento'] as const;
 export const TIPOS_CAMPO = ['agricola', 'ganadero', 'mixto'] as const;
 
+/**
+ * Países que cubre el directorio de campos y de socios. El check de
+ * `pais` en `01_socios.sql`/`02_campos.sql` es la fuente de verdad real;
+ * este enum solo tiene que quedar en sincro con esa lista.
+ */
+export const PAISES = ['Argentina', 'Uruguay'] as const;
+
 export const esquemaCampo = z.object({
   titulo: z.string().min(1, 'Ingresá un título'),
   descripcion: z.string().optional(),
@@ -95,6 +102,7 @@ export const esquemaCampo = z.object({
     (valor) => (valor === '' || valor === undefined ? undefined : valor),
     z.coerce.number().positive('Debe ser mayor a 0').optional(),
   ),
+  pais: z.enum(PAISES, 'Elegí un país'),
   provincia: z.string().min(1, 'Ingresá una provincia'),
   localidad: z.string().min(1, 'Ingresá una localidad'),
   modalidad: z.enum(MODALIDADES_CAMPO, 'Elegí una modalidad'),
@@ -139,6 +147,7 @@ export const esquemaSocio = z.object({
     z.coerce.number().int().positive('Debe ser mayor a 0').optional(),
   ),
   telefono: z.string().optional(),
+  pais: z.enum(PAISES, 'Elegí un país'),
   provincia: z.string().optional(),
   localidad: z.string().optional(),
   latitud: z.coerce.number().min(-90).max(90).optional(),

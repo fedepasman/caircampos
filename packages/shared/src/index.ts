@@ -95,6 +95,17 @@ export function escaparParaFiltroOr(valor: string): string {
  * de `Object.prototype` (`__proto__`, `constructor`) si la clave viene de
  * datos externos.
  */
+export {
+  obtenerProvinciasArgentina,
+  obtenerLocalidadesArgentina,
+  obtenerDepartamentosUruguay,
+  obtenerLocalidadesUruguay,
+  buscarLocalidadesArgentina,
+  buscarLocalidadesUruguay,
+  incluirValorActualSiFalta,
+  type OpcionGeografica,
+} from './ubicacion-geografica';
+
 export function groupBy<T, K>(items: readonly T[], obtenerClave: (item: T) => K): Map<K, T[]> {
   const resultado = new Map<K, T[]>();
   for (const item of items) {

@@ -18,6 +18,11 @@ create table public.socios (
   -- futuro se suma autogestión de perfil.
   nro_socio integer unique,
   telefono text,
+  -- `not null default`: aunque provincia/localidad puedan quedar sin
+  -- cargar todavía, el país casi siempre se sabe de entrada, y el default
+  -- cubre sin backfill manual las filas ya existentes al agregar la
+  -- columna.
+  pais text not null default 'Argentina' check (pais in ('Argentina', 'Uruguay')),
   -- Nullable a propósito, mismo criterio que `campos.precio_usd`: CAIR
   -- puede cargar nombre y número antes de tener la ubicación exacta. El
   -- mapa público solo muestra los socios que sí tienen latitud/longitud.
@@ -92,14 +97,14 @@ create policy "El socio o CAIR actualizan la fila"
 grant select on public.socios to anon, authenticated;
 
 grant insert (
-  nombre, nro_socio, telefono, provincia, localidad, latitud, longitud, publicado, usuario_id
+  nombre, nro_socio, telefono, pais, provincia, localidad, latitud, longitud, publicado, usuario_id
 ) on public.socios to authenticated;
 
 -- `nro_socio` queda afuera de este UPDATE de columnas a propósito (ver el
 -- comentario de la columna): solo se fija al insertar, o después vía
 -- `public.asignar_numero_socio()`, que verifica el rol admin adentro.
 grant update (
-  nombre, telefono, provincia, localidad, latitud, longitud, publicado, usuario_id
+  nombre, telefono, pais, provincia, localidad, latitud, longitud, publicado, usuario_id
 ) on public.socios to authenticated;
 
 -- Único camino para cambiar `nro_socio` después del alta. Vive en `public`

@@ -1,0 +1,215 @@
+{
+  "Artigas": {
+    "centro": [-30.4, -56.47],
+    "localidades": ["Artigas", "Bella Unión", "Baltasar Brum", "Tomás Gomensoro", "Sequeira"]
+  },
+  "Canelones": {
+    "centro": [-34.53, -56.28],
+    "localidades": [
+      "Canelones",
+      "Las Piedras",
+      "Pando",
+      "Ciudad de la Costa",
+      "La Paz",
+      "Progreso",
+      "Santa Lucía",
+      "Atlántida",
+      "Salinas",
+      "Parque del Plata",
+      "San Ramón",
+      "Tala",
+      "Sauce",
+      "Toledo",
+      "San Antonio",
+      "San Bautista",
+      "Empalme Olmos",
+      "Barros Blancos",
+      "Colonia Nicolich",
+      "Joaquín Suárez",
+      "Migues",
+      "Montes",
+      "Soca",
+      "Cuchilla Alta"
+    ]
+  },
+  "Cerro Largo": {
+    "centro": [-32.37, -54.18],
+    "localidades": [
+      "Melo",
+      "Río Branco",
+      "Fraile Muerto",
+      "Isidoro Noblía",
+      "Tupambaé",
+      "Aceguá",
+      "Arévalo",
+      "Bañado de Medina",
+      "Centurión"
+    ]
+  },
+  "Colonia": {
+    "centro": [-34.47, -57.84],
+    "localidades": [
+      "Colonia del Sacramento",
+      "Carmelo",
+      "Nueva Helvecia",
+      "Rosario",
+      "Juan Lacaze",
+      "Tarariras",
+      "Nueva Palmira",
+      "Florencio Sánchez",
+      "Colonia Valdense",
+      "Ombúes de Lavalle",
+      "Cufré",
+      "Miguelete",
+      "Conchillas"
+    ]
+  },
+  "Durazno": {
+    "centro": [-33.38, -56.52],
+    "localidades": [
+      "Durazno",
+      "Sarandí del Yí",
+      "Blanquillo",
+      "Carlos Reyles",
+      "Villa del Carmen",
+      "La Paloma",
+      "Baygorria"
+    ]
+  },
+  "Flores": {
+    "centro": [-33.53, -56.9],
+    "localidades": ["Trinidad", "Ismael Cortinas", "Andresito"]
+  },
+  "Florida": {
+    "centro": [-34.1, -56.22],
+    "localidades": [
+      "Florida",
+      "Sarandí Grande",
+      "Casupá",
+      "Fray Marcos",
+      "Cerro Colorado",
+      "25 de Agosto",
+      "Capilla del Sauce",
+      "Alejandro Gallinal",
+      "Goñi",
+      "Nico Pérez",
+      "Reboledo",
+      "Independencia"
+    ]
+  },
+  "Lavalleja": {
+    "centro": [-34.37, -55.24],
+    "localidades": [
+      "Minas",
+      "José Pedro Varela",
+      "Solís de Mataojo",
+      "Mariscala",
+      "José Batlle y Ordóñez",
+      "Pirarajá",
+      "Zapicán",
+      "Barriga Negra"
+    ]
+  },
+  "Maldonado": {
+    "centro": [-34.91, -54.95],
+    "localidades": [
+      "Maldonado",
+      "Punta del Este",
+      "San Carlos",
+      "Piriápolis",
+      "Pan de Azúcar",
+      "Aiguá",
+      "Solís Grande",
+      "La Barra",
+      "Manantiales",
+      "Gregorio Aznárez",
+      "Garzón",
+      "José Ignacio",
+      "Cerro Pelado"
+    ]
+  },
+  "Montevideo": {
+    "centro": [-34.9, -56.16],
+    "localidades": ["Montevideo"]
+  },
+  "Paysandú": {
+    "centro": [-32.32, -58.08],
+    "localidades": [
+      "Paysandú",
+      "Guichón",
+      "Quebracho",
+      "Chapicuy",
+      "Tambores",
+      "Piedras Coloradas",
+      "Merinos",
+      "Lorenzo Geyres"
+    ]
+  },
+  "Río Negro": {
+    "centro": [-33.13, -58.3],
+    "localidades": ["Fray Bentos", "Young", "San Javier", "Nuevo Berlín", "Grecco", "Algorta"]
+  },
+  "Rivera": {
+    "centro": [-30.9, -55.55],
+    "localidades": ["Rivera", "Tranqueras", "Vichadero", "Minas de Corrales", "Lapuente"]
+  },
+  "Rocha": {
+    "centro": [-34.48, -54.33],
+    "localidades": [
+      "Rocha",
+      "Chuy",
+      "Castillos",
+      "La Paloma",
+      "Lascano",
+      "Cebollatí",
+      "Velázquez",
+      "18 de Julio",
+      "Aguas Dulces",
+      "Barra de Valizas",
+      "Punta del Diablo",
+      "La Coronilla"
+    ]
+  },
+  "Salto": {
+    "centro": [-31.38, -57.97],
+    "localidades": ["Salto", "Constitución", "Belén", "San Antonio", "Pueblo Cayetano"]
+  },
+  "San José": {
+    "centro": [-34.34, -56.71],
+    "localidades": [
+      "San José de Mayo",
+      "Libertad",
+      "Ecilda Paullier",
+      "Rodríguez",
+      "Rafael Perazza",
+      "Ciudad del Plata",
+      "Puntas de Valdez",
+      "Villa Rodríguez"
+    ]
+  },
+  "Soriano": {
+    "centro": [-33.25, -58.03],
+    "localidades": [
+      "Mercedes",
+      "Dolores",
+      "Cardona",
+      "Villa Soriano",
+      "José Enrique Rodó",
+      "Palmitas"
+    ]
+  },
+  "Tacuarembó": {
+    "centro": [-31.72, -55.98],
+    "localidades": [
+      "Tacuarembó",
+      "Paso de los Toros",
+      "San Gregorio de Polanco",
+      "Ansina",
+      "Curtina"
+    ]
+  },
+  "Treinta y Tres": {
+    "centro": [-33.23, -54.38],
+    "localidades": ["Treinta y Tres", "Vergara", "Santa Clara de Olimar", "Rincón"]
+  }
+}
