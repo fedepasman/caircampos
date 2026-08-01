@@ -66,6 +66,7 @@ jobs:
           NEXT_PUBLIC_SITE_URL: http://localhost:3000
           NEXT_PUBLIC_ADMIN_URL: http://localhost:3001
           NEXT_PUBLIC_R2_PUBLIC_URL: http://localhost:9999
+          NEXT_PUBLIC_MAPBOX_TOKEN: pk.ci-placeholder-token
 
   base-de-datos:
     name: Migraciones, guardrails de RLS y tipos

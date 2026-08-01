@@ -90,3 +90,12 @@ minimumReleaseAge: 10080
 #           lento o falla.
 allowBuilds:
   sharp: true
+
+# Fuerza versiones parcheadas de dos dependencias transitivas de `next`
+# (no directas de este repo): sin esto, `pnpm audit` reporta 5 vulnerabilidades
+# (2 moderate, 3 high) heredadas de `next > sharp` y `next > postcss`.
+# Versiones elegidas por ser las mínimas parcheadas con más de una semana
+# publicadas (ver `minimumReleaseAge` arriba), no las últimas disponibles.
+overrides:
+  sharp: 0.35.3
+  postcss: 8.5.20
