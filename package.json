@@ -25,7 +25,8 @@
     "db:test": "supabase test db",
     "db:advisors": "supabase db advisors",
     "db:types": "node scripts/gen-types.mjs",
-    "db:types:check": "pnpm db:types && git diff --exit-code packages/supabase/src/database.types.ts"
+    "db:types:check": "pnpm db:types && git diff --exit-code packages/supabase/src/database.types.ts",
+    "db:lote-demo": "node scripts/generar-lote-demo.mjs"
   },
   "devDependencies": {
     "@types/node": "catalog:",

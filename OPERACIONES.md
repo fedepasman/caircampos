@@ -326,6 +326,130 @@ vercel rollback [url-o-id-del-deployment-anterior] --yes
 O desde el dashboard: Deployments → elegir uno anterior → "Promote to
 Production".
 
+### Generar un lote de datos de demo (sin tocar producción real)
+
+Para mostrar el sitio "lleno" (una demo, probar paginación/filtros con
+volumen) sin mezclar datos ficticios con los reales. **Nunca cargar el lote
+en el proyecto de producción real** (`DB_apps`): `apps/web` es indexable por
+Google (punto 7 del pliego) y las políticas RLS muestran cualquier campo
+`publicado = true` y `revisado_por_cair = 'aprobado'` a cualquier anónimo —
+un campo ficticio ahí termina en una búsqueda real, y una consulta real le
+llega a un socio que no existe.
+
+1. **Generar el SQL:**
+
+   ```bash
+   pnpm db:lote-demo > lote-demo.sql
+   ```
+
+   Genera 40 socios y ~156 campos (`scripts/generar-lote-demo.mjs`) con
+   ubicaciones reales de Argentina/Uruguay. Los campos quedan aprobados
+   igual: el trigger `antes_de_guardar_campo` fuerza `revisado_por_cair =
+'pendiente'` en todo INSERT con `publicado = true`, así que el script hace
+   un UPDATE aparte al final que el trigger no intercepta.
+
+2. **Elegir destino:**
+   - **Solo desarrollo local** (uso propio, nadie más lo ve): cargarlo
+     directo contra el contenedor de Supabase local, sin depender de tener
+     `psql` instalado:
+     ```bash
+     docker exec -i supabase_db_CAIR psql -U postgres -d postgres -v ON_ERROR_STOP=1 < lote-demo.sql
+     ```
+   - **Mostrárselo a alguien de afuera** (CAIR, un socio, un inversor):
+     nunca en producción — un proyecto de Supabase aparte + un deploy
+     _Preview_ de Vercel (ver siguiente sección).
+
+3. **Fotos:** `campo_fotos.object_key` tiene que ser una ruta _dentro_ del
+   bucket de R2, nunca una URL completa — el cliente arma
+   `${NEXT_PUBLIC_R2_PUBLIC_URL}/${object_key}` con una concatenación de
+   string sin ninguna rama para detectar una URL absoluta. Sin credenciales
+   de escritura de R2 (viven solo en la Edge Function
+   `subir-foto-campo/`, nunca en manos de quien genera el lote) no hay forma
+   de subir fotos nuevas. La opción sin subir nada es reutilizar
+   `object_key` que ya existen en el bucket — por ejemplo los que dejaron
+   los campos reales cargados hasta ahora:
+
+   ```bash
+   docker exec -i supabase_db_CAIR psql -U postgres -d postgres -t -A \
+     -c "select distinct object_key from public.campo_fotos;"
+   ```
+
+   y pasarlos como argumento al generador (separados por coma) para que el
+   lote salga con fotos asignadas por rotación:
+
+   ```bash
+   pnpm db:lote-demo "campos/abc/foto1.png,campos/def/foto2.png" > lote-demo.sql
+   ```
+
+   Sin ese argumento, los campos generados quedan sin fotos — el sitio ya
+   maneja ese caso con un degradé de placeholder, no rompe nada.
+
+4. **Guardrails:** `pnpm db:test` corre igual contra el lote ficticio, no
+   hay nada específico que verificar ahí.
+
+#### Mostrarlo a alguien de afuera: proyecto de demo + Preview de Vercel
+
+No usar el proyecto de producción. Flujo completo:
+
+```bash
+# 1. Crear un proyecto de Supabase aparte (cuenta contra el límite de 2
+#    proyectos free por organización, ver troubleshooting más abajo)
+supabase projects create cair-demo --org-id <org-id> --region sa-east-1 --db-password <password>
+
+# 2. Aplicar el esquema completo
+supabase link --project-ref <ref-del-proyecto-demo>
+supabase db push
+
+# 3. Cargar el lote (con fotos si se armó el argumento del paso anterior)
+docker run --rm -i -v "$PWD:/data" postgres:17 \
+  psql "postgresql://postgres.<ref>:<password>@aws-0-sa-east-1.pooler.supabase.com:5432/postgres" \
+  -v ON_ERROR_STOP=1 -f /data/lote-demo.sql
+
+# 4. Volver a linkear el CLI a producción — el link es un estado persistente
+#    en supabase/.temp/, no se revierte solo
+supabase link --project-ref <ref-de-produccion>
+```
+
+Después, en Vercel (proyecto `cair-web`), configurar las env vars de
+**Preview** (no Production) apuntando al proyecto de demo — `vercel env add
+<NOMBRE> preview` para cada una, o `vercel env update <NOMBRE> preview
+--yes` si ya existe. Necesita las mismas seis que Production
+(`NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` del
+proyecto de demo, el resto puede repetir el valor de producción). Sin esto,
+el build de Preview falla con las mismas variables de entorno inválidas que
+si faltaran en Production.
+
+Deploy sin `--prod` (eso es justamente lo que lo hace un Preview, con
+`noindex` automático):
+
+```bash
+cp apps/web/.vercel/project.json .vercel/project.json
+vercel deploy --yes
+```
+
+El proyecto tiene protección SSO de Vercel activada por defecto en los
+Preview: cualquiera con el link igual tiene que loguearse con una cuenta del
+team. Para compartirlo con alguien de afuera, generar un secreto de bypass
+(una sola vez, queda activo para todos los Preview futuros del proyecto):
+
+```bash
+vercel project protection enable cair-web --protection-bypass
+vercel project protection cair-web --format json   # muestra el secreto generado
+```
+
+Y armar el link agregando dos query params:
+
+```
+https://<url-del-preview>.vercel.app/?x-vercel-protection-bypass=<secreto>&x-vercel-set-bypass-cookie=true
+```
+
+Quien lo abre una vez con esos params queda con una cookie válida 7 días;
+después navega normal.
+
+**Al terminar la demo:** el proyecto `cair-demo` queda ahí sin costo (plan
+free) hasta que se borre a mano — Dashboard → proyecto → Settings →
+General → Delete Project. No se borra solo.
+
 ---
 
 ## 8. Troubleshooting conocido
