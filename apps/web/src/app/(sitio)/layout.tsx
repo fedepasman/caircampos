@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Sprout } from 'lucide-react';
 import { clienteServidor } from '@/lib/supabase/server';
 import { AvisoCookies } from '@/components/aviso-cookies';
+import { MenuMobil } from '@/components/menu-mobil';
 
 /**
  * Chrome del sitio público (Persuade), adoptado desde
@@ -26,7 +27,7 @@ export default async function SitioLayout({ children }: { children: React.ReactN
   return (
     <>
       <header className="sticky top-0 z-50 border-b border-neutral-600 bg-neutral-50">
-        <nav className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
+        <nav className="relative mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
           <div className="flex items-center gap-8">
             <Link
               href="/"
@@ -57,18 +58,21 @@ export default async function SitioLayout({ children }: { children: React.ReactN
             </div>
           </div>
 
-          {user ? (
-            <Link
-              href="/panel"
-              className="bg-brand-900 rounded-md px-4 py-2 text-sm font-bold text-neutral-50 hover:opacity-90"
-            >
-              Mi panel
-            </Link>
-          ) : (
-            <Link href="/ingresar" className="text-brand-900 text-sm font-bold hover:underline">
-              Ingresar
-            </Link>
-          )}
+          <div className="flex items-center gap-4">
+            {user ? (
+              <Link
+                href="/panel"
+                className="bg-brand-900 rounded-md px-4 py-2 text-sm font-bold text-neutral-50 hover:opacity-90"
+              >
+                Mi panel
+              </Link>
+            ) : (
+              <Link href="/ingresar" className="text-brand-900 text-sm font-bold hover:underline">
+                Ingresar
+              </Link>
+            )}
+            <MenuMobil />
+          </div>
         </nav>
       </header>
       {children}
