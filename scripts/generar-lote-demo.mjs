@@ -242,8 +242,14 @@ for (let i = 0; i < totalSocios; i++) {
     sql += `values (:'socio_${i}_id', '${escapar(titulo)}', '${escapar(descripcion)}', ${hectareas}, ${precio ?? 'null'}, '${ubicacionCampo.pais}', '${escapar(ubicacionCampo.provincia)}', '${escapar(ubicacionCampo.localidad)}', '${modalidad}', '${tipo}', ${latC}, ${lngC}, true, 'aprobado')\n`;
     sql += `returning id \\gset campo_${i}_${j}_\n\n`;
     if (fotosPlaceholder) {
-      sql += `insert into public.campo_fotos (campo_id, object_key, orden)\n`;
-      sql += `values (:'campo_${i}_${j}_id', '${escapar(pick(fotosPlaceholder))}', 0);\n\n`;
+      // La galería de la ficha (apps/web/.../campos/[id]/page.tsx) muestra
+      // hasta 3 fotos en su layout de grilla — con solo 1 se ve incompleta
+      // (dos huecos vacíos a la derecha). Tres por campo, no necesariamente
+      // distintas entre sí si `fotosPlaceholder` tiene menos de 3 opciones.
+      for (let orden = 0; orden < 3; orden++) {
+        sql += `insert into public.campo_fotos (campo_id, object_key, orden)\n`;
+        sql += `values (:'campo_${i}_${j}_id', '${escapar(pick(fotosPlaceholder))}', ${orden});\n\n`;
+      }
     }
     campoCount++;
   }
