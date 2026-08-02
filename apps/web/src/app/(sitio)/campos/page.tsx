@@ -114,8 +114,17 @@ export default async function ResultadosCamposPage({
   const radioKm = comoRadioValido(params.radio_km);
   const tieneZona = lat !== undefined && lng !== undefined && radioKm !== undefined;
 
+  // `created_at` no se muestra en la tarjeta, pero tiene que estar en el
+  // select igual: PostgREST solo permite `order=` por una columna que
+  // también esté proyectada cuando la consulta pasa por una función RPC
+  // (`campos_en_radio`, para el filtro de zona) — a diferencia de un
+  // `.from('campos')` normal, donde ordenar por una columna no seleccionada
+  // funciona sin problema. Sin esto, toda búsqueda por zona con el orden
+  // por defecto ("Más recientes") fallaba en silencio: el error de
+  // PostgREST se descarta más abajo sin chequear `error`, así que se veía
+  // como "0 campos encontrados" en vez de un error.
   const SELECCION_CAMPOS =
-    'id, titulo, hectareas, precio_usd, provincia, localidad, modalidad, tipo_campo, latitud, longitud, campo_fotos(object_key, orden)';
+    'id, titulo, hectareas, precio_usd, provincia, localidad, modalidad, tipo_campo, latitud, longitud, created_at, campo_fotos(object_key, orden)';
 
   // Reutiliza el índice GiST de `ubicacion` ("Búsqueda espacial futura" en
   // 02_campos.sql) que ya existía sin nada que lo use. `campos_en_radio`
