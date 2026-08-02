@@ -210,7 +210,10 @@ let campoCount = 0;
 for (let i = 0; i < totalSocios; i++) {
   const ubicacionSocio = pick(ubicaciones);
   const nombre = nombresInmobiliaria[i];
-  const nroSocio = 100 + i;
+  // Arranca en 9000: CAIR tiene socios reales numerados en rangos bajos
+  // (hasta ~486 hoy), así que un offset chico como 100 choca con números
+  // reales apenas se cargan ambos en el mismo entorno.
+  const nroSocio = 9000 + i;
   const telefono = `+54 9 11 ${4000 + i}-${1000 + i}`;
   const lat = jitter(ubicacionSocio.lat, 0.3);
   const lng = jitter(ubicacionSocio.lng, 0.3);
