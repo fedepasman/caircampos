@@ -87,7 +87,13 @@ export default async function FichaCampoPage({ params }: { params: Promise<{ id:
     <main>
       <section className="mx-auto max-w-5xl px-6 pt-10">
         {primeraFoto && (
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 sm:grid-rows-2 sm:[&>*:first-child]:row-span-2">
+          // `sm:h-[30rem]` es necesario, no cosmético: sin un alto definido
+          // acá, `sm:grid-rows-2` reparte espacio "disponible" que no
+          // existe, y los `h-full` de las fotos de abajo caen a `auto` —
+          // una foto vertical se renderiza a su alto natural completo y
+          // rompe el layout. Con esto, cada `h-full` sí resuelve contra un
+          // alto real y `object-cover` recorta sin deformar.
+          <div className="grid grid-cols-1 gap-2 sm:h-[30rem] sm:grid-cols-3 sm:grid-rows-2 sm:[&>*:first-child]:row-span-2">
             <div className="h-72 overflow-hidden rounded-lg shadow-lg sm:col-span-2 sm:row-span-2 sm:h-full">
               {/* eslint-disable-next-line @next/next/no-img-element -- URL externa (R2), no pasa por el optimizador de imágenes de Next */}
               <img
