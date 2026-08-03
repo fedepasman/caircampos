@@ -6,7 +6,7 @@ import { BuscadorMapa } from '@/components/buscador-mapa';
 import { BuscadorLocalidad } from '@/components/buscador-localidad';
 import { MODALIDADES_CAMPO, TIPOS_CAMPO } from '@cair/schemas';
 import { formatearPrecioUsd } from '@cair/shared';
-import { env } from '@/lib/env';
+import { urlFotoCampo } from '@/lib/url-foto-campo';
 
 /**
  * Regiones reales de Argentina para la sección "Ubicaciones principales".
@@ -197,7 +197,7 @@ export default async function Home() {
                     {objectKey ? (
                       // eslint-disable-next-line @next/next/no-img-element -- URL externa (R2)
                       <img
-                        src={`${env.NEXT_PUBLIC_R2_PUBLIC_URL}/${objectKey}`}
+                        src={urlFotoCampo(objectKey, 'tarjeta')}
                         alt=""
                         className="h-40 w-full object-cover"
                       />
