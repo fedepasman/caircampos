@@ -13,6 +13,7 @@ import { z } from '@cair/schemas';
 const esquema = z.object({
   EXPO_PUBLIC_SUPABASE_URL: z.url('Debe ser una URL válida'),
   EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY: z.string().min(1),
+  EXPO_PUBLIC_R2_PUBLIC_URL: z.url('Debe ser una URL válida'),
 });
 
 const resultado = esquema.safeParse({
@@ -20,6 +21,7 @@ const resultado = esquema.safeParse({
   // tiempo de build y un acceso dinámico quedaría `undefined` en el bundle.
   EXPO_PUBLIC_SUPABASE_URL: process.env.EXPO_PUBLIC_SUPABASE_URL,
   EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY: process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
+  EXPO_PUBLIC_R2_PUBLIC_URL: process.env.EXPO_PUBLIC_R2_PUBLIC_URL,
 });
 
 if (!resultado.success) {
