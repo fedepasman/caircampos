@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { esquemaRegistroComprador, type RegistroComprador } from '@cair/schemas';
 import { clienteNavegador } from '@/lib/supabase/client';
+import { env } from '@/lib/env';
 import { FormField } from '@cair/ui/FormField';
 import { Button } from '@cair/ui/Button';
 
@@ -29,6 +30,11 @@ export function FormularioRegistro() {
     const { data, error: errorRegistro } = await supabase.auth.signUp({
       email: datos.email,
       password: datos.password,
+      // Sin esto, el link del email de confirmación queda sin destino
+      // propio (`{{ .RedirectTo }}` vacío en supabase/templates/confirmation.html)
+      // y apunta a un `/auth/confirm` sin `next` — funciona, pero cae al
+      // default de esa ruta en vez de volver derecho al panel.
+      options: { emailRedirectTo: `${env.NEXT_PUBLIC_SITE_URL}/auth/confirm?next=/panel` },
     });
 
     if (errorRegistro || !data.user) {

@@ -160,7 +160,7 @@ site_url = "https://cair-web.vercel.app"
 # The public URL that Auth serves on. Defaults to the API external URL with `/auth/v1` appended.
 # external_url = ""
 # A list of *exact* URLs that auth providers are permitted to redirect to post authentication.
-additional_redirect_urls = ["https://127.0.0.1:3000", "https://cair-web.vercel.app", "https://cair-web.vercel.app/**", "https://cair-admin.vercel.app", "https://cair-admin.vercel.app/**"]
+additional_redirect_urls = ["https://127.0.0.1:3000", "http://127.0.0.1:3000", "http://127.0.0.1:3000/**", "http://127.0.0.1:3001", "http://127.0.0.1:3001/**", "https://cair-web.vercel.app", "https://cair-web.vercel.app/**", "https://cair-admin.vercel.app", "https://cair-admin.vercel.app/**"]
 # How long tokens are valid for, in seconds. Defaults to 3600 (1 hour), maximum 604,800 (1 week).
 jwt_expiry = 3600
 # JWT issuer URL. If not set, defaults to auth.external_url.
@@ -251,6 +251,21 @@ otp_expiry = 3600
 # [auth.email.template.invite]
 # subject = "You have been invited"
 # content_path = "./supabase/templates/invite.html"
+
+# La plantilla por defecto de Supabase linkea a su propio endpoint hosteado
+# de verificación (`{{ .ConfirmationURL }}`), que nunca pasa por nuestro
+# Route Handler `/auth/confirm` — necesario para que `@supabase/ssr` deje la
+# sesión en una cookie, no en el fragmento de la URL. Por eso ambas plantillas
+# arman el link a mano con `{{ .RedirectTo }}` (lo que cada app pasó como
+# `redirectTo` al llamar a `resetPasswordForEmail`/`signUp`, ya con
+# `/auth/confirm?next=...` armado) + `token_hash` + `type`.
+[auth.email.template.recovery]
+subject = "Restablecer tu contraseña — CAIR"
+content_path = "./supabase/templates/recovery.html"
+
+[auth.email.template.confirmation]
+subject = "Confirmá tu cuenta — CAIR"
+content_path = "./supabase/templates/confirmation.html"
 
 # Uncomment to customize notification email template
 # [auth.email.notification.password_changed]

@@ -54,7 +54,17 @@ export async function proxy(request: NextRequest) {
   const esAdmin = user?.app_metadata.rol === 'admin';
   const { pathname } = request.nextUrl;
 
-  if (pathname !== '/ingresar' && !esAdmin) {
+  // Recuperación de contraseña: por definición corre sin sesión todavía.
+  // `/auth/confirm` es el Route Handler que intercambia el token del email
+  // por una sesión (`verifyOtp`) — si el proxy lo redirigiera a /ingresar
+  // antes de que corra, el token se pierde. `/recuperar-contrasena` es el
+  // formulario que la dispara. `/restablecer-contrasena` (definir la
+  // contraseña nueva) no necesita eximirse acá: para ese momento
+  // `verifyOtp` ya dejó una sesión real, así que si es de un admin,
+  // `esAdmin` ya da `true` por la rama de abajo.
+  const esRutaDeRecuperacion = pathname === '/auth/confirm' || pathname === '/recuperar-contrasena';
+
+  if (pathname !== '/ingresar' && !esRutaDeRecuperacion && !esAdmin) {
     const destino = request.nextUrl.clone();
     destino.pathname = '/ingresar';
     return NextResponse.redirect(destino);

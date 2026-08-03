@@ -472,3 +472,19 @@ General → Delete Project. No se borra solo.
 - Entorno de staging/preview, separado de producción.
 - Observabilidad (Sentry) — mencionado en CLAUDE.md, no configurado todavía.
 - `apps/mobile` sin desplegar (ni EAS Build ni tiendas).
+- **SMTP de Resend para Supabase Auth.** El proyecto de producción está en el
+  plan free de Supabase, que no permite personalizar las plantillas de
+  email (`supabase config push` falla con "Email template modification is
+  not available for free tier projects"). Sin esto, la recuperación de
+  contraseña y la confirmación de cuenta de compradores (código listo,
+  probado en desarrollo local, ver `apps/web/src/app/auth/confirm/route.ts`
+  y `apps/admin/src/app/auth/confirm/route.ts`) **no se pueden desplegar a
+  producción todavía**: sin la plantilla propia, el link del mail usa el
+  verify hosteado de Supabase, que deja la sesión en el fragmento de la URL
+  — nuestro Route Handler nunca la ve, y el usuario ve "link inválido"
+  después de un click que en el fondo sí funcionó. Para destrabarlo: crear
+  una cuenta en Resend, verificar el dominio de envío, generar una API key,
+  y configurar `[auth.email.smtp]` en `supabase/config.toml` apuntando al
+  relay SMTP de Resend (`smtp.resend.com`, puerto 587) con esa key como
+  secreto del proyecto — o alternativamente upgradear Supabase a un plan
+  pago. Cualquiera de las dos destraba `supabase config push`.
