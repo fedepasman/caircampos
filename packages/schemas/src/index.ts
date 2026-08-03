@@ -163,3 +163,28 @@ export const esquemaConsulta = z.object({
 });
 
 export type Consulta = z.infer<typeof esquemaConsulta>;
+
+/** Pantalla "¿Olvidaste tu contraseña?": solo pide el email. */
+export const esquemaSolicitarRecuperacion = z.object({
+  email: z.email('Ingresá un email válido'),
+});
+
+export type SolicitarRecuperacion = z.infer<typeof esquemaSolicitarRecuperacion>;
+
+/**
+ * Pantalla de definir una contraseña nueva, después de verificar el link de
+ * recuperación. Mismo mínimo que `esquemaRegistroComprador` — ver el
+ * comentario ahí sobre por qué tiene que quedar en sincro con
+ * `minimum_password_length` de `supabase/config.toml`.
+ */
+export const esquemaNuevaContrasena = z
+  .object({
+    password: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres'),
+    confirmarPassword: z.string().min(1, 'Repetí la contraseña'),
+  })
+  .refine((datos) => datos.password === datos.confirmarPassword, {
+    message: 'Las contraseñas no coinciden',
+    path: ['confirmarPassword'],
+  });
+
+export type NuevaContrasena = z.infer<typeof esquemaNuevaContrasena>;

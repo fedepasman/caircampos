@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -57,6 +58,13 @@ export function FormularioIngreso() {
         error={errors.password?.message}
         {...register('password')}
       />
+
+      <Link
+        href="/recuperar-contrasena"
+        className="text-brand-900 -mt-2 self-end text-sm hover:underline"
+      >
+        ¿Olvidaste tu contraseña?
+      </Link>
 
       {errorIngreso && <p className="text-danger text-sm">{errorIngreso}</p>}
 
