@@ -5,6 +5,7 @@ import type { ChangeEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { clienteNavegador } from '@/lib/supabase/client';
 import { buttonStyles } from '@cair/ui/Button';
+import { comprimirImagen } from '@/lib/comprimir-imagen';
 import { env } from '@/lib/env';
 import type { Tables } from '@cair/supabase';
 
@@ -54,6 +55,18 @@ export function SubidaFotos({
     setError(null);
     setSubiendo(true);
 
+    const { archivo: archivoFinal } = await comprimirImagen(archivo);
+
+    // Defensivo: comprimirImagen ya debería cumplir esto siempre (redimensiona
+    // a ~2000px/calidad 0.8, muy por debajo de 8MB), pero todo dato que cruza
+    // a la subida se revalida, incluso el que acaba de producir este mismo
+    // código.
+    if (!TIPOS_PERMITIDOS.has(archivoFinal.type) || archivoFinal.size > TAMANO_MAXIMO_BYTES) {
+      setError('No se pudo procesar la imagen. Probá con otro archivo.');
+      setSubiendo(false);
+      return;
+    }
+
     const supabase = clienteNavegador();
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- el tipo `FunctionsResponseFailure` de @supabase/functions-js declara `error: any`, no nuestro.
@@ -62,9 +75,9 @@ export function SubidaFotos({
       {
         body: {
           campo_id: campoId,
-          nombre_archivo: archivo.name,
-          content_type: archivo.type,
-          tamano_bytes: archivo.size,
+          nombre_archivo: archivoFinal.name,
+          content_type: archivoFinal.type,
+          tamano_bytes: archivoFinal.size,
         },
       },
     );
@@ -77,8 +90,8 @@ export function SubidaFotos({
 
     const subida = await fetch(firma.uploadUrl, {
       method: 'PUT',
-      headers: { 'Content-Type': archivo.type },
-      body: archivo,
+      headers: { 'Content-Type': archivoFinal.type },
+      body: archivoFinal,
     });
 
     if (!subida.ok) {
