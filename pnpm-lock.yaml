@@ -190,6 +190,12 @@ importers:
       '@cair/tokens':
         specifier: workspace:*
         version: link:../../packages/tokens
+      '@hookform/resolvers':
+        specifier: 'catalog:'
+        version: 5.4.0(react-hook-form@7.82.0(react@19.2.3))
+      '@supabase/supabase-js':
+        specifier: 'catalog:'
+        version: 2.110.8
       '@tanstack/react-query':
         specifier: 'catalog:'
         version: 5.101.4(react@19.2.3)
@@ -217,6 +223,9 @@ importers:
       react-dom:
         specifier: 'catalog:'
         version: 19.2.3(react@19.2.3)
+      react-hook-form:
+        specifier: 'catalog:'
+        version: 7.82.0(react@19.2.3)
       react-native:
         specifier: 0.86.0
         version: 0.86.0(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.0(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.17)(react@19.2.3)(supports-color@8.1.1)

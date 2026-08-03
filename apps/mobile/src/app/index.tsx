@@ -1,15 +1,22 @@
 import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
-import { router } from 'expo-router';
+import { Link, router } from 'expo-router';
 import { colors, fontSize, fontWeight, spacing } from '@cair/tokens';
 import { TarjetaCampo } from '../components/TarjetaCampo';
 import { useCampos } from '../lib/queries/campos';
+import { useSesion } from '../lib/use-sesion';
 
 export default function Listado() {
   const { data: campos, isLoading, isError } = useCampos();
+  const { sesion } = useSesion();
 
   return (
     <View style={estilos.contenedor}>
-      <Text style={estilos.titulo}>Campos</Text>
+      <View style={estilos.encabezado}>
+        <Text style={estilos.titulo}>Campos</Text>
+        <Link href={sesion ? '/panel' : '/ingresar'} style={estilos.link}>
+          {sesion ? 'Mi panel' : 'Ingresar'}
+        </Link>
+      </View>
 
       {isLoading && (
         <View style={estilos.centrado}>
@@ -54,12 +61,22 @@ const estilos = StyleSheet.create({
     backgroundColor: colors.neutral[50],
     paddingTop: spacing[16],
   },
+  encabezado: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: spacing[6],
+    marginBottom: spacing[4],
+  },
   titulo: {
     fontSize: fontSize['2xl'],
     fontWeight: fontWeight.bold,
     color: colors.neutral[900],
-    paddingHorizontal: spacing[6],
-    marginBottom: spacing[4],
+  },
+  link: {
+    fontSize: fontSize.base,
+    fontWeight: fontWeight.semibold,
+    color: colors.brand[600],
   },
   lista: {
     paddingHorizontal: spacing[6],
