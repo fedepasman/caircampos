@@ -171,52 +171,50 @@ title, content(HTML), status`. Los campos reales hay que sacarlos del
 
 ## Transformación de imágenes de Cloudflare (`/cdn-cgi/image/...`) para las fotos de campo
 
-Se probó activar `/cdn-cgi/image/width=...,quality=...,format=auto/<object_key>`
-sobre `NEXT_PUBLIC_R2_PUBLIC_URL` para servir variantes redimensionadas de
-las fotos de campo en vez del original completo (cards más livianas, menos
-peso de página). **No funcionó** — smoke test corrido el 2026-08-03:
+Prioridad baja: con la compresión al subir (`comprimirImagen`,
+`apps/web/src/app/panel/subida-fotos.tsx`) ya se logran pesos razonables
+(~830KB para una foto de celular de varios MB, redimensionada a 2000px de
+lado) sin depender de esto. Se investigó y se dejó preparado el camino,
+pero no vale la fricción de habilitarlo todavía.
 
-```
-$ curl -sI "https://pub-06997f89b9114b04a7f0bd989cb514eb.r2.dev/campos/.../foto.png"
-HTTP/1.1 200 OK
-Content-Type: image/png
-Content-Length: 6127869
+**Estado a 2026-08-03**: el dominio propio ya está conectado y andando
+(`fotos.fedepasman.com`, agregado como Custom Domain en R2 y activo — se
+confirmó con un smoke test que sirve el original correctamente:
+`200 OK`, `content-length` real, headers de Cloudflare presentes). El
+bloqueo real es otro: la transformación de imágenes ya no es la vieja
+función standalone "Image Resizing" de Speed → Optimization —Cloudflare la
+fusionó con el producto **Cloudflare Images**, y activarla en el
+dashboard (`Speed → Settings → Image Optimization → Image Transformations`)
+pide comprar/activar ese producto ("Purchase Images Plan"), lo que implica
+cargar una tarjeta en la cuenta de Cloudflare. Según la documentación
+oficial (`developers.cloudflare.com/images/pricing`) seguiría siendo
+gratis dentro de las 5000 transformaciones únicas/mes (no se paga
+almacenamiento ni entrega porque los originales quedan en R2, no en
+Cloudflare Images) — pero requiere esa activación formal, que el usuario
+prefirió no hacer por ahora dado que la compresión al subir ya alcanza.
 
-$ curl -sI "https://pub-06997f89b9114b04a7f0bd989cb514eb.r2.dev/cdn-cgi/image/width=640,quality=80,format=auto/campos/.../foto.png"
-HTTP/1.1 404 Not Found
-Content-Type: text/html; charset=UTF-8
-```
+Con el flag apagado (`CDN_CGI_HABILITADO = false` en
+`apps/web/src/lib/url-foto-campo.ts`), un smoke test contra
+`fotos.fedepasman.com/cdn-cgi/image/width=640,quality=80,format=auto/<object_key>`
+dio `404` — confirma que el dominio sirve bien pero la transformación en sí
+no está habilitada en la cuenta.
 
-**Causa**: `NEXT_PUBLIC_R2_PUBLIC_URL` hoy es el dominio compartido que R2
-asigna gratis (`pub-*.r2.dev`), no un dominio propio agregado como zona en
-la cuenta de Cloudflare del usuario. La transformación de imágenes
-(`/cdn-cgi/image/...`) es una función de **zona** — solo funciona en un
-dominio que el usuario controla y tiene agregado a su cuenta de Cloudflare
-con la opción de Image Resizing habilitada (gratis hasta 5000
-transformaciones únicas/mes, confirmado en la investigación de esta
-sesión). Un `pub-*.r2.dev` no es una zona propia, así que la función ni
-siquiera está disponible ahí.
+**Camino para reactivarlo cuando se decida activar Cloudflare Images**:
 
-**Camino para reactivarlo más adelante**:
-
-1. Comprar o usar un dominio propio y agregarlo a Cloudflare como zona.
-2. En R2 → el bucket → Settings → Custom Domains, conectar un subdominio
-   propio (ej. `fotos.cair.org.ar`) en vez de usar el `r2.dev` compartido.
-3. En esa zona, Speed → Optimization → habilitar Image Resizing.
-4. Actualizar `NEXT_PUBLIC_R2_PUBLIC_URL` al nuevo dominio propio.
-5. Repetir el smoke test de este mismo curl contra el dominio nuevo.
-6. `apps/web/src/lib/url-foto-campo.ts` ya centraliza la construcción de
-   esta URL (con `CDN_CGI_HABILITADO = false`, passthrough puro) — para
-   activarlo alcanza con volver ese flag a `true`, sin recablear los 8
-   lugares que ya usan el helper (panel de subida, ficha de detalle,
+1. En el dashboard de Cloudflare (nivel cuenta, no el de una zona
+   puntual) → **Images → Transformations**, habilitar transformaciones
+   para la zona `fedepasman.com` (esto es lo que pide cargar una tarjeta).
+2. Repetir el smoke test: `curl -sI` contra la URL original vs.
+   `https://fotos.fedepasman.com/cdn-cgi/image/width=640,quality=80,format=auto/<object_key>`
+   con un `object_key` real — confirmar `200`, `content-type` distinto
+   (`webp`/`avif`) o `content-length` notoriamente menor, y el ancho real
+   de píxeles acorde al pedido.
+3. Si pasa: en `apps/web/src/lib/url-foto-campo.ts`, cambiar
+   `CDN_CGI_HABILITADO` a `true` — no hace falta recablear ninguno de los
+   8 lugares que ya usan el helper (panel de subida, ficha de detalle,
    listado de `/campos`, home, popup del mapa).
-
-### Verificación al reintentar
-
-Repetir el smoke test manual de arriba contra el dominio nuevo: confirmar
-`200`, `content-type` distinto al original (`webp`/`avif`) o
-`content-length` notoriamente menor, y el ancho real de píxeles del
-archivo resultante acorde al pedido.
+4. Actualizar `NEXT_PUBLIC_R2_PUBLIC_URL` a `https://fotos.fedepasman.com`
+   en `.env.local` y en Vercel (Preview primero, después Production).
 
 ---
 
