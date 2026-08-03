@@ -18,6 +18,7 @@ declare const process: {
   readonly env: {
     readonly EXPO_PUBLIC_SUPABASE_URL: string | undefined;
     readonly EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY: string | undefined;
+    readonly EXPO_PUBLIC_R2_PUBLIC_URL: string | undefined;
     readonly EXPO_PUBLIC_MAPBOX_TOKEN: string | undefined;
     readonly EXPO_PUBLIC_SENTRY_DSN: string | undefined;
     readonly NODE_ENV: 'development' | 'production' | 'test' | undefined;

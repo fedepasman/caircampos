@@ -1,24 +1,49 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
+import { router } from 'expo-router';
 import { colors, fontSize, fontWeight, spacing } from '@cair/tokens';
+import { TarjetaCampo } from '../components/TarjetaCampo';
+import { useCampos } from '../lib/queries/campos';
 
-/**
- * Pantalla inicial provisoria.
- *
- * Existe para probar la cadena completa —Expo Router, tokens compartidos,
- * cliente de Supabase— y no para definir la pantalla de inicio real.
- *
- * Los estilos se escriben con StyleSheet consumiendo `@cair/tokens`: es la
- * base que funciona con cualquiera de las dos alternativas de estilado en
- * evaluación. Si se adopta NativeWind, esta pantalla se migra.
- */
-export default function Inicio() {
+export default function Listado() {
+  const { data: campos, isLoading, isError } = useCampos();
+
   return (
     <View style={estilos.contenedor}>
-      <Text style={estilos.sobretitulo}>Aplicación móvil</Text>
-      <Text style={estilos.titulo}>Cámara Argentina de Inmobiliarias Rurales</Text>
-      <Text style={estilos.cuerpo}>
-        Estructura inicial del proyecto. Sin funcionalidades ni diseño definitivo.
-      </Text>
+      <Text style={estilos.titulo}>Campos</Text>
+
+      {isLoading && (
+        <View style={estilos.centrado}>
+          <ActivityIndicator color={colors.brand[600]} />
+        </View>
+      )}
+
+      {isError && (
+        <View style={estilos.centrado}>
+          <Text style={estilos.mensaje}>No se pudieron cargar los campos.</Text>
+        </View>
+      )}
+
+      {campos && campos.length === 0 && (
+        <View style={estilos.centrado}>
+          <Text style={estilos.mensaje}>No hay campos publicados todavía.</Text>
+        </View>
+      )}
+
+      {campos && campos.length > 0 && (
+        <FlatList
+          data={campos}
+          keyExtractor={(campo) => campo.id}
+          contentContainerStyle={estilos.lista}
+          renderItem={({ item }) => (
+            <TarjetaCampo
+              campo={item}
+              onPress={() => {
+                router.push(`/campos/${item.id}`);
+              }}
+            />
+          )}
+        />
+      )}
     </View>
   );
 }
@@ -26,25 +51,29 @@ export default function Inicio() {
 const estilos = StyleSheet.create({
   contenedor: {
     flex: 1,
-    justifyContent: 'center',
-    gap: spacing[4],
-    paddingHorizontal: spacing[6],
     backgroundColor: colors.neutral[50],
-  },
-  sobretitulo: {
-    fontSize: fontSize.sm,
-    fontWeight: fontWeight.semibold,
-    letterSpacing: 0.5,
-    textTransform: 'uppercase',
-    color: colors.brand[600],
+    paddingTop: spacing[16],
   },
   titulo: {
-    fontSize: fontSize['3xl'],
+    fontSize: fontSize['2xl'],
     fontWeight: fontWeight.bold,
     color: colors.neutral[900],
+    paddingHorizontal: spacing[6],
+    marginBottom: spacing[4],
   },
-  cuerpo: {
+  lista: {
+    paddingHorizontal: spacing[6],
+    paddingBottom: spacing[6],
+  },
+  centrado: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: spacing[6],
+  },
+  mensaje: {
     fontSize: fontSize.base,
     color: colors.neutral[600],
+    textAlign: 'center',
   },
 });
