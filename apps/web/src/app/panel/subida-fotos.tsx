@@ -5,7 +5,7 @@ import type { ChangeEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { clienteNavegador } from '@/lib/supabase/client';
 import { buttonStyles } from '@cair/ui/Button';
-import { env } from '@/lib/env';
+import { urlFotoCampo } from '@/lib/url-foto-campo';
 import type { Tables } from '@cair/supabase';
 
 const TIPOS_PERMITIDOS = new Set(['image/jpeg', 'image/png', 'image/webp']);
@@ -134,7 +134,7 @@ export function SubidaFotos({
             >
               {/* eslint-disable-next-line @next/next/no-img-element -- URL externa (R2), no pasa por el optimizador de imágenes de Next */}
               <img
-                src={`${env.NEXT_PUBLIC_R2_PUBLIC_URL}/${foto.object_key}`}
+                src={urlFotoCampo(foto.object_key, 'miniatura')}
                 alt=""
                 className="h-full w-full object-cover"
               />

@@ -9,7 +9,7 @@ import { Card } from '@cair/ui/Card';
 import { Badge } from '@cair/ui/Badge';
 import { buttonStyles } from '@cair/ui/Button';
 import { ETIQUETAS_MODALIDAD_CAMPO, ETIQUETAS_TIPO_CAMPO, formatearPrecioUsd } from '@cair/shared';
-import { env } from '@/lib/env';
+import { urlFotoCampo } from '@/lib/url-foto-campo';
 import { FormularioConsulta } from './formulario-consulta';
 
 async function obtenerCampo(id: string) {
@@ -97,7 +97,7 @@ export default async function FichaCampoPage({ params }: { params: Promise<{ id:
             <div className="h-72 overflow-hidden rounded-lg shadow-lg sm:col-span-2 sm:row-span-2 sm:h-full">
               {/* eslint-disable-next-line @next/next/no-img-element -- URL externa (R2), no pasa por el optimizador de imágenes de Next */}
               <img
-                src={`${env.NEXT_PUBLIC_R2_PUBLIC_URL}/${primeraFoto.object_key}`}
+                src={urlFotoCampo(primeraFoto.object_key, 'galeria')}
                 alt={campo.titulo}
                 className="h-full w-full object-cover"
               />
@@ -106,7 +106,7 @@ export default async function FichaCampoPage({ params }: { params: Promise<{ id:
               <div className="hidden h-full overflow-hidden rounded-lg sm:block">
                 {/* eslint-disable-next-line @next/next/no-img-element -- URL externa (R2) */}
                 <img
-                  src={`${env.NEXT_PUBLIC_R2_PUBLIC_URL}/${segundaFoto.object_key}`}
+                  src={urlFotoCampo(segundaFoto.object_key, 'tarjeta')}
                   alt=""
                   className="h-full w-full object-cover"
                 />
@@ -116,7 +116,7 @@ export default async function FichaCampoPage({ params }: { params: Promise<{ id:
               <div className="hidden h-full overflow-hidden rounded-lg sm:block">
                 {/* eslint-disable-next-line @next/next/no-img-element -- URL externa (R2) */}
                 <img
-                  src={`${env.NEXT_PUBLIC_R2_PUBLIC_URL}/${terceraFoto.object_key}`}
+                  src={urlFotoCampo(terceraFoto.object_key, 'tarjeta')}
                   alt=""
                   className="h-full w-full object-cover"
                 />
@@ -291,7 +291,7 @@ export default async function FichaCampoPage({ params }: { params: Promise<{ id:
                       {objectKey ? (
                         // eslint-disable-next-line @next/next/no-img-element -- URL externa (R2)
                         <img
-                          src={`${env.NEXT_PUBLIC_R2_PUBLIC_URL}/${objectKey}`}
+                          src={urlFotoCampo(objectKey, 'tarjeta')}
                           alt=""
                           className="h-32 w-full object-cover"
                         />

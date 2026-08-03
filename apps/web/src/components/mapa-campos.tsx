@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import mapboxgl, { type MapMouseEvent } from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { env } from '@/lib/env';
+import { urlFotoCampo } from '@/lib/url-foto-campo';
 import { formatearPrecioUsd } from '@cair/shared';
 import type { Tables } from '@cair/supabase';
 
@@ -121,7 +122,7 @@ function construirGeojson(campos: CampoParaMapa[]): FeatureCollectionDePuntos {
           // que solo admite valores planos — un `number | null` o un array
           // anidado (las fotos) no sobreviven ese viaje de forma confiable.
           precioTexto: formatearPrecioUsd(campo.precio_usd ?? null),
-          fotoUrl: primeraFoto ? `${env.NEXT_PUBLIC_R2_PUBLIC_URL}/${primeraFoto.object_key}` : '',
+          fotoUrl: primeraFoto ? urlFotoCampo(primeraFoto.object_key, 'miniatura') : '',
         },
       };
     }),
