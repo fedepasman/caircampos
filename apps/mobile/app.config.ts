@@ -13,8 +13,9 @@ import type { ExpoConfig } from 'expo/config';
  */
 const config: ExpoConfig = {
   name: 'CAIR',
-  slug: 'cair',
+  slug: 'cair-app',
   version: '0.0.0',
+  owner: 'fedepasman-team',
   orientation: 'portrait',
   userInterfaceStyle: 'light',
 
@@ -41,8 +42,7 @@ const config: ExpoConfig = {
 
   extra: {
     eas: {
-      // Se completa al crear el proyecto en EAS.
-      projectId: undefined,
+      projectId: '57579574-3c63-4d1a-becb-9ea01c033100',
     },
   },
 };
