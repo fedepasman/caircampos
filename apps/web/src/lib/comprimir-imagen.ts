@@ -81,11 +81,9 @@ export async function comprimirImagen(
       return { archivo, comprimido: false };
     }
 
-    const archivoComprimido = new File(
-      [blob],
-      renombrarConExtension(archivo.name, formatoSalida),
-      { type: formatoSalida },
-    );
+    const archivoComprimido = new File([blob], renombrarConExtension(archivo.name, formatoSalida), {
+      type: formatoSalida,
+    });
     return { archivo: archivoComprimido, comprimido: true };
   } catch {
     return { archivo, comprimido: false };
