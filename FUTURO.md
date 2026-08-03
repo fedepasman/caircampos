@@ -31,6 +31,7 @@ seguro una regla genérica de Cloudflare "Block AI bots" y no un impedimento
 real para este uso autorizado por el propio dueño del sitio.
 
 ### Hallazgos del sitio viejo (verificados con `curl`, no con el fetcher
+
 por defecto — ese da 403 por el WAF de Cloudflare; con un User-Agent de
 navegador normal responde 200 sin problema)
 
@@ -42,7 +43,7 @@ navegador normal responde 200 sin problema)
   sirve para esto).
 - El REST API **no expone custom fields** (no hay `/wp-json/acf/v3/...`,
   el schema de `OPTIONS` no tiene `meta`). Sólo da `id, slug, link, date,
-  title, content(HTML), status`. Los campos reales hay que sacarlos del
+title, content(HTML), status`. Los campos reales hay que sacarlos del
   HTML renderizado de cada ficha.
 - Selectores estables verificados en 3 fichas de muestra (con y sin
   "Partido", con y sin "Instalaciones"):
@@ -78,6 +79,7 @@ navegador normal responde 200 sin problema)
     registros.
 
 ### Esquema real de destino (ya en el repo — `supabase/schemas/01_socios.sql`,
+
 `02_campos.sql`, `07_campo_fotos.sql`, `packages/schemas/src/index.ts`)
 
 - **`public.socios`**: `nombre` (obligatorio), `nro_socio` (nullable, sólo
@@ -196,6 +198,7 @@ sesión). Un `pub-*.r2.dev` no es una zona propia, así que la función ni
 siquiera está disponible ahí.
 
 **Camino para reactivarlo más adelante**:
+
 1. Comprar o usar un dominio propio y agregarlo a Cloudflare como zona.
 2. En R2 → el bucket → Settings → Custom Domains, conectar un subdominio
    propio (ej. `fotos.cair.org.ar`) en vez de usar el `r2.dev` compartido.
@@ -310,13 +313,14 @@ está seleccionando zona ni hay una ya aplicada).
    Component)** — reemplaza el bloque que hoy vive directo en
    `page.tsx`: el mapa (`BuscadorPorRadio`), el encabezado de
    resultados, y la grilla. Estado `camposEnViewport:
-   CampoTarjeta[] | null` (`null` = sin recorte, mostrar todo — es lo
+CampoTarjeta[] | null` (`null` = sin recorte, mostrar todo — es lo
    que mantiene el primer render del cliente idéntico al HTML que ya
    mandó el servidor, sin romper SEO ni causar mismatch de
    hidratación). Un `useEffect` que resetea `camposEnViewport` a
    `null` cuando cambia el array `campos` (cualquier navegación:
    filtros nuevos, zona aplicada/quitada) para no dejar pegado un
    recorte de viewport obsoleto. Al mover el mapa, filtra en memoria:
+
    ```ts
    campos.filter(
      (campo) =>
@@ -324,8 +328,9 @@ está seleccionando zona ni hay una ya aplicada).
        campo.latitud <= bounds.getNorth() &&
        campo.longitud >= bounds.getWest() &&
        campo.longitud <= bounds.getEast(),
-   )
+   );
    ```
+
    El texto de resultados distingue los dos estados: "N campos
    encontrados" sin recorte, vs. "N de TOTAL campos en esta área del
    mapa" con recorte activo — mismo criterio para el estado vacío
