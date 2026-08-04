@@ -13,8 +13,9 @@ export function MapaUbicacion({
 }: {
   latitud: number;
   longitud: number;
-  onCambiar: (coords: { latitud: number; longitud: number }) => void;
+  onCambiar?: (coords: { latitud: number; longitud: number }) => void;
 }) {
+  const soloLectura = !onCambiar;
   const camaraRef = useRef<Camera>(null);
 
   // `centerCoordinate` declarativo no siempre dispara la animación en iOS
@@ -31,7 +32,12 @@ export function MapaUbicacion({
     <View style={estilos.contenedor}>
       <MapView
         style={estilos.mapa}
+        scrollEnabled={!soloLectura}
+        zoomEnabled={!soloLectura}
+        pitchEnabled={!soloLectura}
+        rotateEnabled={!soloLectura}
         onPress={(feature) => {
+          if (!onCambiar) return;
           const coordenadas = feature.geometry as unknown as { coordinates: [number, number] };
           const [longitudNueva, latitudNueva] = coordenadas.coordinates;
           onCambiar({ latitud: latitudNueva, longitud: longitudNueva });

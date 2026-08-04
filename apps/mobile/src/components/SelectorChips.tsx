@@ -16,7 +16,7 @@ export function SelectorChips<T extends string>({
 }) {
   return (
     <View style={estilos.contenedor}>
-      <Text style={estilos.etiqueta}>{etiqueta}</Text>
+      {etiqueta && <Text style={estilos.etiqueta}>{etiqueta}</Text>}
       <View style={estilos.fila}>
         {opciones.map((opcion) => {
           const seleccionado = opcion === valor;

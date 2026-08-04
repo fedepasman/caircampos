@@ -34,4 +34,10 @@ config.resolver.unstable_enableSymlinks = true;
 //    este repositorio declaran sus subpaths (@cair/supabase/mobile).
 config.resolver.unstable_enablePackageExports = true;
 
+// 5. Metro no reconoce `.mjs` por defecto: sin esto, un import que termina en
+//    `.mjs` (como los íconos de lucide-react-native) se resuelve mal — Metro
+//    le agrega sus propias extensiones encima en vez de tratarlo como ya
+//    completo.
+config.resolver.sourceExts.push('mjs');
+
 module.exports = config;

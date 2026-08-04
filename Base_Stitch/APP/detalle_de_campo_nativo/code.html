@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Property Detail - AgroInmuebles</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-container": "#98b984",
+                        "primary-fixed": "#caedb3",
+                        "surface-container-high": "#e8e8e8",
+                        "tertiary-fixed-dim": "#c6c6cb",
+                        "on-primary-fixed-variant": "#324e23",
+                        "surface-bright": "#f9f9f9",
+                        "surface-container": "#eeeeee",
+                        "inverse-primary": "#aed099",
+                        "outline-variant": "#c3c8bb",
+                        "tertiary": "#2c2d31",
+                        "inverse-surface": "#303030",
+                        "primary-fixed-dim": "#aed099",
+                        "surface-variant": "#e2e2e2",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed-variant": "#45474b",
+                        "on-secondary": "#ffffff",
+                        "background": "#f9f9f9",
+                        "secondary-container": "#dfdfe4",
+                        "on-surface": "#1b1b1b",
+                        "tertiary-container": "#424347",
+                        "on-primary": "#ffffff",
+                        "on-surface-variant": "#43483f",
+                        "outline": "#74796e",
+                        "error-container": "#ffdad6",
+                        "surface": "#ffffff", // Forced white for native feel
+                        "on-secondary-container": "#616267",
+                        "secondary-fixed": "#e2e2e7",
+                        "on-background": "#1b1b1b",
+                        "inverse-on-surface": "#f1f1f1",
+                        "on-tertiary-fixed": "#1a1b1f",
+                        "surface-container-highest": "#e2e2e2",
+                        "secondary-fixed-dim": "#c6c6cb",
+                        "on-tertiary": "#ffffff",
+                        "primary": "#2E4A20", // Custom primary green
+                        "on-tertiary-fixed-variant": "#46464b",
+                        "error": "#ba1a1a",
+                        "on-error-container": "#93000a",
+                        "surface-tint": "#496639",
+                        "on-tertiary-container": "#b0b0b5",
+                        "surface-container-low": "#f3f3f3",
+                        "surface-dim": "#dadada",
+                        "secondary": "#f3f3f3", // Light gray for secondary buttons
+                        "on-secondary-fixed": "#1a1c1f",
+                        "primary-container": "#2e4a20",
+                        "tertiary-fixed": "#e3e2e7",
+                        "on-primary-fixed": "#072100",
+                        "on-error": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "inset-card": "1rem",
+                        "gutter-row": "0.75rem",
+                        "control-height": "44px", // Native touch target height
+                        "stack-gap": "1rem",
+                        "margin-page": "1rem"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter", "sans-serif"],
+                        "headline-lg": ["Inter", "sans-serif"],
+                        "headline-lg-mobile": ["Inter", "sans-serif"],
+                        "label-caps": ["Inter", "sans-serif"],
+                        "button-text": ["Inter", "sans-serif"],
+                        "nav-title": ["Inter", "sans-serif"],
+                        "body-sm": ["Inter", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "body-md": ["17px", {"lineHeight": "22px", "letterSpacing": "-0.4px", "fontWeight": "400"}],
+                        "headline-lg": ["34px", {"lineHeight": "41px", "letterSpacing": "-0.4px", "fontWeight": "700"}],
+                        "headline-lg-mobile": ["28px", {"lineHeight": "34px", "letterSpacing": "-0.4px", "fontWeight": "700"}],
+                        "label-caps": ["13px", {"lineHeight": "18px", "letterSpacing": "0.1px", "fontWeight": "600"}],
+                        "button-text": ["17px", {"lineHeight": "22px", "fontWeight": "600"}],
+                        "nav-title": ["17px", {"lineHeight": "22px", "letterSpacing": "-0.4px", "fontWeight": "600"}],
+                        "body-sm": ["15px", {"lineHeight": "20px", "letterSpacing": "-0.2px", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* Hide scrollbar for clean native look */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-top: 0.5px solid rgba(0, 0, 0, 0.1);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body-md antialiased pb-[100px]">
+<!-- Hero Image Carousel -->
+<div class="relative w-full h-[400px] bg-surface-container-low">
+<!-- Top Navigation Actions (Floating over image) -->
+<div class="absolute top-0 left-0 w-full flex justify-between items-center p-margin-page pt-safe z-10">
+<button class="w-10 h-10 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-on-surface">arrow_back</span>
+</button>
+<button class="w-10 h-10 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-on-surface">favorite</span>
+</button>
+</div>
+<!-- Carousel Image Container -->
+<div class="w-full h-full overflow-x-auto snap-x snap-mandatory flex hide-scrollbar">
+<div class="min-w-full h-full snap-center relative">
+<div class="w-full h-full bg-cover bg-center" data-alt="A breathtaking golden hour landscape of an expansive agricultural field in Argentina. The setting sun casts a warm, golden light across the rolling terrain, highlighting the textures of the soil and crops. The sky is a clear, gradient orange and blue. The overall mood is serene, highly productive, and majestic, fitting a premium corporate modern aesthetic for a native mobile real estate app." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBSd1L-cVxR6FmppnwryPVtpmC9zkGkfJ4-lLZH4iC6fGwbdBl5V24YTjRTkXgBwWYUgOFKiFpqnls0j5STScs8xMHgXPHKQoyZ8MfldA0n3wOhxLuuToZROK-z4-sxzev0CAgyv7PPaSZT60PlGXfw7p_PsOGkFvQ_97vGBggpD6EY4_i60d7pJnNnizEFbGkmVTGTx2xmkmx2Nvxefg1mzEAhnIXr33hUkX_SGHE53Eszzhgpdwovlg')"></div>
+<!-- Status Badges overlaying the image -->
+<div class="absolute bottom-6 left-margin-page flex gap-2">
+<span class="bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-lg font-label-caps text-label-caps text-on-surface shadow-sm">
+                        Venta
+                    </span>
+<span class="bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-lg font-label-caps text-label-caps text-on-surface shadow-sm">
+                        Agrícola
+                    </span>
+</div>
+</div>
+<!-- Additional images would go here -->
+</div>
+<!-- Pagination Dots -->
+<div class="absolute bottom-6 left-0 right-0 flex justify-center gap-1.5">
+<div class="w-2 h-2 rounded-full bg-white opacity-100 shadow-sm"></div>
+<div class="w-2 h-2 rounded-full bg-white opacity-50 shadow-sm"></div>
+<div class="w-2 h-2 rounded-full bg-white opacity-50 shadow-sm"></div>
+</div>
+</div>
+<!-- Main Content Container -->
+<div class="px-margin-page py-6">
+<!-- Header Section -->
+<div class="mb-6">
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-2">
+                Estancia La Aurora
+            </h1>
+<div class="flex items-center text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[18px] mr-1">location_on</span>
+<span>Pergamino, Buenos Aires · Argentina</span>
+</div>
+</div>
+<!-- Key Specs Grid (Bento style) -->
+<div class="grid grid-cols-2 gap-3 mb-8">
+<div class="bg-surface-container-low rounded-xl p-4 flex flex-col items-center justify-center text-center">
+<span class="font-headline-lg-mobile text-[24px] font-bold text-primary mb-1">850</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant">Hectáreas</span>
+</div>
+<div class="bg-surface-container-low rounded-xl p-4 flex flex-col items-center justify-center text-center">
+<span class="font-headline-lg-mobile text-[24px] font-bold text-primary mb-1">USD 8.2k</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant">Por hectárea</span>
+</div>
+<div class="bg-surface-container-low rounded-xl p-4 flex flex-col items-center justify-center text-center">
+<span class="font-headline-lg-mobile text-[24px] font-bold text-primary mb-1">45 km</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant">Al puerto</span>
+</div>
+<div class="bg-surface-container-low rounded-xl p-4 flex flex-col items-center justify-center text-center">
+<span class="material-symbols-outlined text-[28px] text-primary mb-1" style="font-variation-settings: 'FILL' 1;">eco</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant">Suelos 1 y 2</span>
+</div>
+</div>
+<!-- Description Section -->
+<div class="mb-8">
+<h2 class="font-nav-title text-nav-title text-on-surface mb-3">Descripción</h2>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                Campo agrícola de alta productividad en zona núcleo pampeana. Suelos tipo 1 y 2, aptitud soja-maíz-trigo. Instalaciones completas con silos, galpones y vivienda del casero. Excelente estado de conservación y listos para la próxima campaña.
+            </p>
+<button class="mt-2 text-primary font-button-text text-body-sm flex items-center">
+                Leer más <span class="material-symbols-outlined text-[16px] ml-1">expand_more</span>
+</button>
+</div>
+<!-- Map Preview Card -->
+<div class="mb-8">
+<div class="flex justify-between items-center mb-3">
+<h2 class="font-nav-title text-nav-title text-on-surface">Ubicación</h2>
+</div>
+<div class="w-full h-48 bg-surface-container-low rounded-xl overflow-hidden relative">
+<img class="w-full h-full object-cover" data-alt="A clean, modern top-down map view of Pergamino, Buenos Aires region. The map uses a light-mode styling with subtle gray and soft green tones to denote agricultural land and roads. A prominent but tasteful marker indicates a specific location. The design is minimal, native to a high-end mobile interface, and avoids clutter." data-location="Pergamino" src="https://lh3.googleusercontent.com/aida-public/AB6AXuApZszHeqv0QInoYZYiUAzHjRc3_7gg-8ziSorm7haVJvtTvsdfdV9GAhJ_EPXoMEoY3ZwAfRQyRkPvSuq9oY_1dwunPjRZwpomAPRX6etBv9KhVhyzydua3sDV4dkZLGHDHKzwq7cXOFawyaGs4HT1QcNznMGVpjgZEUczbB2c09piDg7GYaK8MHdArsQKuV91Rj1y4iDQWNWgmVKNOzp7yzDF75iLBDCdLPWXs0S-LEeYztR1Smzj7Q"/>
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+<div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
+<div class="w-4 h-4 bg-primary rounded-full border-2 border-white"></div>
+</div>
+</div>
+<div class="absolute bottom-3 right-3">
+<button class="bg-white/90 backdrop-blur-md px-4 py-2 rounded-lg font-button-text text-[14px] text-on-surface shadow-sm flex items-center">
+<span class="material-symbols-outlined text-[18px] mr-1">map</span> Ver en mapa
+                    </button>
+</div>
+</div>
+</div>
+<!-- Additional Amenities / Features List -->
+<div class="mb-8">
+<h2 class="font-nav-title text-nav-title text-on-surface mb-3">Características</h2>
+<div class="bg-surface-container-low rounded-xl overflow-hidden">
+<div class="flex items-center justify-between p-4 border-b border-outline-variant/30">
+<div class="flex items-center text-on-surface">
+<span class="material-symbols-outlined mr-3 text-on-surface-variant">bolt</span>
+<span class="font-body-md text-body-md">Energía trifásica</span>
+</div>
+</div>
+<div class="flex items-center justify-between p-4 border-b border-outline-variant/30">
+<div class="flex items-center text-on-surface">
+<span class="material-symbols-outlined mr-3 text-on-surface-variant">water_drop</span>
+<span class="font-body-md text-body-md">Agua de pozo</span>
+</div>
+</div>
+<div class="flex items-center justify-between p-4">
+<div class="flex items-center text-on-surface">
+<span class="material-symbols-outlined mr-3 text-on-surface-variant">home</span>
+<span class="font-body-md text-body-md">Casa principal</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Floating Action Bar (Bottom) -->
+<div class="fixed bottom-0 left-0 w-full glass-nav px-margin-page py-4 pb-safe flex items-center gap-3 z-50">
+<button class="flex-1 h-control-height bg-primary text-white rounded-lg font-button-text text-button-text flex items-center justify-center active:opacity-80 transition-opacity">
+<span class="material-symbols-outlined mr-2" style="font-variation-settings: 'FILL' 1;">chat</span>
+            Contactar inmobiliaria
+        </button>
+<button class="w-control-height h-control-height bg-secondary text-on-surface rounded-lg flex items-center justify-center active:opacity-80 transition-opacity">
+<span class="material-symbols-outlined">share</span>
+</button>
+</div>
+</body></html>

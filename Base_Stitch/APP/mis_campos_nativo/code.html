@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-container": "#98b984",
+                        "primary-fixed": "#caedb3",
+                        "surface-container-high": "#e8e8e8",
+                        "tertiary-fixed-dim": "#c6c6cb",
+                        "on-primary-fixed-variant": "#324e23",
+                        "surface-bright": "#f9f9f9",
+                        "surface-container": "#eeeeee",
+                        "inverse-primary": "#aed099",
+                        "outline-variant": "#c3c8bb",
+                        "tertiary": "#2c2d31",
+                        "inverse-surface": "#303030",
+                        "primary-fixed-dim": "#aed099",
+                        "surface-variant": "#e2e2e2",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed-variant": "#45474b",
+                        "on-secondary": "#ffffff",
+                        "background": "#f9f9f9",
+                        "secondary-container": "#dfdfe4",
+                        "on-surface": "#1b1b1b",
+                        "tertiary-container": "#424347",
+                        "on-primary": "#ffffff",
+                        "on-surface-variant": "#43483f",
+                        "outline": "#74796e",
+                        "error-container": "#ffdad6",
+                        "surface": "#f9f9f9",
+                        "on-secondary-container": "#616267",
+                        "secondary-fixed": "#e2e2e7",
+                        "on-background": "#1b1b1b",
+                        "inverse-on-surface": "#f1f1f1",
+                        "on-tertiary-fixed": "#1a1b1f",
+                        "surface-container-highest": "#e2e2e2",
+                        "secondary-fixed-dim": "#c6c6cb",
+                        "on-tertiary": "#ffffff",
+                        "primary": "#18330c",
+                        "on-tertiary-fixed-variant": "#46464b",
+                        "error": "#ba1a1a",
+                        "on-error-container": "#93000a",
+                        "surface-tint": "#496639",
+                        "on-tertiary-container": "#b0b0b5",
+                        "surface-container-low": "#f3f3f3",
+                        "surface-dim": "#dadada",
+                        "secondary": "#5d5e63",
+                        "on-secondary-fixed": "#1a1c1f",
+                        "primary-container": "#2e4a20",
+                        "tertiary-fixed": "#e3e2e7",
+                        "on-primary-fixed": "#072100",
+                        "on-error": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "inset-card": "1rem",
+                        "gutter-row": "0.75rem",
+                        "control-height": "2.75rem",
+                        "stack-gap": "1rem",
+                        "margin-page": "1rem"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "button-text": ["Inter"],
+                        "nav-title": ["Inter"],
+                        "body-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["17px", { "lineHeight": "22px", "letterSpacing": "-0.4px", "fontWeight": "400" }],
+                        "headline-lg": ["34px", { "lineHeight": "41px", "letterSpacing": "-0.4px", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "34px", "letterSpacing": "-0.4px", "fontWeight": "700" }],
+                        "label-caps": ["13px", { "lineHeight": "18px", "letterSpacing": "0.1px", "fontWeight": "400" }],
+                        "button-text": ["17px", { "lineHeight": "22px", "fontWeight": "600" }],
+                        "nav-title": ["17px", { "lineHeight": "22px", "letterSpacing": "-0.4px", "fontWeight": "600" }],
+                        "body-sm": ["15px", { "lineHeight": "20px", "letterSpacing": "-0.2px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { -webkit-tap-highlight-color: transparent; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen font-body-md pt-[72px] pb-[88px]">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-surface dark:bg-surface-dim border-b border-outline-variant dark:border-outline flex flex-col justify-center px-margin-page h-[72px]">
+<div class="flex items-center justify-between w-full">
+<button class="p-2 -ml-2 text-on-surface-variant hover:opacity-80 active:opacity-50 transition-opacity">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary dark:text-primary-fixed absolute left-1/2 -translate-x-1/2">
+                AgroInmuebles
+            </h1>
+<div class="flex items-center gap-2">
+<button class="p-2 -mr-2 text-on-surface-variant hover:opacity-80 active:opacity-50 transition-opacity">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 -mr-2 text-on-surface-variant hover:opacity-80 active:opacity-50 transition-opacity md:hidden">
+<span class="material-symbols-outlined">search</span>
+</button>
+</div>
+</div>
+</header>
+<main class="px-margin-page space-y-6 pt-4 max-w-3xl mx-auto">
+<!-- Header Text -->
+<div class="space-y-1">
+<h2 class="font-nav-title text-nav-title text-on-background">Bienvenido, Inmobiliaria de Prueba</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Resumen de tu actividad en CAIR.</p>
+</div>
+<!-- Summary Widgets -->
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-surface-container-lowest rounded-xl p-4 shadow-[0px_4px_12px_rgba(0,0,0,0.05)] border border-outline-variant/30 flex flex-col justify-between h-28">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-primary text-2xl">sell</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant text-right">CAMPOS<br/>PUBLICADOS</span>
+</div>
+<span class="font-headline-lg-mobile text-headline-lg-mobile text-primary font-bold">4</span>
+</div>
+<div class="bg-surface-container-lowest rounded-xl p-4 shadow-[0px_4px_12px_rgba(0,0,0,0.05)] border border-outline-variant/30 flex flex-col justify-between h-28">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-primary text-2xl">chat_bubble</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant text-right">CONSULTAS<br/>RECIBIDAS</span>
+</div>
+<span class="font-headline-lg-mobile text-headline-lg-mobile text-primary font-bold">0</span>
+</div>
+</div>
+<!-- List Section -->
+<div class="space-y-4">
+<h3 class="font-nav-title text-nav-title text-on-background">Mis campos</h3>
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0px_4px_12px_rgba(0,0,0,0.05)] border border-outline-variant/30">
+<!-- Row 1 -->
+<a class="block p-4 border-b border-outline-variant/30 hover:bg-surface-container-low active:bg-surface-container transition-colors last:border-b-0" href="#">
+<div class="flex items-center justify-between">
+<div class="space-y-1 pr-4">
+<h4 class="font-button-text text-button-text text-on-background truncate">jsjzbbzbzbz</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1">Alcira Gigena, Córdoba · 60 ha · Venta · Agrícola</p>
+</div>
+<div class="flex items-center gap-3 shrink-0">
+<span class="px-2.5 py-1 bg-surface-container-highest text-on-surface-variant font-label-caps text-[11px] rounded-full uppercase tracking-wider">Borrador</span>
+<span class="material-symbols-outlined text-on-surface-variant text-xl">chevron_right</span>
+</div>
+</div>
+</a>
+<!-- Row 2 -->
+<a class="block p-4 border-b border-outline-variant/30 hover:bg-surface-container-low active:bg-surface-container transition-colors last:border-b-0" href="#">
+<div class="flex items-center justify-between">
+<div class="space-y-1 pr-4">
+<h4 class="font-button-text text-button-text text-on-background truncate">jsjsjs</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1">Curuzú Cuatiá, Corrientes · 10 ha · Venta · Agrícola</p>
+</div>
+<div class="flex items-center gap-3 shrink-0">
+<span class="px-2.5 py-1 bg-surface-container-highest text-on-surface-variant font-label-caps text-[11px] rounded-full uppercase tracking-wider">Borrador</span>
+<span class="material-symbols-outlined text-on-surface-variant text-xl">chevron_right</span>
+</div>
+</div>
+</a>
+<!-- Row 3 -->
+<a class="block p-4 border-b border-outline-variant/30 hover:bg-surface-container-low active:bg-surface-container transition-colors last:border-b-0" href="#">
+<div class="flex items-center justify-between">
+<div class="space-y-1 pr-4">
+<h4 class="font-button-text text-button-text text-on-background truncate">pruaba a</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1">Alcira Gigena, Córdoba · 690 ha · Venta · Agrícola</p>
+</div>
+<div class="flex items-center gap-3 shrink-0">
+<span class="px-2.5 py-1 bg-surface-container-highest text-on-surface-variant font-label-caps text-[11px] rounded-full uppercase tracking-wider">Borrador</span>
+<span class="material-symbols-outlined text-on-surface-variant text-xl">chevron_right</span>
+</div>
+</div>
+</a>
+<!-- Row 4 -->
+<a class="block p-4 border-b border-outline-variant/30 hover:bg-surface-container-low active:bg-surface-container transition-colors last:border-b-0" href="#">
+<div class="flex items-center justify-between">
+<div class="space-y-1 pr-4">
+<h4 class="font-button-text text-button-text text-on-background truncate">Campo Pendiente (prueba)</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1">Bragado, Buenos Aires · 200 ha · Arrendamiento · Ganadero</p>
+</div>
+<div class="flex items-center gap-3 shrink-0">
+<span class="px-2.5 py-1 bg-surface-container-highest text-on-surface-variant font-label-caps text-[11px] rounded-full uppercase tracking-wider text-center max-w-[80px] leading-tight">Pendiente de aprobación</span>
+<span class="material-symbols-outlined text-on-surface-variant text-xl">chevron_right</span>
+</div>
+</div>
+</a>
+<!-- Row 5 -->
+<a class="block p-4 border-b border-outline-variant/30 hover:bg-surface-container-low active:bg-surface-container transition-colors last:border-b-0" href="#">
+<div class="flex items-center justify-between">
+<div class="space-y-1 pr-4">
+<h4 class="font-button-text text-button-text text-on-background truncate">Campo Borrador (prueba)</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1">Villa María, Córdoba · 100 ha · Venta · Agrícola</p>
+</div>
+<div class="flex items-center gap-3 shrink-0">
+<span class="px-2.5 py-1 bg-surface-container-highest text-on-surface-variant font-label-caps text-[11px] rounded-full uppercase tracking-wider">Borrador</span>
+<span class="material-symbols-outlined text-on-surface-variant text-xl">chevron_right</span>
+</div>
+</div>
+</a>
+</div>
+</div>
+</main>
+<!-- FAB -->
+<button class="fixed bottom-[88px] right-4 md:right-[calc(50%-360px+16px)] w-14 h-14 bg-primary-container text-on-primary-container rounded-2xl shadow-lg flex items-center justify-center hover:opacity-90 active:scale-95 transition-all z-40">
+<span class="material-symbols-outlined text-[32px]">add</span>
+</button>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface dark:bg-surface-dim border-t border-outline-variant dark:border-outline md:hidden">
+<div class="flex justify-around items-center h-14 w-full">
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-low active:scale-95 transition-transform duration-100 flex-1 h-full" href="#">
+<span class="material-symbols-outlined text-xl mb-0.5">home</span>
+<span class="font-label-caps text-[10px]">Inicio</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed hover:bg-surface-container-low active:scale-95 transition-transform duration-100 flex-1 h-full" href="#">
+<span class="material-symbols-outlined text-xl mb-0.5" style="font-variation-settings: 'FILL' 1;">landscape</span>
+<span class="font-label-caps text-[10px] font-semibold">Mis Campos</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-low active:scale-95 transition-transform duration-100 flex-1 h-full" href="#">
+<span class="material-symbols-outlined text-xl mb-0.5">chat_bubble</span>
+<span class="font-label-caps text-[10px]">Consultas</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-low active:scale-95 transition-transform duration-100 flex-1 h-full" href="#">
+<span class="material-symbols-outlined text-xl mb-0.5">person</span>
+<span class="font-label-caps text-[10px]">Perfil</span>
+</a>
+</div>
+</nav>
+</body></html>

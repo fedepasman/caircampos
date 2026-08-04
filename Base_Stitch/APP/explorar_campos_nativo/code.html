@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AgroInmuebles - Home</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-container": "#98b984",
+                        "primary-fixed": "#caedb3",
+                        "surface-container-high": "#e8e8e8",
+                        "tertiary-fixed-dim": "#c6c6cb",
+                        "on-primary-fixed-variant": "#324e23",
+                        "surface-bright": "#f9f9f9",
+                        "surface-container": "#eeeeee",
+                        "inverse-primary": "#aed099",
+                        "outline-variant": "#c3c8bb",
+                        "tertiary": "#2c2d31",
+                        "inverse-surface": "#303030",
+                        "primary-fixed-dim": "#aed099",
+                        "surface-variant": "#e2e2e2",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed-variant": "#45474b",
+                        "on-secondary": "#ffffff",
+                        "background": "#f9f9f9",
+                        "secondary-container": "#dfdfe4",
+                        "on-surface": "#1b1b1b",
+                        "tertiary-container": "#424347",
+                        "on-primary": "#ffffff",
+                        "on-surface-variant": "#43483f",
+                        "outline": "#74796e",
+                        "error-container": "#ffdad6",
+                        "surface": "#f9f9f9",
+                        "on-secondary-container": "#616267",
+                        "secondary-fixed": "#e2e2e7",
+                        "on-background": "#1b1b1b",
+                        "inverse-on-surface": "#f1f1f1",
+                        "on-tertiary-fixed": "#1a1b1f",
+                        "surface-container-highest": "#e2e2e2",
+                        "secondary-fixed-dim": "#c6c6cb",
+                        "on-tertiary": "#ffffff",
+                        "primary": "#18330c",
+                        "on-tertiary-fixed-variant": "#46464b",
+                        "error": "#ba1a1a",
+                        "on-error-container": "#93000a",
+                        "surface-tint": "#496639",
+                        "on-tertiary-container": "#b0b0b5",
+                        "surface-container-low": "#f3f3f3",
+                        "surface-dim": "#dadada",
+                        "secondary": "#5d5e63",
+                        "on-secondary-fixed": "#1a1c1f",
+                        "primary-container": "#2e4a20",
+                        "tertiary-fixed": "#e3e2e7",
+                        "on-primary-fixed": "#072100",
+                        "on-error": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "inset-card": "1rem",
+                        "gutter-row": "0.75rem",
+                        "control-height": "2.75rem",
+                        "stack-gap": "1rem",
+                        "margin-page": "1rem"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "button-text": ["Inter"],
+                        "nav-title": ["Inter"],
+                        "body-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["17px", { "lineHeight": "22px", "letterSpacing": "-0.4px", "fontWeight": "400" }],
+                        "headline-lg": ["34px", { "lineHeight": "41px", "letterSpacing": "-0.4px", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "34px", "letterSpacing": "-0.4px", "fontWeight": "700" }],
+                        "label-caps": ["13px", { "lineHeight": "18px", "letterSpacing": "0.1px", "fontWeight": "400" }],
+                        "button-text": ["17px", { "lineHeight": "22px", "fontWeight": "600" }],
+                        "nav-title": ["17px", { "lineHeight": "22px", "letterSpacing": "-0.4px", "fontWeight": "600" }],
+                        "body-sm": ["15px", { "lineHeight": "20px", "letterSpacing": "-0.2px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { -webkit-tap-highlight-color: transparent; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background antialiased font-body-md h-screen flex flex-col relative overflow-hidden">
+<!-- TopAppBar -->
+<header class="bg-surface text-primary font-nav-title text-nav-title fixed top-0 w-full z-50 flex items-center justify-between px-margin-page h-control-height">
+<div class="flex items-center gap-2">
+<span class="font-headline-lg-mobile text-headline-lg-mobile text-primary tracking-tight">CAIR</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:opacity-80 active:opacity-50 transition-opacity flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">search</span>
+</button>
+<button class="text-on-surface-variant hover:opacity-80 active:opacity-50 transition-opacity flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">notifications</span>
+</button>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 overflow-y-auto pt-[calc(theme(spacing.control-height)+theme(spacing.margin-page))] pb-[calc(3.5rem+env(safe-area-inset-bottom)+1rem)] px-margin-page hide-scrollbar">
+<!-- Segmented Control -->
+<div class="bg-surface-variant p-1 rounded-[8px] flex mb-stack-gap">
+<button class="flex-1 bg-surface shadow-[0_1px_3px_rgba(0,0,0,0.1)] rounded-[6px] py-1.5 text-center font-button-text text-button-text text-on-surface transition-all">
+                Venta
+            </button>
+<button class="flex-1 py-1.5 text-center font-button-text text-button-text text-on-surface-variant hover:text-on-surface transition-all">
+                Alquiler
+            </button>
+</div>
+<!-- Filter Chips -->
+<div class="flex gap-2 overflow-x-auto hide-scrollbar mb-stack-gap pb-1">
+<button class="whitespace-nowrap px-4 py-1.5 rounded-full bg-primary-container text-on-primary font-label-caps text-label-caps flex items-center gap-1 border border-primary-container">
+                Agrícola
+            </button>
+<button class="whitespace-nowrap px-4 py-1.5 rounded-full bg-surface text-on-surface font-label-caps text-label-caps border border-outline-variant hover:bg-surface-container-low transition-colors">
+                Ganadero
+            </button>
+<button class="whitespace-nowrap px-4 py-1.5 rounded-full bg-surface text-on-surface font-label-caps text-label-caps border border-outline-variant hover:bg-surface-container-low transition-colors">
+                Mixto
+            </button>
+<button class="whitespace-nowrap px-4 py-1.5 rounded-full bg-surface text-on-surface font-label-caps text-label-caps border border-outline-variant hover:bg-surface-container-low transition-colors">
+                Forestal
+            </button>
+</div>
+<!-- Summary -->
+<div class="flex justify-between items-center mb-gutter-row">
+<h2 class="font-nav-title text-nav-title text-on-surface">47 campos en la zona</h2>
+</div>
+<!-- List Content -->
+<div class="flex flex-col gap-4">
+<!-- Row 1 -->
+<div class="flex items-center gap-4 bg-surface rounded-lg p-3 shadow-sm border border-surface-container-high active:scale-[0.98] transition-transform">
+<img class="w-20 h-20 rounded-md object-cover bg-surface-container" data-alt="A lush, vast agricultural field during golden hour sunset. A pristine, high-end photography style with a warm, modern color palette." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5MkdnxFu_bGPaZLF7cB9pQ--D2VYGOenHdxapeX5Le6MBfVgwh-gXW9E80X6HyHc4cnxAjIKEve4WxqBjOvfip-zX3xocr9BAqF4CP-VrJpKJ_mNQ8WgvasKxyJpxCOgnoCBwp3h16MWj6WWoGr7-LPdhed3jDFPfXON4Y7WQvU-OY0ssJuobOlkesrM_sqRqzQwzlxkL8zoxKjopQ4vPwK13ZNPRigYOSjKnJnPFcmwUudc49NxXkA"/>
+<div class="flex-1 min-w-0">
+<h3 class="font-nav-title text-nav-title text-on-surface truncate">Estancia La Aurora</h3>
+<p class="font-body-sm text-body-sm text-secondary truncate">Pergamino, Buenos Aires</p>
+<div class="flex items-center gap-2 mt-1">
+<span class="bg-primary-container/10 text-primary-container px-2 py-0.5 rounded font-label-caps text-[11px] font-semibold">VENTA</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant font-medium">850 ha</span>
+</div>
+</div>
+<div class="flex flex-col items-end pl-2">
+<span class="font-button-text text-button-text text-on-surface">USD 8.2k</span>
+<span class="font-body-sm text-body-sm text-secondary text-[12px]">/ ha</span>
+</div>
+</div>
+<!-- Row 2 -->
+<div class="flex items-center gap-4 bg-surface rounded-lg p-3 shadow-sm border border-surface-container-high active:scale-[0.98] transition-transform">
+<img class="w-20 h-20 rounded-md object-cover bg-surface-container" data-alt="A wide shot of a productive cattle ranch with green pastures under a clear blue sky. Professional, crisp, modern aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCkYKJqAx08_y0TYLdxriMT_FppbYxjwg7AYKAwqqLdMxdYoShNTUuJsDML__t-ucUsOBafV1xE_4sTQrIilpc4EiS_RE3MZMNixud5N0b00PI4BPtq7Yn4-oXEo9ERw_rSVqXI7s69AqBGA2duv9zUN5trAMOP2FqFqLluFjFAzI4pyht1t6_Ys1QtJDICDZnNUkcr_hfjEFViyZF4ks_-XSDVXx8JJ9o0HUecN9Huk40jI063cEWZ7Q"/>
+<div class="flex-1 min-w-0">
+<h3 class="font-nav-title text-nav-title text-on-surface truncate">Campo Los Esteros</h3>
+<p class="font-body-sm text-body-sm text-secondary truncate">Gualeguaychú, Entre Ríos</p>
+<div class="flex items-center gap-2 mt-1">
+<span class="bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded font-label-caps text-[11px] font-semibold">ALQUILER</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant font-medium">1,200 ha</span>
+</div>
+</div>
+<div class="flex flex-col items-end pl-2">
+<span class="font-button-text text-button-text text-on-surface">USD 150</span>
+<span class="font-body-sm text-body-sm text-secondary text-[12px]">/ ha/año</span>
+</div>
+</div>
+<!-- Row 3 -->
+<div class="flex items-center gap-4 bg-surface rounded-lg p-3 shadow-sm border border-surface-container-high active:scale-[0.98] transition-transform">
+<img class="w-20 h-20 rounded-md object-cover bg-surface-container" data-alt="A modern, high-yield corn field ready for harvest. Bright, clean, corporate agricultural photography style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC0D9XeuMdMBbmPEWdiw82M2HrFDowAEVblClsgK4A9x63nhD9r7Uo5mMvt_tFbZPQDpnWqReB6DLBLci_4mR2AdNwgNsNyOIZ5xegEDt2evzFM0ih-uI_YHUQEnJLDdVAHOGxsQBgQOuEmkvlTD2a-GbuUOrsqkzT3w8my6HvRFhXIZk6DiNnSQ1pLYdxjPMkEhqi66mLsR5aZ3sYw8AJpPgyNikqCr1Vbwf8baynnNXeARE4z73Op1w"/>
+<div class="flex-1 min-w-0">
+<h3 class="font-nav-title text-nav-title text-on-surface truncate">El Ombú</h3>
+<p class="font-body-sm text-body-sm text-secondary truncate">Rojas, Buenos Aires</p>
+<div class="flex items-center gap-2 mt-1">
+<span class="bg-primary-container/10 text-primary-container px-2 py-0.5 rounded font-label-caps text-[11px] font-semibold">VENTA</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant font-medium">450 ha</span>
+</div>
+</div>
+<div class="flex flex-col items-end pl-2">
+<span class="font-button-text text-button-text text-on-surface">USD 9.5k</span>
+<span class="font-body-sm text-body-sm text-secondary text-[12px]">/ ha</span>
+</div>
+</div>
+<!-- Row 4 -->
+<div class="flex items-center gap-4 bg-surface rounded-lg p-3 shadow-sm border border-surface-container-high active:scale-[0.98] transition-transform">
+<img class="w-20 h-20 rounded-md object-cover bg-surface-container" data-alt="A vast expanse of fertile land with a modern irrigation system in the distance. Clean, bright, and professional agricultural setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCuCMwrntsHQ4sPTJe07TlkUsB2i1Ifw4p6pwj4vihuQj-SqoAj3VZN-h9weuOscG8Koqu5NleubNUv82M06T96Bfh1l3LFZtA4zbOow4JBvMBDA6jccK-JN3e7lpo12WSdDtJ6z6Q_5Kz0xNX1Xps1gm0pAOQ7TRulmWcKAYK9u2zCY5sPnvBRESPz4Vir9pJHFE-qtCv1Y-9EnRbpkqQzIU8zaX5sQbyrXUy39nxjz8QnljGIwQKsQ"/>
+<div class="flex-1 min-w-0">
+<h3 class="font-nav-title text-nav-title text-on-surface truncate">La Maruja</h3>
+<p class="font-body-sm text-body-sm text-secondary truncate">Venado Tuerto, Santa Fe</p>
+<div class="flex items-center gap-2 mt-1">
+<span class="bg-primary-container/10 text-primary-container px-2 py-0.5 rounded font-label-caps text-[11px] font-semibold">VENTA</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant font-medium">620 ha</span>
+</div>
+</div>
+<div class="flex flex-col items-end pl-2">
+<span class="font-button-text text-button-text text-on-surface">USD 10.1k</span>
+<span class="font-body-sm text-body-sm text-secondary text-[12px]">/ ha</span>
+</div>
+</div>
+</div>
+</main>
+<!-- FAB -->
+<button class="fixed bottom-[calc(4rem+env(safe-area-inset-bottom))] right-4 bg-primary-container text-on-primary-container w-14 h-14 rounded-full flex items-center justify-center shadow-[0_4px_12px_rgba(0,0,0,0.15)] z-40 active:scale-95 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">map</span>
+</button>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 pb-[env(safe-area-inset-bottom)] flex justify-around items-center h-14 bg-surface shadow-[0_-1px_3px_rgba(0,0,0,0.05)] border-t border-outline-variant/30">
+<button class="flex flex-col items-center justify-center text-primary active:scale-95 transition-transform duration-100 flex-1 h-full">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-label-caps text-label-caps mt-0.5">Inicio</span>
+</button>
+<button class="flex flex-col items-center justify-center text-secondary hover:bg-surface-container-low active:scale-95 transition-transform duration-100 flex-1 h-full">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">landscape</span>
+<span class="font-label-caps text-label-caps mt-0.5">Mis Campos</span>
+</button>
+<button class="flex flex-col items-center justify-center text-secondary hover:bg-surface-container-low active:scale-95 transition-transform duration-100 flex-1 h-full">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">chat_bubble</span>
+<span class="font-label-caps text-label-caps mt-0.5">Consultas</span>
+</button>
+<button class="flex flex-col items-center justify-center text-secondary hover:bg-surface-container-low active:scale-95 transition-transform duration-100 flex-1 h-full">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">person</span>
+<span class="font-label-caps text-label-caps mt-0.5">Perfil</span>
+</button>
+</nav>
+</body></html>
