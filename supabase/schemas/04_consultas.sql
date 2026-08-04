@@ -53,6 +53,12 @@ create policy "El comprador consulta sobre un campo publicado"
 
 grant select, insert on public.consultas to authenticated;
 
+-- `service_role` no hereda privilegios de tabla por defecto en este
+-- proyecto (a diferencia de RLS, que sí bypasea): la Edge Function
+-- `enviar-notificacion-consulta` (más abajo) necesita leer la consulta sin
+-- JWT de usuario detrás.
+grant select on public.consultas to service_role;
+
 -- Función auxiliar para la política de SELECT de `compradores` (abajo).
 --
 -- No puede ser una subquery directa dentro de la política, como en el resto
@@ -111,3 +117,75 @@ create policy "El comprador ve su fila, o el socio del campo consultado"
     usuario_id = (select auth.uid())
     or private.socio_ve_comprador(id)
   );
+
+-- Aviso push al socio cuando entra una consulta nueva.
+--
+-- La URL de la Edge Function y el secreto compartido (para que la función
+-- confirme que la llamada viene de este trigger y no de cualquiera en
+-- internet, ya que corre con `verify_jwt = false` al no haber un usuario
+-- logueado detrás) NO se hardcodean acá: cambian entre entornos (local vs.
+-- producción) y no son parte del estado declarativo del esquema. Se leen de
+-- `vault.decrypted_secrets` por nombre — Supabase Vault es el mecanismo
+-- pensado para esto; un GUC vía `alter database ... set` no es una opción,
+-- el rol de las migraciones no tiene permiso para fijarlo (confirmado
+-- probando contra la base local). Los valores se cargan una sola vez por
+-- entorno con `vault.create_secret(valor, nombre)`, nunca en un archivo de
+-- este repositorio — ver OPERACIONES.md para el valor de producción.
+create function private.notificar_nueva_consulta()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_socio_id uuid;
+  v_url text;
+  v_secreto text;
+begin
+  select s.id into v_socio_id
+  from public.campos c
+  join public.socios s on s.id = c.socio_id
+  where c.id = new.campo_id;
+
+  if v_socio_id is null then
+    return new;
+  end if;
+
+  select decrypted_secret into v_url
+  from vault.decrypted_secrets where name = 'edge_functions_base_url';
+
+  select decrypted_secret into v_secreto
+  from vault.decrypted_secrets where name = 'internal_trigger_secret';
+
+  if v_url is null or v_secreto is null then
+    return new;
+  end if;
+
+  -- Asíncrono (`net.http_post` solo encola la request): el insert de la
+  -- consulta no espera a que el push se mande ni falla si la Edge Function
+  -- está caída.
+  perform net.http_post(
+    url := v_url || '/enviar-notificacion-consulta',
+    body := jsonb_build_object('consulta_id', new.id),
+    headers := jsonb_build_object(
+      'Content-Type', 'application/json',
+      'X-Internal-Secret', v_secreto
+    ),
+    timeout_milliseconds := 5000
+  );
+
+  return new;
+end;
+$$;
+
+comment on function private.notificar_nueva_consulta() is
+  'Avisa por push al socio dueño del campo cuando entra una consulta. Ver comentario arriba sobre vault.';
+
+-- Mismo motivo que private.socio_ve_comprador(uuid) más arriba: revocar
+-- EXECUTE de PUBLIC. El motor de diff descarta este REVOKE al generar la
+-- migración — agregarlo a mano.
+revoke execute on function private.notificar_nueva_consulta() from public;
+
+create trigger trigger_notificar_nueva_consulta
+  after insert on public.consultas
+  for each row execute function private.notificar_nueva_consulta();

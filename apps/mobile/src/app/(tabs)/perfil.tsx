@@ -1,16 +1,38 @@
-import { LogOut } from 'lucide-react-native';
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Bell, LogOut } from 'lucide-react-native';
+import { ActivityIndicator, Linking, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Link } from 'expo-router';
+import * as Notifications from 'expo-notifications';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, fontSize, fontWeight, radius, spacing } from '@cair/tokens';
 import { useSesion } from '../../lib/use-sesion';
 import { useSocio } from '../../lib/queries/panel';
 import { supabase } from '../../lib/supabase';
+import { registrarNotificaciones } from '../../lib/notificaciones';
 
 export default function Perfil() {
   const insets = useSafeAreaInsets();
   const { sesion, cargando: cargandoSesion } = useSesion();
   const { data: socio, isLoading: cargandoSocio } = useSocio(sesion?.user.id);
+  const [estadoNotificaciones, setEstadoNotificaciones] =
+    useState<Notifications.PermissionStatus | null>(null);
+
+  useEffect(() => {
+    void Notifications.getPermissionsAsync().then((permiso) => {
+      setEstadoNotificaciones(permiso.status);
+    });
+  }, []);
+
+  async function activarNotificaciones() {
+    if (estadoNotificaciones === Notifications.PermissionStatus.DENIED) {
+      void Linking.openSettings();
+      return;
+    }
+    if (!socio?.id) return;
+    await registrarNotificaciones(socio.id);
+    const permiso = await Notifications.getPermissionsAsync();
+    setEstadoNotificaciones(permiso.status);
+  }
 
   if (cargandoSesion) {
     return (
@@ -54,6 +76,27 @@ export default function Perfil() {
         </Text>
       )}
 
+      {socio && (
+        <Pressable
+          style={estilos.filaNotificaciones}
+          onPress={() => {
+            void activarNotificaciones();
+          }}
+        >
+          <Bell color={colors.brand[600]} size={18} />
+          <View style={estilos.filaNotificacionesTexto}>
+            <Text style={estilos.notificacionesTitulo}>Notificaciones</Text>
+            <Text style={estilos.notificacionesEstado}>
+              {estadoNotificaciones === Notifications.PermissionStatus.GRANTED
+                ? 'Activadas'
+                : estadoNotificaciones === Notifications.PermissionStatus.DENIED
+                  ? 'Desactivadas — tocá para abrir Configuración'
+                  : 'Tocá para activarlas'}
+            </Text>
+          </View>
+        </Pressable>
+      )}
+
       <Pressable
         style={estilos.botonSalir}
         onPress={() => {
@@ -94,6 +137,28 @@ const estilos = StyleSheet.create({
     color: colors.neutral[900],
   },
   email: {
+    fontSize: fontSize.sm,
+    color: colors.neutral[800],
+  },
+  filaNotificaciones: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing[3],
+    borderRadius: radius.xl,
+    borderWidth: 1,
+    borderColor: colors.neutral[200],
+    padding: spacing[4],
+    marginBottom: spacing[4],
+  },
+  filaNotificacionesTexto: {
+    gap: 2,
+  },
+  notificacionesTitulo: {
+    fontSize: fontSize.base,
+    fontWeight: fontWeight.semibold,
+    color: colors.neutral[900],
+  },
+  notificacionesEstado: {
     fontSize: fontSize.sm,
     color: colors.neutral[800],
   },

@@ -106,6 +106,12 @@ create policy "El socio borra sus propios campos"
 
 grant select on public.campos to anon, authenticated;
 
+-- `service_role` no hereda privilegios de tabla por defecto en este
+-- proyecto (a diferencia de RLS, que sí bypasea): la Edge Function
+-- `enviar-notificacion-consulta` necesita leer título y socio_id del campo
+-- de una consulta, sin JWT de usuario detrás.
+grant select on public.campos to service_role;
+
 -- Column-level, no de tabla completa: `revisado_por_cair` queda afuera de
 -- las dos listas a propósito. Un `grant insert, update` de tabla entera le
 -- daría a cualquier socio escritura sobre esa columna vía un PATCH directo
