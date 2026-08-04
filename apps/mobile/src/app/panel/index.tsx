@@ -1,5 +1,5 @@
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 import { ETIQUETAS_MODALIDAD_CAMPO, ETIQUETAS_TIPO_CAMPO } from '@cair/shared';
 import { colors, fontSize, fontWeight, radius, spacing } from '@cair/tokens';
 import { useSesion } from '../../lib/use-sesion';
@@ -73,6 +73,15 @@ export default function Panel() {
         </Pressable>
       </View>
 
+      <Pressable
+        style={estilos.botonNuevo}
+        onPress={() => {
+          router.push('/panel/campos/nuevo');
+        }}
+      >
+        <Text style={estilos.botonNuevoTexto}>+ Cargar campo nuevo</Text>
+      </Pressable>
+
       {cargandoCampos && (
         <View style={estilos.centrado}>
           <ActivityIndicator color={colors.brand[600]} />
@@ -93,7 +102,12 @@ export default function Panel() {
           renderItem={({ item }) => {
             const { etiqueta, color } = estadoCampo(item);
             return (
-              <View style={estilos.tarjeta}>
+              <Pressable
+                style={estilos.tarjeta}
+                onPress={() => {
+                  router.push(`/panel/campos/${item.id}`);
+                }}
+              >
                 <View style={estilos.tarjetaContenido}>
                   <Text style={estilos.tarjetaTitulo} numberOfLines={1}>
                     {item.titulo}
@@ -104,7 +118,7 @@ export default function Panel() {
                   </Text>
                 </View>
                 <Text style={[estilos.estado, { color }]}>{etiqueta}</Text>
-              </View>
+              </Pressable>
             );
           }}
         />
@@ -151,6 +165,20 @@ const estilos = StyleSheet.create({
   },
   link: {
     fontSize: fontSize.base,
+    fontWeight: fontWeight.semibold,
+    color: colors.brand[600],
+  },
+  botonNuevo: {
+    marginHorizontal: spacing[6],
+    marginBottom: spacing[4],
+    borderRadius: radius.md,
+    borderWidth: 1,
+    borderColor: colors.brand[600],
+    paddingVertical: spacing[2],
+    alignItems: 'center',
+  },
+  botonNuevoTexto: {
+    fontSize: fontSize.sm,
     fontWeight: fontWeight.semibold,
     color: colors.brand[600],
   },
