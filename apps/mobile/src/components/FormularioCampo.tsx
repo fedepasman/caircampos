@@ -3,13 +3,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Alert, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import { router } from 'expo-router';
-import {
-  MODALIDADES_CAMPO,
-  PAISES,
-  TIPOS_CAMPO,
-  esquemaCampo,
-  type z,
-} from '@cair/schemas';
+import { MODALIDADES_CAMPO, PAISES, TIPOS_CAMPO, esquemaCampo, type z } from '@cair/schemas';
 import { ETIQUETAS_MODALIDAD_CAMPO, ETIQUETAS_TIPO_CAMPO } from '@cair/shared';
 import { colors, fontSize, fontWeight, radius, spacing } from '@cair/tokens';
 import type { Tables } from '@cair/supabase';
@@ -97,7 +91,10 @@ export function FormularioCampo({
     };
 
     if (campoExistente) {
-      const { error } = await supabase.from('campos').update(datosAGuardar).eq('id', campoExistente.id);
+      const { error } = await supabase
+        .from('campos')
+        .update(datosAGuardar)
+        .eq('id', campoExistente.id);
       if (error) {
         setErrorGeneral('No se pudo guardar el campo. Intentá de nuevo.');
         return;
@@ -370,11 +367,11 @@ const estilos = StyleSheet.create({
   },
   etiqueta: {
     fontSize: fontSize.sm,
-    color: colors.neutral[700],
+    color: colors.neutral[800],
   },
   ayuda: {
     fontSize: fontSize.sm,
-    color: colors.neutral[500],
+    color: colors.neutral[800],
   },
   publicar: {
     flexDirection: 'row',

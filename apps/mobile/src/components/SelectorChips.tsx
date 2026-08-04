@@ -45,7 +45,7 @@ const estilos = StyleSheet.create({
   },
   etiqueta: {
     fontSize: fontSize.sm,
-    color: colors.neutral[700],
+    color: colors.neutral[800],
   },
   fila: {
     flexDirection: 'row',
@@ -66,7 +66,7 @@ const estilos = StyleSheet.create({
   },
   chipTexto: {
     fontSize: fontSize.sm,
-    color: colors.neutral[700],
+    color: colors.neutral[800],
   },
   chipTextoSeleccionado: {
     color: colors.brand[600],

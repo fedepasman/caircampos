@@ -11,10 +11,12 @@ function estadoCampo(campo: Pick<CampoPanel, 'publicado' | 'revisado_por_cair'>)
   etiqueta: string;
   color: string;
 } {
-  if (!campo.publicado) return { etiqueta: 'Borrador', color: colors.neutral[500] };
-  if (campo.revisado_por_cair === 'aprobado') return { etiqueta: 'Publicado', color: colors.brand[600] };
-  if (campo.revisado_por_cair === 'rechazado') return { etiqueta: 'Rechazado', color: colors.danger };
-  return { etiqueta: 'Pendiente de aprobación', color: colors.neutral[500] };
+  if (!campo.publicado) return { etiqueta: 'Borrador', color: colors.neutral[800] };
+  if (campo.revisado_por_cair === 'aprobado')
+    return { etiqueta: 'Publicado', color: colors.brand[600] };
+  if (campo.revisado_por_cair === 'rechazado')
+    return { etiqueta: 'Rechazado', color: colors.danger };
+  return { etiqueta: 'Pendiente de aprobación', color: colors.neutral[800] };
 }
 
 export default function Panel() {
@@ -61,9 +63,9 @@ export default function Panel() {
     );
   }
 
-  const publicados = campos?.filter(
-    (campo) => campo.publicado && campo.revisado_por_cair === 'aprobado',
-  ).length ?? 0;
+  const publicados =
+    campos?.filter((campo) => campo.publicado && campo.revisado_por_cair === 'aprobado').length ??
+    0;
 
   return (
     <View style={[estilos.contenedor, { paddingTop: insets.top + spacing[2] }]}>
@@ -126,7 +128,8 @@ export default function Panel() {
                   </Text>
                   <Text style={estilos.filaDetalle}>
                     {item.localidad}, {item.provincia} · {item.hectareas} ha ·{' '}
-                    {ETIQUETAS_TIPO_CAMPO[item.tipo_campo]} · {ETIQUETAS_MODALIDAD_CAMPO[item.modalidad]}
+                    {ETIQUETAS_TIPO_CAMPO[item.tipo_campo]} ·{' '}
+                    {ETIQUETAS_MODALIDAD_CAMPO[item.modalidad]}
                   </Text>
                 </View>
                 <Text style={[estilos.estado, { color }]}>{etiqueta}</Text>
@@ -166,7 +169,7 @@ const estilos = StyleSheet.create({
     paddingHorizontal: spacing[4],
     marginBottom: spacing[4],
     fontSize: fontSize.sm,
-    color: colors.neutral[600],
+    color: colors.neutral[800],
   },
   filaStats: {
     flexDirection: 'row',
@@ -192,7 +195,7 @@ const estilos = StyleSheet.create({
   },
   statEtiqueta: {
     fontSize: fontSize.sm,
-    color: colors.neutral[600],
+    color: colors.neutral[800],
     textTransform: 'uppercase',
   },
   seccion: {
@@ -211,7 +214,7 @@ const estilos = StyleSheet.create({
   },
   mensaje: {
     fontSize: fontSize.base,
-    color: colors.neutral[600],
+    color: colors.neutral[800],
     textAlign: 'center',
   },
   link: {
@@ -252,7 +255,7 @@ const estilos = StyleSheet.create({
   },
   filaDetalle: {
     fontSize: fontSize.sm,
-    color: colors.neutral[600],
+    color: colors.neutral[800],
   },
   estado: {
     fontSize: fontSize.xs,

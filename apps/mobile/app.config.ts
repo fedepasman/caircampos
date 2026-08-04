@@ -37,7 +37,8 @@ const config: ExpoConfig = {
     [
       'expo-image-picker',
       {
-        photosPermission: 'CAIR necesita acceder a tus fotos para agregarlas a la publicación de un campo.',
+        photosPermission:
+          'CAIR necesita acceder a tus fotos para agregarlas a la publicación de un campo.',
       },
     ],
     // El token de descarga del SDK nativo (RNMAPBOX_MAPS_DOWNLOAD_TOKEN) se

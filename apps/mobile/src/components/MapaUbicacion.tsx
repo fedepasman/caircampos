@@ -15,7 +15,6 @@ export function MapaUbicacion({
   longitud: number;
   onCambiar?: (coords: { latitud: number; longitud: number }) => void;
 }) {
-  const soloLectura = !onCambiar;
   const camaraRef = useRef<Camera>(null);
 
   // `centerCoordinate` declarativo no siempre dispara la animación en iOS
@@ -32,10 +31,6 @@ export function MapaUbicacion({
     <View style={estilos.contenedor}>
       <MapView
         style={estilos.mapa}
-        scrollEnabled={!soloLectura}
-        zoomEnabled={!soloLectura}
-        pitchEnabled={!soloLectura}
-        rotateEnabled={!soloLectura}
         onPress={(feature) => {
           if (!onCambiar) return;
           const coordenadas = feature.geometry as unknown as { coordinates: [number, number] };
@@ -43,7 +38,10 @@ export function MapaUbicacion({
           onCambiar({ latitud: latitudNueva, longitud: longitudNueva });
         }}
       >
-        <Camera ref={camaraRef} defaultSettings={{ centerCoordinate: [longitud, latitud], zoomLevel: 9 }} />
+        <Camera
+          ref={camaraRef}
+          defaultSettings={{ centerCoordinate: [longitud, latitud], zoomLevel: 9 }}
+        />
         <PointAnnotation id="ubicacion-campo" coordinate={[longitud, latitud]}>
           <View style={estilos.pin} />
         </PointAnnotation>

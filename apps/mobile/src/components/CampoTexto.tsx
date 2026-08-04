@@ -26,7 +26,7 @@ const estilos = StyleSheet.create({
   },
   etiqueta: {
     fontSize: fontSize.sm,
-    color: colors.neutral[700],
+    color: colors.neutral[800],
   },
   input: {
     borderWidth: 1,

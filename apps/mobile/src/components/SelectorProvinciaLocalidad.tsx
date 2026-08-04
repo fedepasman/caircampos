@@ -1,5 +1,14 @@
 import { useState } from 'react';
-import { ActivityIndicator, FlatList, Modal, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import {
+  ActivityIndicator,
+  FlatList,
+  Modal,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import {
   obtenerDepartamentosUruguay,
@@ -159,9 +168,10 @@ export function SelectorProvinciaLocalidad({
         opciones={provincias}
         cargando={cargandoProvincias}
         onSeleccionar={(opcion) => {
-          const coords = opcion.lat !== undefined && opcion.lng !== undefined
-            ? { lat: opcion.lat, lng: opcion.lng }
-            : undefined;
+          const coords =
+            opcion.lat !== undefined && opcion.lng !== undefined
+              ? { lat: opcion.lat, lng: opcion.lng }
+              : undefined;
           onCambiarProvincia(opcion.nombre, coords);
           onCambiarLocalidad('');
           setModalAbierto(null);
@@ -177,9 +187,10 @@ export function SelectorProvinciaLocalidad({
         opciones={localidades}
         cargando={cargandoLocalidades}
         onSeleccionar={(opcion) => {
-          const coords = opcion.lat !== undefined && opcion.lng !== undefined
-            ? { lat: opcion.lat, lng: opcion.lng }
-            : undefined;
+          const coords =
+            opcion.lat !== undefined && opcion.lng !== undefined
+              ? { lat: opcion.lat, lng: opcion.lng }
+              : undefined;
           onCambiarLocalidad(opcion.nombre, coords);
           setModalAbierto(null);
         }}
@@ -200,7 +211,7 @@ const estilos = StyleSheet.create({
   },
   etiqueta: {
     fontSize: fontSize.sm,
-    color: colors.neutral[700],
+    color: colors.neutral[800],
   },
   selector: {
     borderWidth: 1,

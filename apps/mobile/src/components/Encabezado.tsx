@@ -4,7 +4,13 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { colors, fontSize, fontWeight, spacing } from '@cair/tokens';
 
-export function Encabezado({ titulo, transparente = false }: { titulo?: string; transparente?: boolean }) {
+export function Encabezado({
+  titulo,
+  transparente = false,
+}: {
+  titulo?: string;
+  transparente?: boolean;
+}) {
   const insets = useSafeAreaInsets();
 
   return (

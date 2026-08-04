@@ -24,7 +24,9 @@ export function TarjetaCampo({ campo, onPress }: { campo: CampoListado; onPress:
         </Text>
         <View style={estilos.fila}>
           <View style={estilos.badge}>
-            <Text style={estilos.badgeTexto}>{campo.modalidad === 'venta' ? 'VENTA' : 'ALQUILER'}</Text>
+            <Text style={estilos.badgeTexto}>
+              {campo.modalidad === 'venta' ? 'VENTA' : 'ALQUILER'}
+            </Text>
           </View>
           <Text style={estilos.hectareas}>{campo.hectareas} ha</Text>
         </View>
@@ -71,7 +73,7 @@ const estilos = StyleSheet.create({
   },
   ubicacion: {
     fontSize: fontSize.sm,
-    color: colors.neutral[600],
+    color: colors.neutral[800],
   },
   fila: {
     flexDirection: 'row',
@@ -88,11 +90,11 @@ const estilos = StyleSheet.create({
   badgeTexto: {
     fontSize: fontSize.xs,
     fontWeight: fontWeight.semibold,
-    color: colors.neutral[700],
+    color: colors.neutral[900],
   },
   hectareas: {
     fontSize: fontSize.sm,
-    color: colors.neutral[600],
+    color: colors.neutral[800],
   },
   precioContenedor: {
     maxWidth: 110,

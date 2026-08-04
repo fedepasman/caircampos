@@ -95,11 +95,11 @@ const estilos = StyleSheet.create({
   },
   email: {
     fontSize: fontSize.sm,
-    color: colors.neutral[600],
+    color: colors.neutral[800],
   },
   aviso: {
     fontSize: fontSize.sm,
-    color: colors.neutral[600],
+    color: colors.neutral[800],
     marginBottom: spacing[4],
   },
   botonSalir: {
@@ -126,7 +126,7 @@ const estilos = StyleSheet.create({
   },
   mensaje: {
     fontSize: fontSize.base,
-    color: colors.neutral[600],
+    color: colors.neutral[800],
     textAlign: 'center',
   },
   link: {

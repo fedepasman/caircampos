@@ -1,4 +1,12 @@
-import { ActivityIndicator, FlatList, Linking, Pressable, StyleSheet, Text, View } from 'react-native';
+import {
+  ActivityIndicator,
+  FlatList,
+  Linking,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { Link } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, fontSize, fontWeight, radius, spacing } from '@cair/tokens';
@@ -131,7 +139,7 @@ const estilos = StyleSheet.create({
   },
   mensaje: {
     fontSize: fontSize.base,
-    color: colors.neutral[600],
+    color: colors.neutral[800],
     textAlign: 'center',
   },
   link: {
@@ -173,7 +181,7 @@ const estilos = StyleSheet.create({
   },
   fecha: {
     fontSize: fontSize.xs,
-    color: colors.neutral[500],
+    color: colors.neutral[800],
   },
   comprador: {
     fontSize: fontSize.sm,
@@ -186,7 +194,7 @@ const estilos = StyleSheet.create({
   },
   mensajeTexto: {
     fontSize: fontSize.sm,
-    color: colors.neutral[600],
+    color: colors.neutral[800],
     marginTop: spacing[1],
   },
 });
