@@ -18,15 +18,18 @@ export function FormularioConsulta({
 }) {
   const router = useRouter();
   const [errorGeneral, setErrorGeneral] = useState<string | null>(null);
+  const [enviado, setEnviado] = useState(false);
 
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm<Consulta>({ resolver: zodResolver(esquemaConsulta) });
 
   async function alEnviar(datos: Consulta) {
     setErrorGeneral(null);
+    setEnviado(false);
 
     const { error } = await clienteNavegador()
       .from('consultas')
@@ -37,6 +40,8 @@ export function FormularioConsulta({
       return;
     }
 
+    reset();
+    setEnviado(true);
     router.refresh();
   }
 
@@ -48,6 +53,11 @@ export function FormularioConsulta({
       <FormTextarea label="Mensaje" error={errors.mensaje?.message} {...register('mensaje')} />
 
       {errorGeneral && <p className="text-danger text-sm">{errorGeneral}</p>}
+      {enviado && !errorGeneral && (
+        <p className="text-success text-sm">
+          Consulta enviada. La inmobiliaria se va a poner en contacto con vos.
+        </p>
+      )}
 
       <Button type="submit" disabled={isSubmitting}>
         {isSubmitting ? 'Enviando…' : 'Enviar consulta'}
