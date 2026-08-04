@@ -1,4 +1,4 @@
-import { Home, Mountain } from 'lucide-react-native';
+import { Home, MessageCircle, Mountain } from 'lucide-react-native';
 import { Tabs } from 'expo-router';
 import { colors, fontSize } from '@cair/tokens';
 
@@ -29,6 +29,13 @@ export default function TabsLayout() {
         options={{
           title: 'Mis Campos',
           tabBarIcon: ({ color, size }) => <Mountain color={color} size={size} />,
+        }}
+      />
+      <Tabs.Screen
+        name="consultas"
+        options={{
+          title: 'Consultas',
+          tabBarIcon: ({ color, size }) => <MessageCircle color={color} size={size} />,
         }}
       />
     </Tabs>

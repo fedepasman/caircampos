@@ -1,11 +1,11 @@
-import { ChevronRight, Plus, Tag } from 'lucide-react-native';
+import { ChevronRight, MessageCircle, Plus, Tag } from 'lucide-react-native';
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Link, router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ETIQUETAS_MODALIDAD_CAMPO, ETIQUETAS_TIPO_CAMPO } from '@cair/shared';
 import { colors, fontSize, fontWeight, radius, spacing } from '@cair/tokens';
 import { useSesion } from '../../lib/use-sesion';
-import { useMisCampos, useSocio, type CampoPanel } from '../../lib/queries/panel';
+import { useConsultas, useMisCampos, useSocio, type CampoPanel } from '../../lib/queries/panel';
 import { supabase } from '../../lib/supabase';
 
 function estadoCampo(campo: Pick<CampoPanel, 'publicado' | 'revisado_por_cair'>): {
@@ -23,6 +23,7 @@ export default function Panel() {
   const { sesion, cargando: cargandoSesion } = useSesion();
   const { data: socio, isLoading: cargandoSocio } = useSocio(sesion?.user.id);
   const { data: campos, isLoading: cargandoCampos } = useMisCampos(socio?.id);
+  const { data: consultas } = useConsultas(Boolean(socio));
 
   if (cargandoSesion) {
     return (
@@ -82,11 +83,20 @@ export default function Panel() {
 
       <Text style={estilos.bienvenida}>Bienvenido, {socio.nombre}</Text>
 
-      <View style={estilos.tarjetaStat}>
-        <Tag color={colors.brand[600]} size={22} />
-        <View>
-          <Text style={estilos.statNumero}>{publicados}</Text>
-          <Text style={estilos.statEtiqueta}>Campos publicados</Text>
+      <View style={estilos.filaStats}>
+        <View style={[estilos.tarjetaStat, estilos.statMitad]}>
+          <Tag color={colors.brand[600]} size={22} />
+          <View>
+            <Text style={estilos.statNumero}>{publicados}</Text>
+            <Text style={estilos.statEtiqueta}>Publicados</Text>
+          </View>
+        </View>
+        <View style={[estilos.tarjetaStat, estilos.statMitad]}>
+          <MessageCircle color={colors.brand[600]} size={22} />
+          <View>
+            <Text style={estilos.statNumero}>{consultas?.length ?? 0}</Text>
+            <Text style={estilos.statEtiqueta}>Consultas</Text>
+          </View>
         </View>
       </View>
 
@@ -178,12 +188,19 @@ const estilos = StyleSheet.create({
     fontSize: fontSize.sm,
     color: colors.neutral[600],
   },
+  filaStats: {
+    flexDirection: 'row',
+    gap: spacing[3],
+    marginHorizontal: spacing[4],
+    marginBottom: spacing[4],
+  },
+  statMitad: {
+    flex: 1,
+  },
   tarjetaStat: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing[3],
-    marginHorizontal: spacing[4],
-    marginBottom: spacing[4],
     padding: spacing[4],
     borderRadius: radius.xl,
     backgroundColor: colors.neutral[100],
