@@ -28,6 +28,8 @@ export type CampoFicha = Pick<
   | 'localidad'
   | 'modalidad'
   | 'tipo_campo'
+  | 'latitud'
+  | 'longitud'
 > & {
   socios: Pick<Tables<'socios'>, 'nombre'>;
   campo_fotos: (Pick<Tables<'campo_fotos'>, 'id' | 'orden'> & FotoCampo)[];
@@ -57,7 +59,7 @@ export function useCampo(id: string) {
       const { data, error } = await supabase
         .from('campos')
         .select(
-          'id, titulo, descripcion, hectareas, precio_usd, provincia, localidad, modalidad, tipo_campo, socios(nombre), campo_fotos(id, object_key, orden)',
+          'id, titulo, descripcion, hectareas, precio_usd, provincia, localidad, modalidad, tipo_campo, latitud, longitud, socios(nombre), campo_fotos(id, object_key, orden)',
         )
         .eq('id', id)
         .maybeSingle();

@@ -1,5 +1,7 @@
+import { ChevronRight, Plus, Tag } from 'lucide-react-native';
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Link, router } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ETIQUETAS_MODALIDAD_CAMPO, ETIQUETAS_TIPO_CAMPO } from '@cair/shared';
 import { colors, fontSize, fontWeight, radius, spacing } from '@cair/tokens';
 import { useSesion } from '../../lib/use-sesion';
@@ -17,6 +19,7 @@ function estadoCampo(campo: Pick<CampoPanel, 'publicado' | 'revisado_por_cair'>)
 }
 
 export default function Panel() {
+  const insets = useSafeAreaInsets();
   const { sesion, cargando: cargandoSesion } = useSesion();
   const { data: socio, isLoading: cargandoSocio } = useSocio(sesion?.user.id);
   const { data: campos, isLoading: cargandoCampos } = useMisCampos(socio?.id);
@@ -58,11 +61,15 @@ export default function Panel() {
     );
   }
 
+  const publicados = campos?.filter(
+    (campo) => campo.publicado && campo.revisado_por_cair === 'aprobado',
+  ).length ?? 0;
+
   return (
-    <View style={estilos.contenedor}>
+    <View style={[estilos.contenedor, { paddingTop: insets.top + spacing[2] }]}>
       <View style={estilos.encabezado}>
         <Text style={estilos.titulo} numberOfLines={1}>
-          Hola, {socio.nombre}
+          {socio.nombre}
         </Text>
         <Pressable
           onPress={() => {
@@ -73,14 +80,17 @@ export default function Panel() {
         </Pressable>
       </View>
 
-      <Pressable
-        style={estilos.botonNuevo}
-        onPress={() => {
-          router.push('/panel/campos/nuevo');
-        }}
-      >
-        <Text style={estilos.botonNuevoTexto}>+ Cargar campo nuevo</Text>
-      </Pressable>
+      <Text style={estilos.bienvenida}>Bienvenido, {socio.nombre}</Text>
+
+      <View style={estilos.tarjetaStat}>
+        <Tag color={colors.brand[600]} size={22} />
+        <View>
+          <Text style={estilos.statNumero}>{publicados}</Text>
+          <Text style={estilos.statEtiqueta}>Campos publicados</Text>
+        </View>
+      </View>
+
+      <Text style={estilos.seccion}>Mis campos</Text>
 
       {cargandoCampos && (
         <View style={estilos.centrado}>
@@ -99,30 +109,42 @@ export default function Panel() {
           data={campos}
           keyExtractor={(campo) => campo.id}
           contentContainerStyle={estilos.lista}
+          style={estilos.listaGrupo}
+          ItemSeparatorComponent={() => <View style={estilos.separador} />}
           renderItem={({ item }) => {
             const { etiqueta, color } = estadoCampo(item);
             return (
               <Pressable
-                style={estilos.tarjeta}
+                style={estilos.fila}
                 onPress={() => {
                   router.push(`/panel/campos/${item.id}`);
                 }}
               >
-                <View style={estilos.tarjetaContenido}>
-                  <Text style={estilos.tarjetaTitulo} numberOfLines={1}>
+                <View style={estilos.filaContenido}>
+                  <Text style={estilos.filaTitulo} numberOfLines={1}>
                     {item.titulo}
                   </Text>
-                  <Text style={estilos.tarjetaDetalle}>
+                  <Text style={estilos.filaDetalle}>
                     {item.localidad}, {item.provincia} · {item.hectareas} ha ·{' '}
                     {ETIQUETAS_TIPO_CAMPO[item.tipo_campo]} · {ETIQUETAS_MODALIDAD_CAMPO[item.modalidad]}
                   </Text>
                 </View>
                 <Text style={[estilos.estado, { color }]}>{etiqueta}</Text>
+                <ChevronRight color={colors.neutral[400]} size={18} />
               </Pressable>
             );
           }}
         />
       )}
+
+      <Pressable
+        style={[estilos.fab, { bottom: spacing[6] + insets.bottom }]}
+        onPress={() => {
+          router.push('/panel/campos/nuevo');
+        }}
+      >
+        <Plus color={colors.neutral[50]} size={26} />
+      </Pressable>
     </View>
   );
 }
@@ -131,25 +153,57 @@ const estilos = StyleSheet.create({
   contenedor: {
     flex: 1,
     backgroundColor: colors.neutral[50],
-    paddingTop: spacing[16],
   },
   encabezado: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: spacing[6],
-    marginBottom: spacing[4],
+    paddingHorizontal: spacing[4],
+    marginBottom: spacing[1],
   },
   titulo: {
     flexShrink: 1,
-    fontSize: fontSize['2xl'],
+    fontSize: fontSize.xl,
     fontWeight: fontWeight.bold,
-    color: colors.neutral[900],
+    color: colors.brand[900],
   },
   cerrarSesion: {
     flexShrink: 0,
     fontSize: fontSize.sm,
     color: colors.neutral[600],
+  },
+  bienvenida: {
+    paddingHorizontal: spacing[4],
+    marginBottom: spacing[4],
+    fontSize: fontSize.sm,
+    color: colors.neutral[600],
+  },
+  tarjetaStat: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing[3],
+    marginHorizontal: spacing[4],
+    marginBottom: spacing[4],
+    padding: spacing[4],
+    borderRadius: radius.xl,
+    backgroundColor: colors.neutral[100],
+  },
+  statNumero: {
+    fontSize: fontSize['2xl'],
+    fontWeight: fontWeight.bold,
+    color: colors.neutral[900],
+  },
+  statEtiqueta: {
+    fontSize: fontSize.sm,
+    color: colors.neutral[600],
+    textTransform: 'uppercase',
+  },
+  seccion: {
+    paddingHorizontal: spacing[4],
+    marginBottom: spacing[2],
+    fontSize: fontSize.lg,
+    fontWeight: fontWeight.semibold,
+    color: colors.neutral[900],
   },
   centrado: {
     flex: 1,
@@ -168,52 +222,59 @@ const estilos = StyleSheet.create({
     fontWeight: fontWeight.semibold,
     color: colors.brand[600],
   },
-  botonNuevo: {
-    marginHorizontal: spacing[6],
-    marginBottom: spacing[4],
-    borderRadius: radius.md,
-    borderWidth: 1,
-    borderColor: colors.brand[600],
-    paddingVertical: spacing[2],
-    alignItems: 'center',
-  },
-  botonNuevoTexto: {
-    fontSize: fontSize.sm,
-    fontWeight: fontWeight.semibold,
-    color: colors.brand[600],
-  },
-  lista: {
-    paddingHorizontal: spacing[6],
-    paddingBottom: spacing[6],
-  },
-  tarjeta: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: spacing[3],
-    borderRadius: radius.md,
+  listaGrupo: {
+    marginHorizontal: spacing[4],
+    borderRadius: radius.xl,
+    backgroundColor: colors.neutral[50],
     borderWidth: 1,
     borderColor: colors.neutral[200],
-    backgroundColor: colors.neutral[50],
-    padding: spacing[4],
-    marginBottom: spacing[3],
+    overflow: 'hidden',
   },
-  tarjetaContenido: {
+  lista: {
+    paddingBottom: spacing[16],
+  },
+  separador: {
+    height: 1,
+    backgroundColor: colors.neutral[200],
+    marginLeft: spacing[4],
+  },
+  fila: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing[2],
+    padding: spacing[4],
+  },
+  filaContenido: {
     flex: 1,
     gap: spacing[1],
   },
-  tarjetaTitulo: {
+  filaTitulo: {
     fontSize: fontSize.base,
     fontWeight: fontWeight.semibold,
     color: colors.neutral[900],
   },
-  tarjetaDetalle: {
+  filaDetalle: {
     fontSize: fontSize.sm,
     color: colors.neutral[600],
   },
   estado: {
-    fontSize: fontSize.sm,
+    fontSize: fontSize.xs,
     fontWeight: fontWeight.medium,
     textAlign: 'right',
+  },
+  fab: {
+    position: 'absolute',
+    right: spacing[6],
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: colors.brand[600],
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: colors.neutral[950],
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 4,
   },
 });
