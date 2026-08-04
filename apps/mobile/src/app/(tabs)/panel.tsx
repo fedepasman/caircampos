@@ -6,7 +6,6 @@ import { ETIQUETAS_MODALIDAD_CAMPO, ETIQUETAS_TIPO_CAMPO } from '@cair/shared';
 import { colors, fontSize, fontWeight, radius, spacing } from '@cair/tokens';
 import { useSesion } from '../../lib/use-sesion';
 import { useConsultas, useMisCampos, useSocio, type CampoPanel } from '../../lib/queries/panel';
-import { supabase } from '../../lib/supabase';
 
 function estadoCampo(campo: Pick<CampoPanel, 'publicado' | 'revisado_por_cair'>): {
   etiqueta: string;
@@ -68,18 +67,9 @@ export default function Panel() {
 
   return (
     <View style={[estilos.contenedor, { paddingTop: insets.top + spacing[2] }]}>
-      <View style={estilos.encabezado}>
-        <Text style={estilos.titulo} numberOfLines={1}>
-          {socio.nombre}
-        </Text>
-        <Pressable
-          onPress={() => {
-            void supabase.auth.signOut();
-          }}
-        >
-          <Text style={estilos.cerrarSesion}>Cerrar sesión</Text>
-        </Pressable>
-      </View>
+      <Text style={estilos.titulo} numberOfLines={1}>
+        {socio.nombre}
+      </Text>
 
       <Text style={estilos.bienvenida}>Bienvenido, {socio.nombre}</Text>
 
@@ -164,23 +154,13 @@ const estilos = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.neutral[50],
   },
-  encabezado: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: spacing[4],
-    marginBottom: spacing[1],
-  },
   titulo: {
     flexShrink: 1,
+    paddingHorizontal: spacing[4],
+    marginBottom: spacing[1],
     fontSize: fontSize.xl,
     fontWeight: fontWeight.bold,
     color: colors.brand[900],
-  },
-  cerrarSesion: {
-    flexShrink: 0,
-    fontSize: fontSize.sm,
-    color: colors.neutral[600],
   },
   bienvenida: {
     paddingHorizontal: spacing[4],
