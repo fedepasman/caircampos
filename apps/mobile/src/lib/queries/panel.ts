@@ -36,6 +36,25 @@ export function useSocio(usuarioId: string | undefined) {
   });
 }
 
+export type CampoEditable = Tables<'campos'>;
+export type FotoCampo = Pick<Tables<'campo_fotos'>, 'id' | 'object_key' | 'orden'>;
+
+export function useCampoParaEditar(id: string) {
+  return useQuery({
+    queryKey: ['campos', 'editar', id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('campos')
+        .select('*, campo_fotos(id, object_key, orden)')
+        .eq('id', id)
+        .maybeSingle();
+
+      if (error) throw error;
+      return data satisfies (CampoEditable & { campo_fotos: FotoCampo[] }) | null;
+    },
+  });
+}
+
 export function useMisCampos(socioId: string | undefined) {
   return useQuery({
     queryKey: ['campos', 'mios', socioId],

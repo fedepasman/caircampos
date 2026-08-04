@@ -14,6 +14,7 @@ const esquema = z.object({
   EXPO_PUBLIC_SUPABASE_URL: z.url('Debe ser una URL válida'),
   EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY: z.string().min(1),
   EXPO_PUBLIC_R2_PUBLIC_URL: z.url('Debe ser una URL válida'),
+  EXPO_PUBLIC_MAPBOX_TOKEN: z.string().min(1),
 });
 
 const resultado = esquema.safeParse({
@@ -22,6 +23,7 @@ const resultado = esquema.safeParse({
   EXPO_PUBLIC_SUPABASE_URL: process.env.EXPO_PUBLIC_SUPABASE_URL,
   EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY: process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
   EXPO_PUBLIC_R2_PUBLIC_URL: process.env.EXPO_PUBLIC_R2_PUBLIC_URL,
+  EXPO_PUBLIC_MAPBOX_TOKEN: process.env.EXPO_PUBLIC_MAPBOX_TOKEN,
 });
 
 if (!resultado.success) {

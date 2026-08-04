@@ -31,7 +31,21 @@ const config: ExpoConfig = {
     package: 'ar.org.cair.app',
   },
 
-  plugins: ['expo-router', 'expo-secure-store'],
+  plugins: [
+    'expo-router',
+    'expo-secure-store',
+    [
+      'expo-image-picker',
+      {
+        photosPermission: 'CAIR necesita acceder a tus fotos para agregarlas a la publicación de un campo.',
+      },
+    ],
+    // El token de descarga del SDK nativo (RNMAPBOX_MAPS_DOWNLOAD_TOKEN) se
+    // pasa por variable de entorno al correr prebuild/build, no acá — la
+    // opción de plugin equivalente está deprecada. Nunca se embebe en el
+    // binario. Ver OPERACIONES.md.
+    '@rnmapbox/maps',
+  ],
 
   experiments: {
     // Genera tipos para las rutas: un enlace a una ruta inexistente rompe en
