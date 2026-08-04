@@ -8,7 +8,3 @@ import { env } from './env';
 export function urlFotoCampo(objectKey: string): string {
   return `${env.EXPO_PUBLIC_R2_PUBLIC_URL}/${objectKey}`;
 }
-
-export function fotoPortada(fotos: { object_key: string; orden: number }[]): string | undefined {
-  return [...fotos].sort((a, b) => a.orden - b.orden)[0]?.object_key;
-}

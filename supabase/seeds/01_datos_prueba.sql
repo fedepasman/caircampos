@@ -7,6 +7,14 @@
 --
 -- Un campo queda sin publicar a propósito: sirve para confirmar a simple
 -- vista que la política RLS pública lo excluye del mapa.
+--
+-- El email del socio de prueba (prueba_socio@cair.com, contraseña
+-- password123) es el que se usa consistentemente para probar login en el
+-- móvil desde hace semanas. Antes decía socio-prueba@cair.test: alguien lo
+-- había creado a mano contra la base local en una sesión anterior (nunca
+-- llegó a este archivo), así que cada `db:reset` lo borraba sin avisar y el
+-- login "se rompía" sin motivo aparente. Cambiarlo acá, en el seed, es lo
+-- que lo hace sobrevivir a cualquier reset futuro.
 
 insert into auth.users (
   instance_id,
@@ -29,7 +37,7 @@ insert into auth.users (
   '11111111-1111-1111-1111-111111111111',
   'authenticated',
   'authenticated',
-  'socio-prueba@cair.test',
+  'prueba_socio@cair.com',
   extensions.crypt('password123', extensions.gen_salt('bf')),
   now(),
   '{"provider": "email", "providers": ["email"], "rol": "socio"}',

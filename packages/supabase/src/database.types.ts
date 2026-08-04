@@ -180,6 +180,35 @@ export type Database = {
           },
         ];
       };
+      push_tokens: {
+        Row: {
+          created_at: string;
+          id: string;
+          socio_id: string;
+          token: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          socio_id: string;
+          token: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          socio_id?: string;
+          token?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'push_tokens_socio_id_fkey';
+            columns: ['socio_id'];
+            isOneToOne: false;
+            referencedRelation: 'socios';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       socios: {
         Row: {
           created_at: string;

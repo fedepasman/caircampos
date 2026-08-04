@@ -443,6 +443,15 @@ entrypoint = "./functions/subir-foto-campo/index.ts"
 # For example, if you want to serve static HTML pages in your function:
 # static_files = [ "./functions/subir-foto-campo/*.html" ]
 
+[functions.enviar-notificacion-consulta]
+enabled = true
+# La llama el trigger de Postgres vía pg_net, no un usuario logueado: no hay
+# JWT que verificar. La función valida por su cuenta un secreto compartido
+# (header X-Internal-Secret) — ver el comentario en su index.ts.
+verify_jwt = false
+import_map = "./functions/enviar-notificacion-consulta/deno.json"
+entrypoint = "./functions/enviar-notificacion-consulta/index.ts"
+
 # SMTP de producción, solo para el proyecto de producción — `supabase start`
 # local sigue usando Mailpit (ver OPERACIONES.md §9): así los tests locales
 # no consumen la cuota de Resend ni dependen de la red. Necesario porque el

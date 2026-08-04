@@ -17,6 +17,13 @@ create schema if not exists extensions;
 -- al cliente y filtrar ahí.
 create extension if not exists postgis with schema extensions;
 
+-- pg_net: HTTP asíncrono desde Postgres. Lo usa el trigger de
+-- `04_consultas.sql` para avisarle a una Edge Function cuando entra una
+-- consulta nueva, sin bloquear el insert esperando la respuesta.
+-- No admite `with schema`: sus propias funciones se instalan siempre en un
+-- esquema `net` fijo, definido por la extensión misma.
+create extension if not exists pg_net;
+
 -- Esquema privado para funciones auxiliares de las políticas RLS.
 --
 -- Las funciones `SECURITY DEFINER` evaden RLS, y en `public` Postgres otorga

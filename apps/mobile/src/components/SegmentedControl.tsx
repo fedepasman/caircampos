@@ -59,7 +59,7 @@ const estilos = StyleSheet.create({
   texto: {
     fontSize: fontSize.sm,
     fontWeight: fontWeight.medium,
-    color: colors.neutral[700],
+    color: colors.neutral[800],
   },
   textoSeleccionado: {
     fontWeight: fontWeight.semibold,
