@@ -55,6 +55,31 @@ export function useCampoParaEditar(id: string) {
   });
 }
 
+export type Consulta = Pick<Tables<'consultas'>, 'id' | 'mensaje' | 'created_at'> & {
+  campos: Pick<Tables<'campos'>, 'titulo'>;
+  compradores: Pick<Tables<'compradores'>, 'nombre' | 'apellido' | 'telefono'>;
+};
+
+export function useConsultas(habilitado: boolean) {
+  return useQuery({
+    queryKey: ['consultas'],
+    queryFn: async () => {
+      // Sin filtro a propósito: la política de RLS de `consultas` ya
+      // restringe el SELECT a las consultas de los campos del socio
+      // logueado (o a las que mandó, si fuera comprador) — mismo select
+      // que usa apps/web/src/app/panel/page.tsx.
+      const { data, error } = await supabase
+        .from('consultas')
+        .select('id, mensaje, created_at, campos(titulo), compradores(nombre, apellido, telefono)')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return data satisfies Consulta[];
+    },
+    enabled: habilitado,
+  });
+}
+
 export function useMisCampos(socioId: string | undefined) {
   return useQuery({
     queryKey: ['campos', 'mios', socioId],
