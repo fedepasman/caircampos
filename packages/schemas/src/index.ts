@@ -157,6 +157,17 @@ export const esquemaSocio = z.object({
 
 export type Socio = z.infer<typeof esquemaSocio>;
 
+/**
+ * Autoservicio del socio para editar su propio perfil desde `/panel/perfil`
+ * — a diferencia de `esquemaSocio` (alta/edición completa desde el panel de
+ * admin), acá no hay `nro_socio` (solo lo asigna CAIR, vía la función
+ * `asignar_numero_socio`) ni `publicado` (visibilidad en el directorio
+ * público, decisión de CAIR, no del socio).
+ */
+export const esquemaPerfilSocio = esquemaSocio.omit({ nro_socio: true, publicado: true });
+
+export type PerfilSocio = z.infer<typeof esquemaPerfilSocio>;
+
 /** Consulta de un comprador por un campo, desde la ficha pública. */
 export const esquemaConsulta = z.object({
   mensaje: z.string().min(1, 'Escribí tu consulta'),

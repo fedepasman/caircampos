@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { LayoutDashboard, MessageCircle, Plus, Sprout } from 'lucide-react';
+import { LayoutDashboard, MessageCircle, Plus, Sprout, UserCircle } from 'lucide-react';
 import { BotonCerrarSesion } from '@/components/boton-cerrar-sesion';
 import { buttonStyles } from '@cair/ui/Button';
 
@@ -9,6 +9,9 @@ import { buttonStyles } from '@cair/ui/Button';
  * Solo enlaza a lo que existe de verdad: "Mis campos" y "Consultas" son
  * anclas dentro de /panel, no rutas nuevas — no hay "Saved Properties" ni
  * "Market Reports" del comp de Stitch porque esas funciones no existen.
+ * "Mi perfil" sí es una ruta real (/panel/perfil): a diferencia de las
+ * otras dos, no es una sección de /panel, es una pantalla propia con un
+ * formulario de edición.
  *
  * En mobile el sidebar de 256px no cabe: colapsa a una barra horizontal
  * arriba (`flex-col` en el contenedor, `sm:flex-row` recién desde tablet),
@@ -49,6 +52,14 @@ export default function PanelLayout({ children }: { children: React.ReactNode })
           >
             <MessageCircle size={18} />
             <span className="hidden sm:inline">Consultas</span>
+          </Link>
+          <Link
+            href="/panel/perfil"
+            title="Mi perfil"
+            className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-semibold whitespace-nowrap text-neutral-900 hover:bg-neutral-300"
+          >
+            <UserCircle size={18} />
+            <span className="hidden sm:inline">Mi perfil</span>
           </Link>
         </nav>
 
