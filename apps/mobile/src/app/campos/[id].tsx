@@ -137,7 +137,7 @@ const estilos = StyleSheet.create({
   },
   mensaje: {
     fontSize: fontSize.base,
-    color: colors.neutral[600],
+    color: colors.neutral[800],
     textAlign: 'center',
   },
   foto: {
@@ -192,7 +192,7 @@ const estilos = StyleSheet.create({
   },
   ubicacion: {
     fontSize: fontSize.base,
-    color: colors.neutral[600],
+    color: colors.neutral[800],
     marginBottom: spacing[3],
   },
   stats: {
@@ -214,7 +214,7 @@ const estilos = StyleSheet.create({
   },
   statEtiqueta: {
     fontSize: fontSize.xs,
-    color: colors.neutral[600],
+    color: colors.neutral[800],
   },
   seccion: {
     marginTop: spacing[4],
@@ -232,7 +232,7 @@ const estilos = StyleSheet.create({
   },
   publicadoPor: {
     fontSize: fontSize.sm,
-    color: colors.neutral[500],
+    color: colors.neutral[800],
     marginTop: spacing[6],
     marginBottom: spacing[4],
   },

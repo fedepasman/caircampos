@@ -24,7 +24,9 @@ export default function CampoEditar() {
     );
   }
 
-  return <FormularioCampo socioId={campo.socio_id} campoExistente={campo} fotos={campo.campo_fotos} />;
+  return (
+    <FormularioCampo socioId={campo.socio_id} campoExistente={campo} fotos={campo.campo_fotos} />
+  );
 }
 
 const estilos = StyleSheet.create({
@@ -36,6 +38,6 @@ const estilos = StyleSheet.create({
   },
   mensaje: {
     fontSize: fontSize.base,
-    color: colors.neutral[600],
+    color: colors.neutral[800],
   },
 });

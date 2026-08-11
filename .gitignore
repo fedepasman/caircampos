@@ -11,6 +11,7 @@
 *.mobileprovision
 *.keystore
 !debug.keystore
+google-services.json
 .secretos-locales/
 .vercel/
 

@@ -1,7 +1,16 @@
 import { ImageManipulator, SaveFormat } from 'expo-image-manipulator';
 import * as ImagePicker from 'expo-image-picker';
 import { useState } from 'react';
-import { ActivityIndicator, Alert, FlatList, Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Alert,
+  FlatList,
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { useQueryClient } from '@tanstack/react-query';
 import { colors, fontSize, fontWeight, radius, spacing } from '@cair/tokens';
 import { supabase } from '../lib/supabase';
@@ -162,7 +171,7 @@ const estilos = StyleSheet.create({
   },
   etiqueta: {
     fontSize: fontSize.sm,
-    color: colors.neutral[700],
+    color: colors.neutral[800],
   },
   fotoContenedor: {
     marginRight: spacing[2],

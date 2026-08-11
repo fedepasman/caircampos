@@ -1,106 +1,131 @@
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
-import { formatearPrecioUsd } from '@cair/shared';
+import { useState } from 'react';
+import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ETIQUETAS_TIPO_CAMPO, formatearPrecioUsd } from '@cair/shared';
 import { colors, fontSize, fontWeight, radius, spacing } from '@cair/tokens';
 import type { CampoListado } from '../lib/queries/campos';
-import { fotoPortada, urlFotoCampo } from '../lib/url-foto-campo';
+import { urlFotoCampo } from '../lib/url-foto-campo';
 
 export function TarjetaCampo({ campo, onPress }: { campo: CampoListado; onPress: () => void }) {
-  const objectKey = fotoPortada(campo.campo_fotos);
+  const [anchoCarrusel, setAnchoCarrusel] = useState(0);
+  const [fotoActual, setFotoActual] = useState(0);
+  const fotos = [...campo.campo_fotos].sort((a, b) => a.orden - b.orden);
 
   return (
-    <Pressable style={estilos.tarjeta} onPress={onPress}>
-      {objectKey ? (
-        <Image source={{ uri: urlFotoCampo(objectKey) }} style={estilos.foto} />
-      ) : (
-        <View style={[estilos.foto, estilos.fotoVacia]} />
-      )}
+    <View style={estilos.tarjeta}>
+      <View
+        style={estilos.carrusel}
+        onLayout={(evento) => {
+          setAnchoCarrusel(evento.nativeEvent.layout.width);
+        }}
+      >
+        {fotos.length > 0 && anchoCarrusel > 0 ? (
+          <ScrollView
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            onMomentumScrollEnd={(evento) => {
+              setFotoActual(Math.round(evento.nativeEvent.contentOffset.x / anchoCarrusel));
+            }}
+          >
+            {fotos.map((foto, indice) => (
+              <Pressable
+                key={`${foto.object_key}-${String(indice)}`}
+                style={{ width: anchoCarrusel }}
+                onPress={onPress}
+              >
+                <Image source={{ uri: urlFotoCampo(foto.object_key) }} style={estilos.foto} />
+              </Pressable>
+            ))}
+          </ScrollView>
+        ) : (
+          <Pressable style={[estilos.foto, estilos.fotoVacia]} onPress={onPress} />
+        )}
 
-      <View style={estilos.contenido}>
+        {fotos.length > 1 && (
+          <View style={estilos.puntos}>
+            {fotos.map((foto, indice) => (
+              <View
+                key={`${foto.object_key}-${String(indice)}`}
+                style={[estilos.punto, indice === fotoActual && estilos.puntoActivo]}
+              />
+            ))}
+          </View>
+        )}
+      </View>
+
+      <Pressable style={estilos.contenido} onPress={onPress}>
         <Text style={estilos.titulo} numberOfLines={1}>
           {campo.titulo}
         </Text>
         <Text style={estilos.ubicacion} numberOfLines={1}>
           {campo.localidad}, {campo.provincia}
         </Text>
-        <View style={estilos.fila}>
-          <View style={estilos.badge}>
-            <Text style={estilos.badgeTexto}>{campo.modalidad === 'venta' ? 'VENTA' : 'ALQUILER'}</Text>
-          </View>
-          <Text style={estilos.hectareas}>{campo.hectareas} ha</Text>
-        </View>
-      </View>
-
-      <View style={estilos.precioContenedor}>
+        <Text style={estilos.detalle}>
+          {campo.hectareas} ha · {ETIQUETAS_TIPO_CAMPO[campo.tipo_campo]}
+        </Text>
         <Text style={estilos.precio} numberOfLines={1}>
           {formatearPrecioUsd(campo.precio_usd)}
         </Text>
-      </View>
-    </Pressable>
+      </Pressable>
+    </View>
   );
 }
 
 const estilos = StyleSheet.create({
   tarjeta: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing[3],
+    marginBottom: spacing[6],
+  },
+  carrusel: {
+    aspectRatio: 4 / 3,
     borderRadius: radius.xl,
-    backgroundColor: colors.neutral[50],
-    borderWidth: 1,
-    borderColor: colors.neutral[200],
-    padding: spacing[2],
-    marginBottom: spacing[3],
+    overflow: 'hidden',
+    backgroundColor: colors.neutral[100],
   },
   foto: {
-    width: 88,
-    height: 88,
-    borderRadius: radius.lg,
-    backgroundColor: colors.neutral[100],
+    height: '100%',
   },
   fotoVacia: {
-    backgroundColor: colors.neutral[100],
+    flex: 1,
+  },
+  puntos: {
+    position: 'absolute',
+    bottom: spacing[3],
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: spacing[1],
+  },
+  punto: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: 'rgba(255,255,255,0.5)',
+  },
+  puntoActivo: {
+    backgroundColor: colors.neutral[50],
   },
   contenido: {
-    flex: 1,
+    paddingTop: spacing[3],
     gap: spacing[1],
   },
   titulo: {
-    fontSize: fontSize.base,
-    fontWeight: fontWeight.semibold,
+    fontSize: fontSize.lg,
+    fontWeight: fontWeight.bold,
     color: colors.neutral[900],
   },
   ubicacion: {
+    fontSize: fontSize.base,
+    color: colors.neutral[800],
+  },
+  detalle: {
     fontSize: fontSize.sm,
-    color: colors.neutral[600],
-  },
-  fila: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing[2],
-    marginTop: spacing[1],
-  },
-  badge: {
-    backgroundColor: colors.neutral[200],
-    borderRadius: radius.sm,
-    paddingHorizontal: spacing[2],
-    paddingVertical: 2,
-  },
-  badgeTexto: {
-    fontSize: fontSize.xs,
-    fontWeight: fontWeight.semibold,
-    color: colors.neutral[700],
-  },
-  hectareas: {
-    fontSize: fontSize.sm,
-    color: colors.neutral[600],
-  },
-  precioContenedor: {
-    maxWidth: 110,
+    color: colors.neutral[800],
   },
   precio: {
-    fontSize: fontSize.xs,
+    fontSize: fontSize.xl,
     fontWeight: fontWeight.bold,
     color: colors.neutral[900],
-    textAlign: 'right',
+    marginTop: spacing[1],
   },
 });
