@@ -1,260 +1,448 @@
-<!DOCTYPE html>
+<!doctype html>
 
-<html class="light" lang="es"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Noticias del Sector - CAIR</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600&amp;family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "surface-variant": "#e3e2e0",
-                        "error": "#ba1a1a",
-                        "surface-container-high": "#e9e8e6",
-                        "surface-bright": "#faf9f7",
-                        "on-secondary-container": "#6f6350",
-                        "on-surface": "#1a1c1b",
-                        "secondary-container": "#f2e0c8",
-                        "surface-container": "#efeeec",
-                        "surface": "#faf9f7",
-                        "primary": "#18281e",
-                        "outline": "#737873",
-                        "clay-warm": "#A69076",
-                        "outline-variant": "#c3c8c2",
-                        "on-surface-variant": "#434844",
-                        "on-tertiary-fixed": "#1e1b13",
-                        "on-tertiary": "#ffffff",
-                        "inverse-on-surface": "#f1f1ef",
-                        "surface-dim": "#dadad8",
-                        "inverse-primary": "#b8cbbc",
-                        "on-tertiary-fixed-variant": "#4a463d",
-                        "on-secondary-fixed": "#231a0c",
-                        "institutional-blue": "#34495E",
-                        "on-tertiary-container": "#aaa498",
-                        "secondary": "#695d4a",
-                        "tertiary-fixed-dim": "#ccc6b9",
-                        "moss-accent": "#5E7056",
-                        "secondary-fixed-dim": "#d5c4ad",
-                        "on-error-container": "#93000a",
-                        "on-primary": "#ffffff",
-                        "secondary-fixed": "#f2e0c8",
-                        "inverse-surface": "#2f3130",
-                        "on-error": "#ffffff",
-                        "surface-tint": "#516356",
-                        "background": "#faf9f7",
-                        "tertiary-fixed": "#e9e2d4",
-                        "primary-container": "#2d3e33",
-                        "on-secondary-fixed-variant": "#504534",
-                        "error-container": "#ffdad6",
-                        "surface-container-lowest": "#ffffff",
-                        "forest-deep": "#1B261F",
-                        "primary-fixed": "#d4e7d8",
-                        "primary-fixed-dim": "#b8cbbc",
-                        "on-primary-fixed-variant": "#394b3f",
-                        "surface-container-highest": "#e3e2e0",
-                        "on-secondary": "#ffffff",
-                        "surface-container-low": "#f4f3f1",
-                        "on-background": "#1a1c1b",
-                        "on-primary-fixed": "#0e1f15",
-                        "tertiary-container": "#3e3a31",
-                        "on-primary-container": "#96a99b",
-                        "tertiary": "#28251c"
-                    },
-                    "borderRadius": {
-                        "DEFAULT": "0.125rem",
-                        "lg": "0.25rem",
-                        "xl": "0.5rem",
-                        "full": "0.75rem"
-                    },
-                    "spacing": {
-                        "base": "8px",
-                        "margin-desktop": "64px",
-                        "container-max": "1280px",
-                        "margin-mobile": "16px",
-                        "gutter": "24px",
-                        "section-gap": "120px"
-                    },
-                    "fontFamily": {
-                        "caption": ["Hanken Grotesk"],
-                        "headline-md": ["\"Source Serif 4\""],
-                        "display-lg": ["\"Source Serif 4\""],
-                        "body-md": ["Hanken Grotesk"],
-                        "headline-lg": ["\"Source Serif 4\""],
-                        "body-lg": ["Hanken Grotesk"],
-                        "headline-lg-mobile": ["\"Source Serif 4\""],
-                        "label-md": ["Hanken Grotesk"]
-                    }
-                }
-            }
-        }
+<html class="light" lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Noticias del Sector - CAIR</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600&amp;family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              'surface-variant': '#e3e2e0',
+              error: '#ba1a1a',
+              'surface-container-high': '#e9e8e6',
+              'surface-bright': '#faf9f7',
+              'on-secondary-container': '#6f6350',
+              'on-surface': '#1a1c1b',
+              'secondary-container': '#f2e0c8',
+              'surface-container': '#efeeec',
+              surface: '#faf9f7',
+              primary: '#18281e',
+              outline: '#737873',
+              'clay-warm': '#A69076',
+              'outline-variant': '#c3c8c2',
+              'on-surface-variant': '#434844',
+              'on-tertiary-fixed': '#1e1b13',
+              'on-tertiary': '#ffffff',
+              'inverse-on-surface': '#f1f1ef',
+              'surface-dim': '#dadad8',
+              'inverse-primary': '#b8cbbc',
+              'on-tertiary-fixed-variant': '#4a463d',
+              'on-secondary-fixed': '#231a0c',
+              'institutional-blue': '#34495E',
+              'on-tertiary-container': '#aaa498',
+              secondary: '#695d4a',
+              'tertiary-fixed-dim': '#ccc6b9',
+              'moss-accent': '#5E7056',
+              'secondary-fixed-dim': '#d5c4ad',
+              'on-error-container': '#93000a',
+              'on-primary': '#ffffff',
+              'secondary-fixed': '#f2e0c8',
+              'inverse-surface': '#2f3130',
+              'on-error': '#ffffff',
+              'surface-tint': '#516356',
+              background: '#faf9f7',
+              'tertiary-fixed': '#e9e2d4',
+              'primary-container': '#2d3e33',
+              'on-secondary-fixed-variant': '#504534',
+              'error-container': '#ffdad6',
+              'surface-container-lowest': '#ffffff',
+              'forest-deep': '#1B261F',
+              'primary-fixed': '#d4e7d8',
+              'primary-fixed-dim': '#b8cbbc',
+              'on-primary-fixed-variant': '#394b3f',
+              'surface-container-highest': '#e3e2e0',
+              'on-secondary': '#ffffff',
+              'surface-container-low': '#f4f3f1',
+              'on-background': '#1a1c1b',
+              'on-primary-fixed': '#0e1f15',
+              'tertiary-container': '#3e3a31',
+              'on-primary-container': '#96a99b',
+              tertiary: '#28251c',
+            },
+            borderRadius: {
+              DEFAULT: '0.125rem',
+              lg: '0.25rem',
+              xl: '0.5rem',
+              full: '0.75rem',
+            },
+            spacing: {
+              base: '8px',
+              'margin-desktop': '64px',
+              'container-max': '1280px',
+              'margin-mobile': '16px',
+              gutter: '24px',
+              'section-gap': '120px',
+            },
+            fontFamily: {
+              caption: ['Hanken Grotesk'],
+              'headline-md': ['"Source Serif 4"'],
+              'display-lg': ['"Source Serif 4"'],
+              'body-md': ['Hanken Grotesk'],
+              'headline-lg': ['"Source Serif 4"'],
+              'body-lg': ['Hanken Grotesk'],
+              'headline-lg-mobile': ['"Source Serif 4"'],
+              'label-md': ['Hanken Grotesk'],
+            },
+          },
+        },
+      };
     </script>
-<style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-        .card-shadow {
-            box-shadow: 0 20px 40px -10px rgba(24, 40, 30, 0.05);
-        }
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings:
+          'FILL' 0,
+          'wght' 400,
+          'GRAD' 0,
+          'opsz' 24;
+      }
+      .card-shadow {
+        box-shadow: 0 20px 40px -10px rgba(24, 40, 30, 0.05);
+      }
     </style>
-</head>
-<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col">
-<!-- TopNavBar (Simulated Active State: Mercado) -->
-<header class="bg-surface border-b border-outline-variant docked full-width top-0 z-50">
-<div class="flex justify-between items-center w-full px-6 py-4 max-w-7xl mx-auto">
-<div class="text-2xl font-headline-md font-bold text-primary">CAIR</div>
-<nav class="hidden md:flex space-x-8">
-<a class="text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors duration-200 px-3 py-2 rounded-md font-body-md" href="#">Propiedades</a>
-<a class="text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors duration-200 px-3 py-2 rounded-md font-body-md" href="#">Institucional</a>
-<a class="text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors duration-200 px-3 py-2 rounded-md font-body-md" href="#">Socios</a>
-<a class="text-primary border-b-2 border-primary pb-1 font-semibold hover:bg-surface-container-low transition-colors duration-200 px-3 py-2 rounded-md font-body-md" href="#">Mercado</a>
-</nav>
-<div class="flex items-center space-x-4">
-<button class="hidden md:block bg-primary text-on-primary px-6 py-2 rounded-full font-label-md hover:bg-primary-container transition-colors">Iniciar Sesión</button>
-<button class="md:hidden text-primary">
-<span class="material-symbols-outlined" data-icon="menu">menu</span>
-</button>
-</div>
-</div>
-</header>
-<!-- Hero Section -->
-<section class="relative w-full h-[400px] md:h-[500px] flex items-center justify-center">
-<img alt="Paisaje Rural" class="absolute inset-0 w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCvyHDS-E62uGx7YbTg5t1g5lXSYShMcQOLrtclBPp5j99-x9MqiGjCv1u8NO7ESIoGEoLWezCUnU8-ZvBVtXUCFRQLTusOyV0YKib91Bt-vUmTIO3J70ORvBj5yefqx37XrQK9FYcXGa33VOgEska3FuJNk7hoy1Tp5_zXI9EuLYUGIb_bekUBFLpsAGXNt8uiGilgBiy997JwrVqW_tadeoP8kWnAYDixrZrnEXZ6f55EyJ4DncEEHw"/>
-<div class="absolute inset-0 bg-black/50"></div>
-<div class="relative z-10 text-center px-6 max-w-4xl mx-auto">
-<h1 class="font-display-lg text-4xl md:text-display-lg text-white mb-6">Noticias del Sector Rural</h1>
-<p class="font-body-lg text-lg md:text-body-lg text-white/90 max-w-2xl mx-auto">
-            Análisis, tendencias y novedades del mercado inmobiliario rural argentino. Información clave para la toma de decisiones.
+  </head>
+  <body class="bg-background text-on-background font-body-md flex min-h-screen flex-col">
+    <!-- TopNavBar (Simulated Active State: Mercado) -->
+    <header class="bg-surface border-outline-variant docked full-width top-0 z-50 border-b">
+      <div class="mx-auto flex w-full max-w-7xl items-center justify-between px-6 py-4">
+        <div class="font-headline-md text-primary text-2xl font-bold">CAIR</div>
+        <nav class="hidden space-x-8 md:flex">
+          <a
+            class="text-on-surface-variant hover:text-primary hover:bg-surface-container-low font-body-md rounded-md px-3 py-2 transition-colors duration-200"
+            href="#"
+            >Propiedades</a
+          >
+          <a
+            class="text-on-surface-variant hover:text-primary hover:bg-surface-container-low font-body-md rounded-md px-3 py-2 transition-colors duration-200"
+            href="#"
+            >Institucional</a
+          >
+          <a
+            class="text-on-surface-variant hover:text-primary hover:bg-surface-container-low font-body-md rounded-md px-3 py-2 transition-colors duration-200"
+            href="#"
+            >Socios</a
+          >
+          <a
+            class="text-primary border-primary hover:bg-surface-container-low font-body-md rounded-md border-b-2 px-3 py-2 pb-1 font-semibold transition-colors duration-200"
+            href="#"
+            >Mercado</a
+          >
+        </nav>
+        <div class="flex items-center space-x-4">
+          <button
+            class="bg-primary text-on-primary font-label-md hover:bg-primary-container hidden rounded-full px-6 py-2 transition-colors md:block"
+          >
+            Iniciar Sesión
+          </button>
+          <button class="text-primary md:hidden">
+            <span class="material-symbols-outlined" data-icon="menu">menu</span>
+          </button>
+        </div>
+      </div>
+    </header>
+    <!-- Hero Section -->
+    <section class="relative flex h-[400px] w-full items-center justify-center md:h-[500px]">
+      <img
+        alt="Paisaje Rural"
+        class="absolute inset-0 h-full w-full object-cover"
+        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCvyHDS-E62uGx7YbTg5t1g5lXSYShMcQOLrtclBPp5j99-x9MqiGjCv1u8NO7ESIoGEoLWezCUnU8-ZvBVtXUCFRQLTusOyV0YKib91Bt-vUmTIO3J70ORvBj5yefqx37XrQK9FYcXGa33VOgEska3FuJNk7hoy1Tp5_zXI9EuLYUGIb_bekUBFLpsAGXNt8uiGilgBiy997JwrVqW_tadeoP8kWnAYDixrZrnEXZ6f55EyJ4DncEEHw"
+      />
+      <div class="absolute inset-0 bg-black/50"></div>
+      <div class="relative z-10 mx-auto max-w-4xl px-6 text-center">
+        <h1 class="font-display-lg md:text-display-lg mb-6 text-4xl text-white">
+          Noticias del Sector Rural
+        </h1>
+        <p class="font-body-lg md:text-body-lg mx-auto max-w-2xl text-lg text-white/90">
+          Análisis, tendencias y novedades del mercado inmobiliario rural argentino. Información
+          clave para la toma de decisiones.
         </p>
-</div>
-</section>
-<main class="flex-grow max-w-container-max mx-auto w-full px-margin-mobile md:px-margin-desktop py-12 md:py-16">
-<!-- Filter Chips -->
-<div class="flex flex-wrap gap-4 mb-16">
-<button class="bg-surface-container-highest text-primary px-6 py-2 rounded-full font-label-md text-label-md hover:bg-tertiary-fixed transition-colors">Todos</button>
-<button class="bg-surface text-primary border border-outline-variant px-6 py-2 rounded-full font-label-md text-label-md hover:bg-surface-container transition-colors">Mercado</button>
-<button class="bg-surface text-primary border border-outline-variant px-6 py-2 rounded-full font-label-md text-label-md hover:bg-surface-container transition-colors">Institucional</button>
-<button class="bg-surface text-primary border border-outline-variant px-6 py-2 rounded-full font-label-md text-label-md hover:bg-surface-container transition-colors">Eventos</button>
-</div>
-<!-- Featured News (Bento Style) -->
-<section class="mb-section-gap">
-<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
-<article class="md:col-span-8 bg-surface-container-low rounded-3xl p-8 md:p-12 card-shadow flex flex-col justify-between h-full min-h-[400px] border border-outline-variant/30 relative overflow-hidden group hover:bg-surface-container transition-colors">
-<div>
-<span class="text-moss-accent font-label-md text-label-md tracking-wider uppercase mb-6 inline-block">Mercado</span>
-<h2 class="font-headline-lg text-headline-lg text-primary mb-6 pr-4">Perspectivas del valor de la tierra en la región pampeana para el segundo semestre</h2>
-<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">Un análisis detallado de los factores climáticos, económicos y políticos que están influenciando las operaciones de compraventa y arrendamiento en la zona núcleo.</p>
-</div>
-<div class="mt-12 flex justify-between items-end border-t border-outline-variant/50 pt-6">
-<div class="flex items-center space-x-2 text-on-surface-variant font-caption text-caption">
-<span>15 Sep, 2024</span>
-<span>•</span>
-<span>8 min lectura</span>
-</div>
-<a class="font-label-md text-label-md text-primary flex items-center group-hover:text-moss-accent transition-colors" href="#">
-                            LEER MÁS <span class="material-symbols-outlined ml-2 transition-transform group-hover:translate-x-1" data-icon="arrow_outward">arrow_outward</span>
-</a>
-</div>
-</article>
-<div class="md:col-span-4 flex flex-col gap-gutter">
-<article class="bg-surface-container-low rounded-3xl p-8 card-shadow flex-grow border border-outline-variant/30 flex flex-col justify-between group hover:bg-surface-container transition-colors">
-<div>
-<span class="text-moss-accent font-label-md text-label-md tracking-wider uppercase mb-4 inline-block">Institucional</span>
-<h3 class="font-headline-md text-headline-md text-primary mb-4 leading-tight">CAIR presenta nuevo índice de actividad</h3>
-</div>
-<div class="mt-8 flex justify-between items-center border-t border-outline-variant/50 pt-4">
-<span class="text-on-surface-variant font-caption text-caption">10 Sep, 2024</span>
-<a class="font-label-md text-label-md text-primary flex items-center group-hover:text-moss-accent" href="#"><span class="material-symbols-outlined" data-icon="arrow_outward">arrow_outward</span></a>
-</div>
-</article>
-<article class="bg-surface-container-low rounded-3xl p-8 card-shadow flex-grow border border-outline-variant/30 flex flex-col justify-between group hover:bg-surface-container transition-colors">
-<div>
-<span class="text-moss-accent font-label-md text-label-md tracking-wider uppercase mb-4 inline-block">Eventos</span>
-<h3 class="font-headline-md text-headline-md text-primary mb-4 leading-tight">Próxima asamblea anual de socios en Rosario</h3>
-</div>
-<div class="mt-8 flex justify-between items-center border-t border-outline-variant/50 pt-4">
-<span class="text-on-surface-variant font-caption text-caption">05 Sep, 2024</span>
-<a class="font-label-md text-label-md text-primary flex items-center group-hover:text-moss-accent" href="#"><span class="material-symbols-outlined" data-icon="arrow_outward">arrow_outward</span></a>
-</div>
-</article>
-</div>
-</div>
-</section>
-<!-- Grid News (Inspired by user image) -->
-<section>
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
-<!-- Card 1 -->
-<article class="bg-surface-container-low rounded-3xl p-8 card-shadow border border-outline-variant/30 flex flex-col justify-between min-h-[450px] group hover:bg-surface-container transition-colors">
-<div>
-<span class="text-on-surface-variant font-label-md text-caption tracking-[0.1em] uppercase mb-6 inline-block">Mercado</span>
-<h3 class="font-headline-md text-headline-md text-primary mb-6 leading-tight">Evolución de los arrendamientos agrícolas 2024/2025</h3>
-<p class="font-body-md text-body-md text-on-surface-variant line-clamp-3">
-                            Cómo prepararse para la próxima campaña considerando los márgenes ajustados y las proyecciones climáticas a mediano plazo.
-                        </p>
-</div>
-<div class="mt-12 flex justify-between items-center border-t border-outline-variant/50 pt-6">
-<span class="text-on-surface-variant font-caption text-caption">01 Sep, 2024 • 5 min read</span>
-<a class="font-label-md text-label-md text-primary flex items-center group-hover:text-moss-accent transition-colors" href="#">
-                            READ <span class="material-symbols-outlined ml-1 text-sm" data-icon="arrow_outward">arrow_outward</span>
-</a>
-</div>
-</article>
-<!-- Card 2 -->
-<article class="bg-surface-container-low rounded-3xl p-8 card-shadow border border-outline-variant/30 flex flex-col justify-between min-h-[450px] group hover:bg-surface-container transition-colors">
-<div>
-<span class="text-on-surface-variant font-label-md text-caption tracking-[0.1em] uppercase mb-6 inline-block">Regulaciones</span>
-<h3 class="font-headline-md text-headline-md text-primary mb-6 leading-tight">Actualización sobre normativas ambientales provinciales</h3>
-<p class="font-body-md text-body-md text-on-surface-variant line-clamp-3">
-                            Resumen de las nuevas disposiciones que afectan el desarrollo de proyectos productivos en zonas de transición.
-                        </p>
-</div>
-<div class="mt-12 flex justify-between items-center border-t border-outline-variant/50 pt-6">
-<span class="text-on-surface-variant font-caption text-caption">28 Ago, 2024 • 7 min read</span>
-<a class="font-label-md text-label-md text-primary flex items-center group-hover:text-moss-accent transition-colors" href="#">
-                            READ <span class="material-symbols-outlined ml-1 text-sm" data-icon="arrow_outward">arrow_outward</span>
-</a>
-</div>
-</article>
-<!-- Card 3 -->
-<article class="bg-surface-container-low rounded-3xl p-8 card-shadow border border-outline-variant/30 flex flex-col justify-between min-h-[450px] group hover:bg-surface-container transition-colors">
-<div>
-<span class="text-on-surface-variant font-label-md text-caption tracking-[0.1em] uppercase mb-6 inline-block">Tecnología</span>
-<h3 class="font-headline-md text-headline-md text-primary mb-6 leading-tight">Digitalización de tasaciones rurales</h3>
-<p class="font-body-md text-body-md text-on-surface-variant line-clamp-3">
-                            Nuevas herramientas y metodologías que están transformando la forma en que valoramos los activos inmobiliarios agropecuarios.
-                        </p>
-</div>
-<div class="mt-12 flex justify-between items-center border-t border-outline-variant/50 pt-6">
-<span class="text-on-surface-variant font-caption text-caption">20 Ago, 2024 • 4 min read</span>
-<a class="font-label-md text-label-md text-primary flex items-center group-hover:text-moss-accent transition-colors" href="#">
-                            READ <span class="material-symbols-outlined ml-1 text-sm" data-icon="arrow_outward">arrow_outward</span>
-</a>
-</div>
-</article>
-</div>
-<div class="mt-16 flex justify-center">
-<button class="border border-clay-warm text-secondary px-8 py-3 rounded-full font-label-md hover:bg-surface-container-low transition-colors">
-                    Cargar Más Noticias
-                </button>
-</div>
-</section>
-</main>
-<!-- Footer -->
-<footer class="bg-surface-container-highest mt-auto">
-<div class="w-full py-12 px-6 flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto gap-8">
-<div class="text-xl font-headline-md font-bold text-primary">CAIR</div>
-<nav class="flex flex-wrap justify-center gap-6">
-<a class="font-body-md text-sm text-on-surface-variant hover:text-secondary transition-colors" href="#">Privacidad</a>
-<a class="font-body-md text-sm text-on-surface-variant hover:text-secondary transition-colors" href="#">Términos</a>
-<a class="font-body-md text-sm text-on-surface-variant hover:text-secondary transition-colors" href="#">Contacto</a>
-<a class="font-body-md text-sm text-on-surface-variant hover:text-secondary transition-colors" href="#">Prensa</a>
-</nav>
-<p class="font-body-md text-sm text-on-surface-variant">© 2024 Cámara Argentina de Inmobiliarias Rurales. Todos los derechos reservados.</p>
-</div>
-</footer>
-</body></html>
+      </div>
+    </section>
+    <main
+      class="max-w-container-max px-margin-mobile md:px-margin-desktop mx-auto w-full flex-grow py-12 md:py-16"
+    >
+      <!-- Filter Chips -->
+      <div class="mb-16 flex flex-wrap gap-4">
+        <button
+          class="bg-surface-container-highest text-primary font-label-md text-label-md hover:bg-tertiary-fixed rounded-full px-6 py-2 transition-colors"
+        >
+          Todos
+        </button>
+        <button
+          class="bg-surface text-primary border-outline-variant font-label-md text-label-md hover:bg-surface-container rounded-full border px-6 py-2 transition-colors"
+        >
+          Mercado
+        </button>
+        <button
+          class="bg-surface text-primary border-outline-variant font-label-md text-label-md hover:bg-surface-container rounded-full border px-6 py-2 transition-colors"
+        >
+          Institucional
+        </button>
+        <button
+          class="bg-surface text-primary border-outline-variant font-label-md text-label-md hover:bg-surface-container rounded-full border px-6 py-2 transition-colors"
+        >
+          Eventos
+        </button>
+      </div>
+      <!-- Featured News (Bento Style) -->
+      <section class="mb-section-gap">
+        <div class="gap-gutter grid grid-cols-1 md:grid-cols-12">
+          <article
+            class="bg-surface-container-low card-shadow border-outline-variant/30 group hover:bg-surface-container relative flex h-full min-h-[400px] flex-col justify-between overflow-hidden rounded-3xl border p-8 transition-colors md:col-span-8 md:p-12"
+          >
+            <div>
+              <span
+                class="text-moss-accent font-label-md text-label-md mb-6 inline-block tracking-wider uppercase"
+                >Mercado</span
+              >
+              <h2 class="font-headline-lg text-headline-lg text-primary mb-6 pr-4">
+                Perspectivas del valor de la tierra en la región pampeana para el segundo semestre
+              </h2>
+              <p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">
+                Un análisis detallado de los factores climáticos, económicos y políticos que están
+                influenciando las operaciones de compraventa y arrendamiento en la zona núcleo.
+              </p>
+            </div>
+            <div
+              class="border-outline-variant/50 mt-12 flex items-end justify-between border-t pt-6"
+            >
+              <div
+                class="text-on-surface-variant font-caption text-caption flex items-center space-x-2"
+              >
+                <span>15 Sep, 2024</span>
+                <span>•</span>
+                <span>8 min lectura</span>
+              </div>
+              <a
+                class="font-label-md text-label-md text-primary group-hover:text-moss-accent flex items-center transition-colors"
+                href="#"
+              >
+                LEER MÁS
+                <span
+                  class="material-symbols-outlined ml-2 transition-transform group-hover:translate-x-1"
+                  data-icon="arrow_outward"
+                  >arrow_outward</span
+                >
+              </a>
+            </div>
+          </article>
+          <div class="gap-gutter flex flex-col md:col-span-4">
+            <article
+              class="bg-surface-container-low card-shadow border-outline-variant/30 group hover:bg-surface-container flex flex-grow flex-col justify-between rounded-3xl border p-8 transition-colors"
+            >
+              <div>
+                <span
+                  class="text-moss-accent font-label-md text-label-md mb-4 inline-block tracking-wider uppercase"
+                  >Institucional</span
+                >
+                <h3 class="font-headline-md text-headline-md text-primary mb-4 leading-tight">
+                  CAIR presenta nuevo índice de actividad
+                </h3>
+              </div>
+              <div
+                class="border-outline-variant/50 mt-8 flex items-center justify-between border-t pt-4"
+              >
+                <span class="text-on-surface-variant font-caption text-caption">10 Sep, 2024</span>
+                <a
+                  class="font-label-md text-label-md text-primary group-hover:text-moss-accent flex items-center"
+                  href="#"
+                  ><span class="material-symbols-outlined" data-icon="arrow_outward"
+                    >arrow_outward</span
+                  ></a
+                >
+              </div>
+            </article>
+            <article
+              class="bg-surface-container-low card-shadow border-outline-variant/30 group hover:bg-surface-container flex flex-grow flex-col justify-between rounded-3xl border p-8 transition-colors"
+            >
+              <div>
+                <span
+                  class="text-moss-accent font-label-md text-label-md mb-4 inline-block tracking-wider uppercase"
+                  >Eventos</span
+                >
+                <h3 class="font-headline-md text-headline-md text-primary mb-4 leading-tight">
+                  Próxima asamblea anual de socios en Rosario
+                </h3>
+              </div>
+              <div
+                class="border-outline-variant/50 mt-8 flex items-center justify-between border-t pt-4"
+              >
+                <span class="text-on-surface-variant font-caption text-caption">05 Sep, 2024</span>
+                <a
+                  class="font-label-md text-label-md text-primary group-hover:text-moss-accent flex items-center"
+                  href="#"
+                  ><span class="material-symbols-outlined" data-icon="arrow_outward"
+                    >arrow_outward</span
+                  ></a
+                >
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+      <!-- Grid News (Inspired by user image) -->
+      <section>
+        <div class="gap-gutter grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+          <!-- Card 1 -->
+          <article
+            class="bg-surface-container-low card-shadow border-outline-variant/30 group hover:bg-surface-container flex min-h-[450px] flex-col justify-between rounded-3xl border p-8 transition-colors"
+          >
+            <div>
+              <span
+                class="text-on-surface-variant font-label-md text-caption mb-6 inline-block tracking-[0.1em] uppercase"
+                >Mercado</span
+              >
+              <h3 class="font-headline-md text-headline-md text-primary mb-6 leading-tight">
+                Evolución de los arrendamientos agrícolas 2024/2025
+              </h3>
+              <p class="font-body-md text-body-md text-on-surface-variant line-clamp-3">
+                Cómo prepararse para la próxima campaña considerando los márgenes ajustados y las
+                proyecciones climáticas a mediano plazo.
+              </p>
+            </div>
+            <div
+              class="border-outline-variant/50 mt-12 flex items-center justify-between border-t pt-6"
+            >
+              <span class="text-on-surface-variant font-caption text-caption"
+                >01 Sep, 2024 • 5 min read</span
+              >
+              <a
+                class="font-label-md text-label-md text-primary group-hover:text-moss-accent flex items-center transition-colors"
+                href="#"
+              >
+                READ
+                <span class="material-symbols-outlined ml-1 text-sm" data-icon="arrow_outward"
+                  >arrow_outward</span
+                >
+              </a>
+            </div>
+          </article>
+          <!-- Card 2 -->
+          <article
+            class="bg-surface-container-low card-shadow border-outline-variant/30 group hover:bg-surface-container flex min-h-[450px] flex-col justify-between rounded-3xl border p-8 transition-colors"
+          >
+            <div>
+              <span
+                class="text-on-surface-variant font-label-md text-caption mb-6 inline-block tracking-[0.1em] uppercase"
+                >Regulaciones</span
+              >
+              <h3 class="font-headline-md text-headline-md text-primary mb-6 leading-tight">
+                Actualización sobre normativas ambientales provinciales
+              </h3>
+              <p class="font-body-md text-body-md text-on-surface-variant line-clamp-3">
+                Resumen de las nuevas disposiciones que afectan el desarrollo de proyectos
+                productivos en zonas de transición.
+              </p>
+            </div>
+            <div
+              class="border-outline-variant/50 mt-12 flex items-center justify-between border-t pt-6"
+            >
+              <span class="text-on-surface-variant font-caption text-caption"
+                >28 Ago, 2024 • 7 min read</span
+              >
+              <a
+                class="font-label-md text-label-md text-primary group-hover:text-moss-accent flex items-center transition-colors"
+                href="#"
+              >
+                READ
+                <span class="material-symbols-outlined ml-1 text-sm" data-icon="arrow_outward"
+                  >arrow_outward</span
+                >
+              </a>
+            </div>
+          </article>
+          <!-- Card 3 -->
+          <article
+            class="bg-surface-container-low card-shadow border-outline-variant/30 group hover:bg-surface-container flex min-h-[450px] flex-col justify-between rounded-3xl border p-8 transition-colors"
+          >
+            <div>
+              <span
+                class="text-on-surface-variant font-label-md text-caption mb-6 inline-block tracking-[0.1em] uppercase"
+                >Tecnología</span
+              >
+              <h3 class="font-headline-md text-headline-md text-primary mb-6 leading-tight">
+                Digitalización de tasaciones rurales
+              </h3>
+              <p class="font-body-md text-body-md text-on-surface-variant line-clamp-3">
+                Nuevas herramientas y metodologías que están transformando la forma en que valoramos
+                los activos inmobiliarios agropecuarios.
+              </p>
+            </div>
+            <div
+              class="border-outline-variant/50 mt-12 flex items-center justify-between border-t pt-6"
+            >
+              <span class="text-on-surface-variant font-caption text-caption"
+                >20 Ago, 2024 • 4 min read</span
+              >
+              <a
+                class="font-label-md text-label-md text-primary group-hover:text-moss-accent flex items-center transition-colors"
+                href="#"
+              >
+                READ
+                <span class="material-symbols-outlined ml-1 text-sm" data-icon="arrow_outward"
+                  >arrow_outward</span
+                >
+              </a>
+            </div>
+          </article>
+        </div>
+        <div class="mt-16 flex justify-center">
+          <button
+            class="border-clay-warm text-secondary font-label-md hover:bg-surface-container-low rounded-full border px-8 py-3 transition-colors"
+          >
+            Cargar Más Noticias
+          </button>
+        </div>
+      </section>
+    </main>
+    <!-- Footer -->
+    <footer class="bg-surface-container-highest mt-auto">
+      <div
+        class="mx-auto flex w-full max-w-7xl flex-col items-center justify-between gap-8 px-6 py-12 md:flex-row"
+      >
+        <div class="font-headline-md text-primary text-xl font-bold">CAIR</div>
+        <nav class="flex flex-wrap justify-center gap-6">
+          <a
+            class="font-body-md text-on-surface-variant hover:text-secondary text-sm transition-colors"
+            href="#"
+            >Privacidad</a
+          >
+          <a
+            class="font-body-md text-on-surface-variant hover:text-secondary text-sm transition-colors"
+            href="#"
+            >Términos</a
+          >
+          <a
+            class="font-body-md text-on-surface-variant hover:text-secondary text-sm transition-colors"
+            href="#"
+            >Contacto</a
+          >
+          <a
+            class="font-body-md text-on-surface-variant hover:text-secondary text-sm transition-colors"
+            href="#"
+            >Prensa</a
+          >
+        </nav>
+        <p class="font-body-md text-on-surface-variant text-sm">
+          © 2024 Cámara Argentina de Inmobiliarias Rurales. Todos los derechos reservados.
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>

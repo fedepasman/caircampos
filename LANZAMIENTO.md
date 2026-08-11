@@ -72,11 +72,11 @@ conocido del pliego, pero nunca se implementó.
 Verificado con `aapt dump badging` sobre el manifiesto ya mergeado, no solo
 el `AndroidManifest.xml` fuente:
 
-| Permiso | Lo agrega | Por qué sobra |
-|---|---|---|
-| `ACCESS_COARSE_LOCATION`, `ACCESS_FINE_LOCATION` | `@rnmapbox/maps` (declarado incondicionalmente en su propio manifest) | `MapaUbicacion.tsx` nunca pide la ubicación del usuario, solo centra el mapa en coordenadas ya conocidas del campo |
-| `CAMERA` | `expo-image-picker` (ídem) | `SubidaFotos.tsx` solo llama `launchImageLibraryAsync` (galería), nunca `launchCameraAsync` |
-| `RECORD_AUDIO`, `USE_BIOMETRIC`, `USE_FINGERPRINT` | Origen no confirmado en texto plano (no aparecen en los manifiestos de las dependencias directas revisadas — probablemente un AAR transitivo) | Ningún flujo de audio ni biometría en `apps/mobile/src` |
+| Permiso                                            | Lo agrega                                                                                                                                     | Por qué sobra                                                                                                      |
+| -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `ACCESS_COARSE_LOCATION`, `ACCESS_FINE_LOCATION`   | `@rnmapbox/maps` (declarado incondicionalmente en su propio manifest)                                                                         | `MapaUbicacion.tsx` nunca pide la ubicación del usuario, solo centra el mapa en coordenadas ya conocidas del campo |
+| `CAMERA`                                           | `expo-image-picker` (ídem)                                                                                                                    | `SubidaFotos.tsx` solo llama `launchImageLibraryAsync` (galería), nunca `launchCameraAsync`                        |
+| `RECORD_AUDIO`, `USE_BIOMETRIC`, `USE_FINGERPRINT` | Origen no confirmado en texto plano (no aparecen en los manifiestos de las dependencias directas revisadas — probablemente un AAR transitivo) | Ningún flujo de audio ni biometría en `apps/mobile/src`                                                            |
 
 Google puede rechazar o sancionar por permiso peligroso sin caso de uso real.
 
@@ -102,8 +102,8 @@ no configura `requireAuthentication` en `expo-secure-store`).
 
 - [ ] Quitar esas tres claves en `ios.infoPlist` de `app.config.ts`, o
       reescribirlas en español y específicas si se planea implementar esas
-      funciones (coherente con la que ya existe para fotos: *"CAIR necesita
-      acceder a tus fotos para agregarlas a la publicación de un campo."*).
+      funciones (coherente con la que ya existe para fotos: _"CAIR necesita
+      acceder a tus fotos para agregarlas a la publicación de un campo."_).
 
 ---
 
@@ -212,12 +212,12 @@ que se sube a las tiendas.
 
 ## Fuentes oficiales consultadas (2026-08-05)
 
-- Apple, *App Review Guidelines* (5.1.1(v), 4.2, 2.1(a)) —
+- Apple, _App Review Guidelines_ (5.1.1(v), 4.2, 2.1(a)) —
   `developer.apple.com/app-store/review/guidelines/`
-- Apple, *Offering Account Deletion in Your App* —
+- Apple, _Offering Account Deletion in Your App_ —
   `developer.apple.com/support/offering-account-deletion-in-your-app/`
-- Google, *Target API level requirements* —
+- Google, _Target API level requirements_ —
   `developer.android.com/google/play/requirements/target-sdk`
-- Google Play Help, *Account Deletion Requirements* —
+- Google Play Help, _Account Deletion Requirements_ —
   `support.google.com/googleplay/android-developer/answer/13327111`
-- Google Play, *Developer Content Policy Center* — `play.google/developer-content-policy/`
+- Google Play, _Developer Content Policy Center_ — `play.google/developer-content-policy/`

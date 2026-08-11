@@ -113,13 +113,14 @@ spacing:
 
 ## Brand & Style
 
-This design system blends the precision of institutional credibility with the warmth of landscape architecture. The brand personality is "Refined Stewardship"—it is authoritative, grounded, and deeply connected to the environment. 
+This design system blends the precision of institutional credibility with the warmth of landscape architecture. The brand personality is "Refined Stewardship"—it is authoritative, grounded, and deeply connected to the environment.
 
 The design style follows a **Modern Minimalist** approach with **Tactile** undertones. It utilizes expansive whitespace to signify clarity and purpose, while organic textures and earthy tones soften the institutional rigour. The aesthetic response should feel like walking through a well-curated botanical garden: structured, intentional, and serene.
 
 ## Colors
 
-The palette is rooted in a "Forest & Earth" philosophy. 
+The palette is rooted in a "Forest & Earth" philosophy.
+
 - **Primary:** A deep, near-black forest green used for high-contrast typography and primary branding to maintain authority.
 - **Secondary:** A warm, earthy taupe used for interactive elements and accents that require a softer touch than the primary green.
 - **Neutral:** A range of warm off-whites and bone tones replace pure whites to reduce eye strain and reinforce the organic theme.
@@ -127,7 +128,8 @@ The palette is rooted in a "Forest & Earth" philosophy.
 
 ## Typography
 
-The typography pairing creates a dialogue between tradition and modernity. 
+The typography pairing creates a dialogue between tradition and modernity.
+
 - **Headlines:** Use **Source Serif 4**. Its sturdy, professional serifs provide the necessary institutional weight while feeling "literary" and sophisticated.
 - **Body & Labels:** Use **Hanken Grotesk**. This sans-serif is exceptionally clean and contemporary, ensuring high legibility for data-heavy sections of the CAIR project.
 - **Scale:** Maintain generous line heights (1.5x minimum for body) to preserve the feeling of "breathability" across all screen sizes.
@@ -135,20 +137,23 @@ The typography pairing creates a dialogue between tradition and modernity.
 ## Layout & Spacing
 
 This design system employs a **Fixed Grid** with an emphasis on "Generous Negative Space."
-- **Grid:** A 12-column system for desktop with 24px gutters. 
+
+- **Grid:** A 12-column system for desktop with 24px gutters.
 - **Sectioning:** Content sections should be separated by significant vertical gaps (80px to 120px) to allow the "landscape" of the information to breathe.
 - **Alignment:** Use asymmetrical layouts occasionally—shifting content off-center or utilizing wide margins—to mimic the natural, non-linear flow of outdoor environments.
 
 ## Elevation & Depth
 
 Hierarchy is established through **Ambient Shadows** and **Tonal Layering** rather than harsh borders.
+
 - **Surfaces:** Use subtle shifts in background color (e.g., transitioning from neutral-50 to neutral-100) to separate functional areas.
 - **Shadows:** Elements like cards should use very large, soft blurs (30px+) with low opacity (3-5%) tinted with the primary forest green. This creates a "lifted" effect that feels airy rather than heavy.
 - **Glassmorphism:** Apply light backdrop blurs (8px) on navigation bars and floating headers to maintain a sense of environmental depth.
 
 ## Shapes
 
-The shape language is **Soft and Architectural**. 
+The shape language is **Soft and Architectural**.
+
 - **Corners:** Use 4px to 8px radii. This provides a gentle, organic feel without sacrificing the structured, professional look required for institutional credibility.
 - **Containers:** Large image containers and main cards should use the larger `rounded-xl` (12px) to feel more approachable.
 - **Buttons:** Use the "Soft" setting (4px) for a precise, confident clickable area.
