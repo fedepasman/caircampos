@@ -40,7 +40,11 @@ export async function generateMetadata({
 
   if (!noticia) return {};
 
-  const primerParrafo = noticia.cuerpo.split(/\n\s*\n/)[0]?.trim().slice(0, 160) ?? '';
+  const primerParrafo =
+    noticia.cuerpo
+      .split(/\n\s*\n/)[0]
+      ?.trim()
+      .slice(0, 160) ?? '';
 
   return {
     title: noticia.titulo,
@@ -71,7 +75,9 @@ export default async function NoticiaPage({ params }: { params: Promise<{ slug: 
       </Link>
 
       <div className="mt-4 flex flex-wrap items-center gap-3">
-        <Badge tone="brand">{ETIQUETAS_CATEGORIA_NOTICIA[noticia.categoria] ?? noticia.categoria}</Badge>
+        <Badge tone="brand">
+          {ETIQUETAS_CATEGORIA_NOTICIA[noticia.categoria] ?? noticia.categoria}
+        </Badge>
         <span className="text-sm text-neutral-800">
           {new Date(noticia.fecha_publicacion).toLocaleDateString('es-AR', {
             day: 'numeric',

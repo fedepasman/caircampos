@@ -36,9 +36,7 @@ const columnas = [
   }),
   columnHelper.accessor('publicado', {
     header: 'Publicada',
-    cell: (info) => (
-      <BotonPublicada id={info.row.original.id} publicado={info.getValue()} />
-    ),
+    cell: (info) => <BotonPublicada id={info.row.original.id} publicado={info.getValue()} />,
     enableSorting: false,
   }),
   columnHelper.display({

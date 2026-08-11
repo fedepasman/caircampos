@@ -115,7 +115,11 @@ export default async function NoticiasPage() {
       {resto.length > 0 && (
         <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {resto.map((noticia) => (
-            <Link key={noticia.id} href={`/noticias/${noticia.slug}`} className="group block h-full">
+            <Link
+              key={noticia.id}
+              href={`/noticias/${noticia.slug}`}
+              className="group block h-full"
+            >
               <div className="flex h-full flex-col overflow-hidden rounded-xl bg-neutral-200 transition-colors group-hover:bg-neutral-300">
                 {noticia.imagen_object_key && (
                   // eslint-disable-next-line @next/next/no-img-element -- URL externa (R2)
@@ -132,7 +136,9 @@ export default async function NoticiasPage() {
                   <p className="font-display text-lg font-semibold text-neutral-950">
                     {noticia.titulo}
                   </p>
-                  <p className="flex-1 text-sm text-neutral-800">{extraerResumen(noticia.cuerpo)}</p>
+                  <p className="flex-1 text-sm text-neutral-800">
+                    {extraerResumen(noticia.cuerpo)}
+                  </p>
 
                   <div className="mt-2 flex items-center justify-between border-t border-neutral-600 pt-4">
                     <span className="text-xs text-neutral-800">
