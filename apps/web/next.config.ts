@@ -1,5 +1,14 @@
 import type { NextConfig } from 'next';
 
+// Se lee el hostname desde la propia variable de entorno (en vez de
+// hardcodear `pub-xxxx.r2.dev`) para no tener que volver a tocar este
+// archivo si el bucket migra a un dominio propio más adelante (ver
+// FUTURO.md). Next carga los `.env*` antes de evaluar este archivo, así que
+// `process.env` ya está poblado acá.
+const hostnameR2 = process.env.NEXT_PUBLIC_R2_PUBLIC_URL
+  ? new URL(process.env.NEXT_PUBLIC_R2_PUBLIC_URL).hostname
+  : undefined;
+
 const config: NextConfig = {
   // Los paquetes del monorepo exponen TypeScript sin compilar (patrón
   // Just-in-Time): Turbopack tiene que transpilarlos como si fueran código
@@ -25,9 +34,13 @@ const config: NextConfig = {
   poweredByHeader: false,
 
   images: {
-    // Fotografía del hero mientras no hay banco de imágenes propio ni fotos
-    // reales de campos (sin columna en `campos`, sin R2 conectado todavía).
-    remotePatterns: [{ protocol: 'https', hostname: 'images.unsplash.com' }],
+    remotePatterns: [
+      // Fotografía de stock del hero y de "Ubicaciones principales",
+      // mientras no hay banco de imágenes propio.
+      { protocol: 'https', hostname: 'images.unsplash.com' },
+      // Fotos reales de campos y noticias, servidas desde Cloudflare R2.
+      ...(hostnameR2 ? [{ protocol: 'https' as const, hostname: hostnameR2 }] : []),
+    ],
   },
 
   async headers() {

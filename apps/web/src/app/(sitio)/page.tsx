@@ -195,12 +195,15 @@ export default async function Home() {
                     className="hover:border-brand-900 block overflow-hidden rounded-md border border-neutral-600 bg-neutral-50"
                   >
                     {objectKey ? (
-                      // eslint-disable-next-line @next/next/no-img-element -- URL externa (R2)
-                      <img
-                        src={urlFotoCampo(objectKey, 'tarjeta')}
-                        alt=""
-                        className="h-40 w-full object-cover"
-                      />
+                      <div className="relative h-40 w-full">
+                        <Image
+                          src={urlFotoCampo(objectKey, 'tarjeta')}
+                          alt={campo.titulo}
+                          fill
+                          sizes="(min-width: 640px) 33vw, 100vw"
+                          className="object-cover"
+                        />
+                      </div>
                     ) : (
                       <div
                         className="from-brand-700 to-brand-900 h-40 bg-gradient-to-br"

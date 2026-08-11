@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { MapPin, Ruler, Sprout } from 'lucide-react';
@@ -10,6 +11,7 @@ import { Badge } from '@cair/ui/Badge';
 import { buttonStyles } from '@cair/ui/Button';
 import { ETIQUETAS_MODALIDAD_CAMPO, ETIQUETAS_TIPO_CAMPO, formatearPrecioUsd } from '@cair/shared';
 import { urlFotoCampo } from '@/lib/url-foto-campo';
+import { env } from '@/lib/env';
 import { FormularioConsulta } from './formulario-consulta';
 
 async function obtenerCampo(id: string) {
@@ -35,9 +37,32 @@ export async function generateMetadata({
 
   if (!campo) return {};
 
+  const descripcion = `${campo.titulo} — ${campo.localidad}, ${campo.provincia}. ${String(campo.hectareas)} hectáreas.`;
+  const primeraFoto = [...campo.campo_fotos].sort((a, b) => a.orden - b.orden)[0];
+  // Absoluta: Open Graph no resuelve rutas relativas contra `metadataBase`
+  // para `images` fuera de ese mecanismo cuando la URL ya viene completa
+  // (la de R2 lo es), así que se arma directo, sin depender de esa resolución.
+  const imagen = primeraFoto ? urlFotoCampo(primeraFoto.object_key, 'galeria') : undefined;
+
   return {
     title: campo.titulo,
-    description: `${campo.titulo} — ${campo.localidad}, ${campo.provincia}. ${String(campo.hectareas)} hectáreas.`,
+    description: descripcion,
+    alternates: { canonical: `/campos/${id}` },
+    openGraph: {
+      title: campo.titulo,
+      description: descripcion,
+      url: `/campos/${id}`,
+      siteName: 'CAIR',
+      locale: 'es_AR',
+      type: 'website',
+      images: imagen ? [{ url: imagen, alt: campo.titulo }] : undefined,
+    },
+    twitter: {
+      card: imagen ? 'summary_large_image' : 'summary',
+      title: campo.titulo,
+      description: descripcion,
+      images: imagen ? [imagen] : undefined,
+    },
   };
 }
 
@@ -83,8 +108,54 @@ export default async function FichaCampoPage({ params }: { params: Promise<{ id:
     (a, b) => a.orden - b.orden,
   );
 
+  // Structured data (schema.org): le da a Google datos de precio y ubicación
+  // ya estructurados para el resultado de búsqueda (potencial rich snippet),
+  // en vez de que tenga que inferirlos del texto. Solo campos reales, nunca
+  // inventados — `offers` se omite directo si no hay precio publicado.
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'RealEstateListing',
+    name: campo.titulo,
+    description: campo.descripcion ?? undefined,
+    url: `${env.NEXT_PUBLIC_SITE_URL}/campos/${id}`,
+    image:
+      campo.campo_fotos.length > 0
+        ? campo.campo_fotos.map((f) => urlFotoCampo(f.object_key, 'galeria'))
+        : undefined,
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: campo.localidad,
+      addressRegion: campo.provincia,
+      addressCountry: 'AR',
+    },
+    geo: { '@type': 'GeoCoordinates', latitude: campo.latitud, longitude: campo.longitud },
+    additionalProperty: {
+      '@type': 'PropertyValue',
+      name: 'Superficie',
+      value: campo.hectareas,
+      unitText: 'ha',
+    },
+    offers: campo.precio_usd
+      ? {
+          '@type': 'Offer',
+          price: campo.precio_usd,
+          priceCurrency: 'USD',
+          availability: 'https://schema.org/InStock',
+          url: `${env.NEXT_PUBLIC_SITE_URL}/campos/${id}`,
+        }
+      : undefined,
+  };
+
   return (
     <main>
+      {/* `.replace(/</g, '\\u003c')`: JSON.stringify no escapa `<`, y un
+          `</script>` dentro de un string (ej. una descripción con HTML
+          pegado) cerraría la etiqueta antes de tiempo. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }}
+      />
+
       <section className="mx-auto max-w-5xl px-6 pt-10">
         {primeraFoto && (
           // `sm:h-[30rem]` es necesario, no cosmético: sin un alto definido
@@ -94,31 +165,35 @@ export default async function FichaCampoPage({ params }: { params: Promise<{ id:
           // rompe el layout. Con esto, cada `h-full` sí resuelve contra un
           // alto real y `object-cover` recorta sin deformar.
           <div className="grid grid-cols-1 gap-2 sm:h-[30rem] sm:grid-cols-3 sm:grid-rows-2 sm:[&>*:first-child]:row-span-2">
-            <div className="h-72 overflow-hidden rounded-lg shadow-lg sm:col-span-2 sm:row-span-2 sm:h-full">
-              {/* eslint-disable-next-line @next/next/no-img-element -- URL externa (R2), no pasa por el optimizador de imágenes de Next */}
-              <img
+            <div className="relative h-72 overflow-hidden rounded-lg shadow-lg sm:col-span-2 sm:row-span-2 sm:h-full">
+              <Image
                 src={urlFotoCampo(primeraFoto.object_key, 'galeria')}
                 alt={campo.titulo}
-                className="h-full w-full object-cover"
+                fill
+                priority
+                sizes="(min-width: 640px) 66vw, 100vw"
+                className="object-cover"
               />
             </div>
             {segundaFoto && (
-              <div className="hidden h-full overflow-hidden rounded-lg sm:block">
-                {/* eslint-disable-next-line @next/next/no-img-element -- URL externa (R2) */}
-                <img
+              <div className="relative hidden h-full overflow-hidden rounded-lg sm:block">
+                <Image
                   src={urlFotoCampo(segundaFoto.object_key, 'tarjeta')}
-                  alt=""
-                  className="h-full w-full object-cover"
+                  alt={`Foto de ${campo.titulo}`}
+                  fill
+                  sizes="33vw"
+                  className="object-cover"
                 />
               </div>
             )}
             {terceraFoto && (
-              <div className="hidden h-full overflow-hidden rounded-lg sm:block">
-                {/* eslint-disable-next-line @next/next/no-img-element -- URL externa (R2) */}
-                <img
+              <div className="relative hidden h-full overflow-hidden rounded-lg sm:block">
+                <Image
                   src={urlFotoCampo(terceraFoto.object_key, 'tarjeta')}
-                  alt=""
-                  className="h-full w-full object-cover"
+                  alt={`Foto de ${campo.titulo}`}
+                  fill
+                  sizes="33vw"
+                  className="object-cover"
                 />
               </div>
             )}
@@ -289,12 +364,15 @@ export default async function FichaCampoPage({ params }: { params: Promise<{ id:
                   <Link key={otro.id} href={`/campos/${otro.id}`}>
                     <Card className="hover:border-brand-900 overflow-hidden">
                       {objectKey ? (
-                        // eslint-disable-next-line @next/next/no-img-element -- URL externa (R2)
-                        <img
-                          src={urlFotoCampo(objectKey, 'tarjeta')}
-                          alt=""
-                          className="h-32 w-full object-cover"
-                        />
+                        <div className="relative h-32 w-full">
+                          <Image
+                            src={urlFotoCampo(objectKey, 'tarjeta')}
+                            alt={otro.titulo}
+                            fill
+                            sizes="(min-width: 640px) 33vw, 100vw"
+                            className="object-cover"
+                          />
+                        </div>
                       ) : (
                         <div
                           className="from-brand-700 to-brand-900 h-32 bg-gradient-to-br"

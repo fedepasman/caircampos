@@ -5,16 +5,21 @@ import { env } from '../lib/env';
 /**
  * Sitemap.
  *
- * Las noticias publicadas se suman consultando la base — es la vía concreta
- * para el punto 7 del pliego: sin sus URLs acá, Google tarda mucho más en
- * descubrirlas. Las fichas de `campos` quedan pendientes de sumarse acá
- * (no es parte de este cambio).
+ * Las fichas de campos y las noticias publicadas se suman consultando la
+ * base — es la vía concreta para el punto 7 del pliego: sin sus URLs acá,
+ * Google solo las descubre por link interno, mucho más lento que por
+ * sitemap. Es el contenido central de la plataforma, así que va primero.
  *
  * Nota para cuando el volumen crezca: un sitemap admite hasta 50.000 URLs.
  * Al acercarse a ese tope hay que partirlo con `generateSitemaps`.
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = await clienteServidor();
+  const { data: campos } = await supabase
+    .from('campos')
+    .select('id, created_at')
+    .eq('publicado', true)
+    .eq('revisado_por_cair', 'aprobado');
   const { data: noticias } = await supabase
     .from('noticias')
     .select('slug, fecha_publicacion')
@@ -45,6 +50,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'daily',
       priority: 0.8,
     },
+    ...(campos ?? []).map((campo) => ({
+      url: `${env.NEXT_PUBLIC_SITE_URL}/campos/${campo.id}`,
+      lastModified: new Date(campo.created_at),
+      changeFrequency: 'weekly' as const,
+      priority: 0.9,
+    })),
     ...(noticias ?? []).map((noticia) => ({
       url: `${env.NEXT_PUBLIC_SITE_URL}/noticias/${noticia.slug}`,
       lastModified: new Date(noticia.fecha_publicacion),

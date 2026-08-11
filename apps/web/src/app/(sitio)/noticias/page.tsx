@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
 import { clienteServidor } from '@/lib/supabase/server';
@@ -77,12 +78,16 @@ export default async function NoticiasPage() {
         <Link href={`/noticias/${destacada.slug}`} className="group block">
           <div className="grid grid-cols-1 overflow-hidden rounded-xl bg-neutral-200 transition-colors group-hover:bg-neutral-300 sm:grid-cols-2">
             {destacada.imagen_object_key ? (
-              // eslint-disable-next-line @next/next/no-img-element -- URL externa (R2), no pasa por el optimizador de imágenes de Next
-              <img
-                src={urlFotoNoticia(destacada.imagen_object_key, 'galeria')}
-                alt=""
-                className="h-56 w-full object-cover sm:h-full"
-              />
+              <div className="relative h-56 w-full sm:h-full">
+                <Image
+                  src={urlFotoNoticia(destacada.imagen_object_key, 'galeria')}
+                  alt={destacada.titulo}
+                  fill
+                  priority
+                  sizes="(min-width: 640px) 50vw, 100vw"
+                  className="object-cover"
+                />
+              </div>
             ) : (
               <div
                 className="from-brand-700 to-brand-900 h-56 bg-gradient-to-br sm:h-full"
@@ -122,12 +127,15 @@ export default async function NoticiasPage() {
             >
               <div className="flex h-full flex-col overflow-hidden rounded-xl bg-neutral-200 transition-colors group-hover:bg-neutral-300">
                 {noticia.imagen_object_key && (
-                  // eslint-disable-next-line @next/next/no-img-element -- URL externa (R2)
-                  <img
-                    src={urlFotoNoticia(noticia.imagen_object_key, 'tarjeta')}
-                    alt=""
-                    className="h-40 w-full object-cover"
-                  />
+                  <div className="relative h-40 w-full">
+                    <Image
+                      src={urlFotoNoticia(noticia.imagen_object_key, 'tarjeta')}
+                      alt={noticia.titulo}
+                      fill
+                      sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                      className="object-cover"
+                    />
+                  </div>
                 )}
                 <div className="flex flex-1 flex-col gap-3 p-6">
                   <p className="text-xs font-semibold tracking-widest text-neutral-800 uppercase">

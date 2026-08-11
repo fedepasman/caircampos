@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { MapPin, Ruler, Sprout, Tag } from 'lucide-react';
 import { clienteServidor } from '@/lib/supabase/server';
@@ -385,12 +386,15 @@ export default async function ResultadosCamposPage({
                   className="group hover:border-brand-900 flex flex-col overflow-hidden rounded-md border border-neutral-600 bg-neutral-50 transition-all duration-300 hover:shadow-xl"
                 >
                   {objectKey ? (
-                    // eslint-disable-next-line @next/next/no-img-element -- URL externa (R2)
-                    <img
-                      src={urlFotoCampo(objectKey, 'tarjeta')}
-                      alt=""
-                      className="h-64 w-full object-cover"
-                    />
+                    <div className="relative h-64 w-full">
+                      <Image
+                        src={urlFotoCampo(objectKey, 'tarjeta')}
+                        alt={campo.titulo}
+                        fill
+                        sizes="(min-width: 1280px) 50vw, 100vw"
+                        className="object-cover"
+                      />
+                    </div>
                   ) : (
                     <div
                       className="from-brand-700 to-brand-900 h-64 bg-gradient-to-br"
