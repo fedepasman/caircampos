@@ -25,10 +25,11 @@ typography:
     fontWeight: 400
     lineHeight: 1.5
 rounded:
-  sm: '2px'
-  md: '4px'
-  lg: '8px'
-  xl: '12px'
+  sm: '10px'
+  md: '16px'
+  lg: '22px'
+  xl: '28px'
+  full: '9999px'
 spacing:
   1: '4px'
   2: '8px'
@@ -40,11 +41,11 @@ components:
   button-primary:
     backgroundColor: '{colors.harvest-gold-light}'
     textColor: '{colors.field-green}'
-    rounded: '{rounded.sm}'
+    rounded: '{rounded.full}'
     padding: '12px 24px'
   card:
     backgroundColor: '{colors.surface-lowest}'
-    rounded: '{rounded.md}'
+    rounded: '{rounded.xl}'
 ---
 
 # Design System: CAIR
@@ -71,8 +72,10 @@ propuesta nueva.
 - El verde (Field Green) es el color de autoridad: navegación, texto sobre
   fondo claro, franjas institucionales. El dorado (Harvest Gold) es escaso a
   propósito: solo para la acción principal y los destacados.
-- Radios chicos (2–12px): "prolijo" sin caer en la forma "pill" de una app de
-  consumo.
+- Esquinas suaves y generosas (10–28px, botones y badges en `full`/pill):
+  decisión posterior sobre una referencia visual (Omega, un blog de
+  agencia) que el usuario trajo explícitamente para reemplazar la escala
+  chica original — ver "Shapes" más abajo.
 - Sin ilustración ni iconografía genérica de stock: cuando no hay una foto
   real todavía (como las fichas de campos, que aún no tienen carga de
   imágenes), se usa un bloque de color sólido en vez de inventar una imagen.
@@ -159,12 +162,26 @@ simular altura física.
 
 ## Shapes
 
-Radios chicos en toda la interfaz (2–12px, escala `radius` de
-`@cair/tokens`): suficiente para sentirse moderno sin caer en la forma
-"pill" de una app de consumo. Las cards y el panel de búsqueda usan 4px
-(`radius.md`); no hay ningún elemento con esquinas completamente rectas ni
-completamente redondeadas salvo excepciones puntuales (badges circulares,
-si se agregan más adelante).
+**Cambio de dirección (sobre la base original de Stitch):** el usuario trajo
+una referencia visual externa (el blog de "Omega", una agencia — no un comp
+de Stitch) pidiendo esquinas notoriamente más redondeadas en todo el sitio,
+"como estilo para todo de acá en más". Reemplaza la escala chica original
+(2–12px, "prolijo sin caer en pill") por una más generosa: **10–28px** para
+contenedores (escala `radius` de `@cair/tokens`), y **`radius.full`** (pill
+completo) para botones y badges — ahí sí se adopta la forma "pill" que la
+dirección original evitaba a propósito.
+
+- `radius.sm` (10px): inputs, chips chicos.
+- `radius.md` (16px): tablas, contenedores medianos.
+- `radius.lg` (22px): imágenes y mapas grandes, popup de Mapbox.
+- `radius.xl` (28px): `Card` — la superficie de contenedor más visible del
+  sitio (campos destacados, noticias, estadísticas del panel).
+- `radius.full`: `Button` y `Badge`, sin excepción.
+
+Todo esto vive en un solo lugar (`@cair/tokens` + el `@theme` de
+`packages/ui/src/styles.css`, que el test `styles.test.ts` mantiene en
+sincro) — cambiar la identidad de nuevo en el futuro es editar esos dos
+archivos, no cada `className` suelto.
 
 ## Components
 
@@ -175,7 +192,7 @@ depende de `StyleSheet` (ADR 0008).
 
 ### Button (`@cair/ui/Button`)
 
-- **Shape:** radio 2px (`rounded-sm`).
+- **Shape:** pill completo (`rounded-full`) — ver "Shapes" arriba.
 - **`variant="primary"`:** fondo Harvest Gold, texto Field Green, semibold.
   El único botón dorado por vista — ver The Scarcity Rule.
 - **`variant="secondary"`:** borde Field Green, transparente.
@@ -185,8 +202,8 @@ depende de `StyleSheet` (ADR 0008).
 
 ### FormField / FormTextarea / FormCheckbox (`@cair/ui`)
 
-- **Style:** borde 1px `neutral.700`, fondo blanco, radio 2px, label
-  semibold arriba, mensaje de error en `danger` abajo.
+- **Style:** borde 1px `neutral.700`, fondo blanco, radio 10px
+  (`rounded-sm`), label semibold arriba, mensaje de error en `danger` abajo.
 - Un solo componente para los cinco formularios del sitio (ingreso,
   registro, alta/edición de campo, consulta) — antes cada uno repetía el
   mismo markup.
@@ -194,7 +211,8 @@ depende de `StyleSheet` (ADR 0008).
 
 ### Card (`@cair/ui/Card`)
 
-- **Corner Style:** 4px (`rounded-md`).
+- **Corner Style:** 28px (`rounded-xl`) — el radio más grande de la escala,
+  a propósito: es la superficie de contenedor más visible del sitio.
 - **Background:** blanco (`neutral.50`), borde sutil `neutral.600`.
 - Base de las tarjetas de "Campos destacados", "Mis campos", las
   estadísticas del panel, la ficha de contacto y "Otros campos publicados".
@@ -205,8 +223,9 @@ depende de `StyleSheet` (ADR 0008).
 
 ### Badge (`@cair/ui/Badge`)
 
-- Pill Publicado/Borrador: `tone="brand"` (fondo `brand.900`) o
-  `tone="neutral"` (fondo `neutral.600`), siempre texto `neutral.50`.
+- Pill completo (`rounded-full`) Publicado/Borrador: `tone="brand"` (fondo
+  `brand.900`) o `tone="neutral"` (fondo `neutral.600`), siempre texto
+  `neutral.50`.
 
 ### Hero search
 
@@ -221,7 +240,7 @@ depende de `StyleSheet` (ADR 0008).
   (`fitBounds`) según las coordenadas reales — a diferencia del comp
   original de Stitch, que usa una captura de pantalla con un pin dibujado
   encima.
-- **Contenedor:** tarjeta blanca, borde `neutral.600`, radio 8px
+- **Contenedor:** tarjeta blanca, borde `neutral.600`, radio 22px
   (`rounded-lg`), sombra (`shadow-lg`), **altura fija** (`420px` / `560px`
   en `md:`) — no `aspect-ratio`: en Safari el contenedor colapsaba a 0px de
   alto con `aspect-video`, así que se usa el mismo patrón de altura
@@ -244,7 +263,7 @@ depende de `StyleSheet` (ADR 0008).
 ### Formulario de ingreso
 
 - Misma paleta de inputs que el resto del sitio (borde `neutral.700`, radio
-  2px). Un solo mensaje de error genérico si falla el login ("Email o
+  10px). Un solo mensaje de error genérico si falla el login ("Email o
   contraseña incorrectos"): nunca decir cuál de los dos campos estuvo mal.
 
 ### Panel de socios (Operate, con sidebar propio)

@@ -15,7 +15,10 @@
 .popup-tarjeta-campo .mapboxgl-popup-content {
   padding: 0;
   overflow: hidden;
-  border-radius: 0.5rem;
+  /* No puede leer el token vía clase de Tailwind: es CSS que apunta al DOM
+   * interno de Mapbox, no markup propio. Mismo valor que --radius-lg de
+   * @cair/ui/styles.css (22px) — actualizar los dos juntos si cambia. */
+  border-radius: 22px;
   box-shadow: 0 10px 25px rgb(0 0 0 / 0.15);
 }
 .popup-tarjeta-campo .mapboxgl-popup-tip {

@@ -13,6 +13,6 @@ export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
 }
 
 export function Badge({ tone = 'neutral', className, ...props }: BadgeProps) {
-  const base = `rounded-sm px-2 py-1 text-xs font-semibold ${ESTILOS_POR_TONO[tone]}`;
+  const base = `rounded-full px-3 py-1 text-xs font-semibold ${ESTILOS_POR_TONO[tone]}`;
   return <span className={className ? `${base} ${className}` : base} {...props} />;
 }
