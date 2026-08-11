@@ -67,6 +67,16 @@ export const ETIQUETAS_TIPO_CAMPO: Record<string, string> = {
   mixto: 'Mixto',
 };
 
+/** Etiquetas legibles de `noticias.categoria` — mismo criterio que
+ * `ETIQUETAS_MODALIDAD_CAMPO` de arriba. */
+export const ETIQUETAS_CATEGORIA_NOTICIA: Record<string, string> = {
+  mercado: 'Mercado',
+  institucional: 'Institucional',
+  eventos: 'Eventos',
+  regulaciones: 'Regulaciones',
+  tecnologia: 'Tecnología',
+};
+
 /**
  * Formatea `campos.precio_usd` para mostrarlo. `null` es un estado real del
  * negocio ("precio a consultar"), no un dato faltante — se muestra como tal
@@ -105,6 +115,9 @@ export {
   incluirValorActualSiFalta,
   type OpcionGeografica,
 } from './ubicacion-geografica';
+
+export { generarSlug } from './slug';
+export { urlObjetoR2, type VarianteFotoR2 } from './url-r2';
 
 export function groupBy<T, K>(items: readonly T[], obtenerClave: (item: T) => K): Map<K, T[]> {
   const resultado = new Map<K, T[]>();

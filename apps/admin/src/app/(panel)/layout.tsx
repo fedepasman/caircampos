@@ -1,13 +1,13 @@
 import Link from 'next/link';
-import { BarChart3, Building2, ClipboardCheck, LayoutDashboard } from 'lucide-react';
+import { BarChart3, Building2, ClipboardCheck, LayoutDashboard, Newspaper } from 'lucide-react';
 import { BotonCerrarSesion } from '@/components/boton-cerrar-sesion';
 
 /**
  * Chrome del panel de admin: sidebar a la izquierda, mismo patrón que
  * `apps/web/src/app/panel/layout.tsx` (panel de socios) — wordmark adentro
- * del sidebar, no un header arriba de la página. Cuatro destinos reales:
- * Panel, Moderación, Estadísticas, Socios. `/ingresar` queda fuera de este
- * Route Group.
+ * del sidebar, no un header arriba de la página. Cinco destinos reales:
+ * Panel, Moderación, Estadísticas, Socios, Noticias. `/ingresar` queda
+ * fuera de este Route Group.
  *
  * En mobile el sidebar de 256px no cabe: colapsa a una barra horizontal
  * arriba (`flex-col` en el contenedor, `sm:flex-row` recién desde tablet),
@@ -57,6 +57,14 @@ export default function PanelLayout({ children }: { children: React.ReactNode })
           >
             <Building2 size={18} />
             <span className="hidden sm:inline">Socios</span>
+          </Link>
+          <Link
+            href="/noticias"
+            title="Noticias"
+            className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-semibold whitespace-nowrap text-neutral-900 hover:bg-neutral-300"
+          >
+            <Newspaper size={18} />
+            <span className="hidden sm:inline">Noticias</span>
           </Link>
         </nav>
 

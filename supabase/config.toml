@@ -443,6 +443,12 @@ entrypoint = "./functions/subir-foto-campo/index.ts"
 # For example, if you want to serve static HTML pages in your function:
 # static_files = [ "./functions/subir-foto-campo/*.html" ]
 
+[functions.subir-foto-noticia]
+enabled = true
+verify_jwt = true
+import_map = "./functions/subir-foto-noticia/deno.json"
+entrypoint = "./functions/subir-foto-noticia/index.ts"
+
 # SMTP de producción, solo para el proyecto de producción — `supabase start`
 # local sigue usando Mailpit (ver OPERACIONES.md §9): así los tests locales
 # no consumen la cuota de Resend ni dependen de la red. Necesario porque el

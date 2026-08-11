@@ -12,6 +12,8 @@ const esquema = z.object({
   NEXT_PUBLIC_ADMIN_URL: z.url('Debe ser una URL válida'),
   // Para el selector de ubicación del alta de inmobiliarias (Mapbox).
   NEXT_PUBLIC_MAPBOX_TOKEN: z.string().min(1),
+  // Para previsualizar la portada de una noticia ya subida a R2.
+  NEXT_PUBLIC_R2_PUBLIC_URL: z.url('Debe ser una URL válida'),
 });
 
 const resultado = esquema.safeParse({
@@ -19,6 +21,7 @@ const resultado = esquema.safeParse({
   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
   NEXT_PUBLIC_ADMIN_URL: process.env.NEXT_PUBLIC_ADMIN_URL,
   NEXT_PUBLIC_MAPBOX_TOKEN: process.env.NEXT_PUBLIC_MAPBOX_TOKEN,
+  NEXT_PUBLIC_R2_PUBLIC_URL: process.env.NEXT_PUBLIC_R2_PUBLIC_URL,
 });
 
 if (!resultado.success) {

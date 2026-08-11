@@ -188,3 +188,38 @@ export const esquemaNuevaContrasena = z
   });
 
 export type NuevaContrasena = z.infer<typeof esquemaNuevaContrasena>;
+
+/**
+ * Categorías fijas de una noticia, mismo criterio que `MODALIDADES_CAMPO`:
+ * el `check` de `09_noticias.sql` es la fuente de verdad real, este enum
+ * solo tiene que quedar en sincro con esa lista.
+ */
+export const CATEGORIAS_NOTICIA = [
+  'mercado',
+  'institucional',
+  'eventos',
+  'regulaciones',
+  'tecnologia',
+] as const;
+
+/**
+ * Alta/edición de una noticia desde el panel de admin de CAIR.
+ *
+ * `imagen_object_key` queda fuera a propósito: se escribe aparte, después
+ * de subir el archivo a R2 (mismo motivo por el que `campo_fotos` no pasa
+ * por `esquemaCampo`). `slug` se autogenera del título en el formulario,
+ * pero viaja como campo propio porque el admin puede editarlo a mano.
+ */
+export const esquemaNoticia = z.object({
+  titulo: z.string().min(1, 'Ingresá un título'),
+  slug: z
+    .string()
+    .min(1, 'Ingresá un slug')
+    .regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, 'Solo minúsculas, números y guiones simples'),
+  categoria: z.enum(CATEGORIAS_NOTICIA, 'Elegí una categoría'),
+  cuerpo: z.string().min(1, 'Escribí el contenido de la noticia'),
+  fecha_publicacion: z.coerce.date(),
+  publicado: z.coerce.boolean(),
+});
+
+export type Noticia = z.infer<typeof esquemaNoticia>;
