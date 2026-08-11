@@ -1,0 +1,15 @@
+CREATE TABLE public.noticias (id uuid DEFAULT gen_random_uuid() NOT NULL, titulo text NOT NULL, slug text NOT NULL, categoria text NOT NULL, cuerpo text NOT NULL, imagen_object_key text, fecha_publicacion timestamp with time zone DEFAULT now() NOT NULL, publicado boolean DEFAULT false NOT NULL, created_at timestamp with time zone DEFAULT now() NOT NULL);
+COMMENT ON TABLE public.noticias IS 'Noticias publicadas por CAIR. Alta, edición y borrado únicamente desde el panel de admin.';
+ALTER TABLE public.noticias ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.noticias ADD CONSTRAINT noticias_categoria_check CHECK (categoria = ANY (ARRAY['mercado'::text, 'institucional'::text, 'eventos'::text, 'regulaciones'::text, 'tecnologia'::text]));
+ALTER TABLE public.noticias ADD CONSTRAINT noticias_pkey PRIMARY KEY (id);
+ALTER TABLE public.noticias ADD CONSTRAINT noticias_slug_check CHECK (slug ~ '^[a-z0-9]+(-[a-z0-9]+)*$'::text);
+ALTER TABLE public.noticias ADD CONSTRAINT noticias_slug_key UNIQUE (slug);
+GRANT SELECT ON public.noticias TO anon;
+GRANT DELETE, INSERT, SELECT, UPDATE ON public.noticias TO authenticated;
+GRANT MAINTAIN, REFERENCES, TRIGGER, TRUNCATE ON public.noticias TO service_role;
+CREATE INDEX noticias_publicado_fecha_idx ON public.noticias (fecha_publicacion DESC) WHERE publicado = true;
+CREATE POLICY "CAIR borra las noticias" ON public.noticias FOR DELETE TO authenticated USING ((((( SELECT auth.jwt() AS jwt) -> 'app_metadata'::text) ->> 'rol'::text) = 'admin'::text));
+CREATE POLICY "CAIR da de alta noticias" ON public.noticias FOR INSERT TO authenticated WITH CHECK ((((( SELECT auth.jwt() AS jwt) -> 'app_metadata'::text) ->> 'rol'::text) = 'admin'::text));
+CREATE POLICY "CAIR edita las noticias" ON public.noticias FOR UPDATE TO authenticated USING ((((( SELECT auth.jwt() AS jwt) -> 'app_metadata'::text) ->> 'rol'::text) = 'admin'::text)) WITH CHECK ((((( SELECT auth.jwt() AS jwt) -> 'app_metadata'::text) ->> 'rol'::text) = 'admin'::text));
+CREATE POLICY "Cualquiera ve las noticias publicadas, CAIR ve todas" ON public.noticias FOR SELECT TO anon, authenticated USING (((publicado = true) OR (((( SELECT auth.jwt() AS jwt) -> 'app_metadata'::text) ->> 'rol'::text) = 'admin'::text)));

@@ -180,6 +180,42 @@ export type Database = {
           },
         ];
       };
+      noticias: {
+        Row: {
+          categoria: string;
+          created_at: string;
+          cuerpo: string;
+          fecha_publicacion: string;
+          id: string;
+          imagen_object_key: string | null;
+          publicado: boolean;
+          slug: string;
+          titulo: string;
+        };
+        Insert: {
+          categoria: string;
+          created_at?: string;
+          cuerpo: string;
+          fecha_publicacion?: string;
+          id?: string;
+          imagen_object_key?: string | null;
+          publicado?: boolean;
+          slug: string;
+          titulo: string;
+        };
+        Update: {
+          categoria?: string;
+          created_at?: string;
+          cuerpo?: string;
+          fecha_publicacion?: string;
+          id?: string;
+          imagen_object_key?: string | null;
+          publicado?: boolean;
+          slug?: string;
+          titulo?: string;
+        };
+        Relationships: [];
+      };
       socios: {
         Row: {
           created_at: string;
