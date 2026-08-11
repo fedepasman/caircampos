@@ -4,7 +4,7 @@ import type { ButtonHTMLAttributes } from 'react';
 export type ButtonVariant = 'primary' | 'secondary';
 
 const ESTILOS_BASE =
-  'rounded-sm px-6 py-3 text-base font-semibold transition-colors disabled:opacity-60';
+  'rounded-full px-6 py-3 text-base font-semibold transition-colors disabled:opacity-60';
 
 const ESTILOS_POR_VARIANTE: Record<ButtonVariant, string> = {
   // El dorado escaso: la acción principal de la pantalla, nunca más de una

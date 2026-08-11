@@ -111,15 +111,18 @@ export const spacing = {
 } as const;
 
 /**
- * Radios de borde. Valores tomados del DESIGN.md de origen: "Soft" pero no
- * "pill" — cards, inputs y botones en 4px, imágenes grandes hasta 12px.
+ * Radios de borde. Identidad "esquinas suaves" en toda la interfaz —
+ * decisión del usuario sobre una referencia visual (Omega), que reemplaza
+ * la escala chica (2–12px) del DESIGN.md original. `full` sigue siendo el
+ * único valor "pill" de verdad; el resto son pasos generosos pero no
+ * circulares.
  */
 export const radius = {
   none: 0,
-  sm: 2,
-  md: 4,
-  lg: 8,
-  xl: 12,
+  sm: 10,
+  md: 16,
+  lg: 22,
+  xl: 28,
   full: 9999,
 } as const;
 
