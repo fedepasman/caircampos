@@ -8,6 +8,7 @@ const ENLACES = [
   { href: '/campos?modalidad=venta', etiqueta: 'Comprar' },
   { href: '/campos?modalidad=arrendamiento', etiqueta: 'Alquilar' },
   { href: '/inmobiliarias', etiqueta: 'Entidades Rurales' },
+  { href: '/noticias', etiqueta: 'Noticias' },
 ];
 
 /**
