@@ -34,6 +34,7 @@ ios/
 android/
 *.orig.*
 *.jks
+expo-env.d.ts
 
 # ─── Supabase ────────────────────────────────────────────────────────────────
 # El directorio temporal del CLI local. `schemas/`, `migrations/`, `functions/`
