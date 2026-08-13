@@ -13,7 +13,12 @@
     },
     "preview": {
       "distribution": "internal",
-      "channel": "preview"
+      "channel": "preview",
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://pibljbgvkilwfrdgtcqm.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY": "sb_publishable_hcyqjNtcodalJMQR1JCH0g_kKq-r9MU",
+        "EXPO_PUBLIC_R2_PUBLIC_URL": "https://pub-06997f89b9114b04a7f0bd989cb514eb.r2.dev"
+      }
     },
     "production": {
       "channel": "production",
