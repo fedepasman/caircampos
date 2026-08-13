@@ -368,3 +368,151 @@ A mano en `/campos`:
    recorte de viewport de antes.
 8. Alejar el zoom hasta 0 campos visibles: confirmar el mensaje
    distinto de vacío.
+
+---
+
+## Ideas de GIS avanzado (sin investigar todavía — solo brainstorm)
+
+A diferencia de las demás entradas de este archivo, estas ideas **no
+están investigadas ni diseñadas** — es una lista de posibilidades para
+evaluar y priorizar en algún momento, no algo listo para implementar
+directo. Cuando se elija una, hay que investigarla en serio (APIs
+reales, costos, esfuerzo) antes de convertirla en un plan.
+
+Contexto: ya existe PostGIS habilitado, un índice GiST sobre
+`campos.ubicacion`, la RPC `campos_en_radio` para búsqueda circular, y
+Mapbox GL en el cliente (web) con clustering de marcadores. Estas ideas
+parten de eso.
+
+### Con lo que ya está disponible (Mapbox + PostGIS), esfuerzo bajo
+
+- **Búsqueda por polígono libre**: que el comprador dibuje un área
+  irregular en el mapa (no solo el círculo de radio que ya existe) y
+  filtrar campos con `ST_Contains`/`ST_Intersects` contra ese polígono.
+- **Isócronas** ("campos a 3 horas en auto desde Buenos Aires"): la
+  Directions/Isochrone API de Mapbox ya está pagada/disponible con el
+  mismo token que se usa hoy para el mapa.
+- **Heatmap de precio por hectárea por zona**: agregado por región, no
+  por campo individual — encaja con la regla de "CAIR solo ve
+  agregados" que ya rige el resto del producto.
+- **Insights al hacer clic en un cluster**: mostrar precio promedio y
+  hectáreas promedio de ese grupo antes de hacer zoom (el clustering ya
+  existe en `mapa-campos.tsx`, esto es agregar un popup con un query
+  agregado).
+- **Toggle a vista satelital**: Mapbox ya tiene el estilo
+  `mapbox://styles/mapbox/satellite-streets-v12` — es un selector de
+  estilo de mapa, sin costo ni infraestructura nueva.
+- **"Cerca mío"**: usar la Geolocation API del navegador para centrar
+  el mapa en la ubicación del comprador y ordenar por proximidad —
+  nada de backend nuevo, solo un botón más en el buscador del mapa.
+- **Medir distancia entre dos puntos**: herramienta simple de
+  click-click en el mapa que muestra los km entre dos ubicaciones (útil
+  para comparar un campo contra una ciudad de referencia).
+- **Comparador de campos**: seleccionar 2-3 campos y verlos resaltados
+  a la vez en el mapa, con una tabla comparativa de hectáreas/precio/
+  ubicación al lado.
+- **Cálculo automático de hectáreas**: si en algún momento se permite
+  a los socios dibujar el polígono real del campo (no solo un pin),
+  calcular las hectáreas con `ST_Area` en vez de que las tipeen a
+  mano — evita el clásico error de tipeo de superficie.
+- **Ficha de campo exportable a PDF con mapa embebido**: usar la
+  Static Images API de Mapbox para insertar un mapa estático en un PDF
+  descargable de la ficha, para que el socio lo mande por WhatsApp.
+- **Mapa de cobertura para CAIR (admin)**: cuántos campos/socios hay
+  publicados por provincia, para detectar zonas del país
+  sub-representadas — agregado por diseño, no expone campos ni socios
+  individuales.
+- **Detección de campos linderos**: con `ST_DWithin`/`ST_Touches`
+  sugerir "este campo linda con otro publicado" — interesante para un
+  comprador que busca combinar lotes para juntar más superficie.
+- **Ruta de visita optimizada**: el comprador guarda varios campos de
+  interés y se arma un orden de recorrida razonable por proximidad
+  geográfica (no hace falta un TSP completo, alcanza con ordenar por
+  distancia acumulada) para planificar un viaje.
+- **Auto-sugerir ubicación desde el EXIF de la foto**: cuando el socio
+  sube una foto sacada con el celular, leer las coordenadas GPS del
+  EXIF (si están) y proponer la ubicación del campo automáticamente en
+  vez de que la tipeé/geocodifique a mano. Ojo: la compresión con
+  canvas que ya se implementó (`comprimir-imagen.ts`) borra el EXIF al
+  recodificar, así que esta lectura tendría que pasar sobre el archivo
+  original, antes de comprimirlo.
+- **Control de calidad de polígonos superpuestos**: si en el futuro se
+  cargan polígonos reales de parcela, alertar si dos campos publicados
+  se superponen — probable error de carga de uno de los dos.
+- **Tasación estimada por comparables geográficos**: sugerir un rango
+  de precio/hectárea para un campo nuevo en base al promedio de campos
+  similares (mismo `tipo_campo`, superficie parecida) dentro de un
+  radio — usa solo datos propios ya en la base, sin fuente externa.
+- **Vista de corredor a lo largo de una ruta**: filtrar "campos a
+  X km de la Ruta 9" trazando un buffer geográfico a lo largo de una
+  línea de ruta, en vez de un círculo centrado en un punto.
+- **Terreno 3D con relieve**: Mapbox GL soporta `setTerrain` con los
+  tiles `mapbox-terrain-dem` incluidos en el mismo token que ya se usa
+  — sirve para visualizar pendiente de un campo ganadero sin traer
+  ningún dato nuevo.
+- **Recorrido virtual animado del perímetro**: si en algún momento hay
+  polígono real de un campo, animar la cámara del mapa recorriéndolo
+  con `flyTo`/`easeTo` encadenados (mismo Mapbox GL de siempre).
+- **Pegar coordenadas GPS directo en el formulario de carga**: que el
+  socio pueda pegar algo como `-34.603, -58.381` (copiado de Google
+  Maps o un GPS de mano) en vez de depender solo del geocoder de
+  dirección — mejora chica de UX en el alta de campo.
+- **Auto-centrar el mapa de selección según provincia/localidad**: al
+  elegir la provincia en el formulario, centrar y acercar el mapa a
+  esa zona automáticamente, para que el socio no tenga que buscarla a
+  mano antes de marcar el punto exacto.
+- **Sincronizar hover entre el mapa y la lista de resultados**: pasar
+  el mouse por una tarjeta resalta su pin en el mapa y viceversa —
+  mejora de UX pura sobre lo que ya existe en `/campos`, sin
+  infraestructura nueva.
+- **Mini-mapa "todos los campos de este socio"**: si en algún momento
+  existe una página pública de socio, mostrar sus campos publicados
+  juntos en un mapa chico.
+- **Detección de posibles duplicados por proximidad**: si dos campos
+  quedan con coordenadas casi idénticas y hectáreas parecidas, alertar
+  a CAIR como probable carga duplicada o error — control de calidad,
+  no necesita nada externo.
+- **Geocerca de área de servicio**: si CAIR en algún momento decide
+  limitar el alta de campos a ciertas provincias, validar la ubicación
+  contra un polígono de "área cubierta" al cargar un campo nuevo.
+
+### Piden traer una fuente de datos externa nueva (justificar antes, per CLAUDE.md §2)
+
+- **Polígonos de parcela catastral real** en vez de un pin de lat/lng
+  — si hay datos catastrales provinciales o del IGN disponibles, un
+  comprador rural valora mucho ver el límite exacto del campo.
+- **Capas de aptitud de suelo** del INTA (Instituto Nacional de
+  Tecnología Agropecuaria, tiene mapas públicos) — hoy `tipo_campo`
+  es solo un enum de texto libre (`agricola`/`ganadero`/`mixto`), esto
+  le daría un respaldo objetivo.
+- **NDVI / vegetación satelital** (Sentinel/Copernicus, gratis) —
+  mostrar el estado actual del cultivo/pastura sin que el comprador
+  tenga que viajar a ver el campo.
+- **Distancia a puerto/ruta/ferrocarril**: pre-calculada con PostGIS
+  contra un dataset de referencia (Vialidad Nacional tiene datos
+  abiertos) — relevante para logística de exportación de granos,
+  serviría como filtro/orden nuevo en `/campos`.
+- **Clima histórico / precipitaciones por zona**: datos abiertos del
+  SMN (Servicio Meteorológico Nacional), relevante para aptitud
+  agrícola de una zona.
+- **Alertas geográficas guardadas**: que un comprador guarde una zona
+  de interés (polígono o radio) y reciba un email (vía Resend, ya
+  configurado) cuando se publique un campo nuevo ahí adentro —
+  combina PostGIS (`ST_Contains` contra el polígono guardado) con un
+  job periódico o un trigger en `campos`.
+- **Capas de recursos hídricos**: ríos, arroyos, lagunas, acceso a
+  riego — muy relevante para valorar un campo agrícola/ganadero, el
+  Instituto Nacional del Agua tiene datasets abiertos.
+- **Street View / Mapillary embebido en la ficha**: ver el frente y el
+  camino de acceso al campo sin viajar — Mapillary tiene un tier
+  gratuito con imágenes contribuidas por la comunidad.
+- **Comparación temporal de imágenes satelitales** (antes/después): útil
+  para que un comprador vea si un campo fue desmontado o cambió de uso
+  en los últimos años — debida diligencia previa a la compra.
+- **Zonas de riesgo de incendio/inundación**: datos del Servicio
+  Nacional de Manejo del Fuego o Defensa Civil, relevante para aptitud
+  ganadera y para que el comprador entienda el riesgo antes de comprar.
+- **Distancia a escuela/hospital/pueblo más cercano**: relevante para
+  una familia que va a vivir en el campo, no solo para la producción
+  — hoy el foco está en aptitud productiva, esto suma el ángulo
+  residencial.

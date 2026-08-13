@@ -212,7 +212,15 @@ export default async function PanelPage() {
         </div>
 
         <div>
-          <h2 className="font-display text-xl font-semibold text-neutral-950">Mis datos</h2>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h2 className="font-display text-xl font-semibold text-neutral-950">Mis datos</h2>
+            <Link
+              href="/panel/perfil"
+              className="text-brand-900 text-sm font-semibold whitespace-nowrap underline underline-offset-4"
+            >
+              Editar perfil
+            </Link>
+          </div>
           <Card className="mt-4 p-6">
             <p className="font-display text-lg font-semibold text-neutral-950">{socio.nombre}</p>
             <p className="mt-1 text-sm text-neutral-800">{user.email}</p>
