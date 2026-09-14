@@ -26,7 +26,7 @@ catalog:
   typescript-eslint: 8.65.0
   eslint-config-prettier: 10.1.8
   eslint-plugin-react-hooks: 7.1.1
-  '@next/eslint-plugin-next': 16.2.11
+  '@next/eslint-plugin-next': 16.3.4
   prettier: 3.9.6
   prettier-plugin-tailwindcss: 0.8.1
   vitest: 4.1.10
@@ -39,7 +39,7 @@ catalog:
   '@supabase/ssr': 0.12.3
 
   # --- Web (Next.js) ---
-  next: 16.2.11
+  next: 16.3.4
   # React queda en la versión que fija Expo SDK 57, no en la última. Next 16
   # acepta cualquier ^19, así que unificar acá es gratis para web y evita que
   # el monorepo tenga dos Reacts distintos.
@@ -92,10 +92,12 @@ allowBuilds:
   sharp: true
 
 # Fuerza versiones parcheadas de dos dependencias transitivas de `next`
-# (no directas de este repo): sin esto, `pnpm audit` reporta 5 vulnerabilidades
-# (2 moderate, 3 high) heredadas de `next > sharp` y `next > postcss`.
+# (no directas de este repo): sin esto, `pnpm audit` reporta vulnerabilidades
+# heredadas de `next > sharp` y `next > postcss`.
 # Versiones elegidas por ser las mínimas parcheadas con más de una semana
 # publicadas (ver `minimumReleaseAge` arriba), no las últimas disponibles.
+# `sharp` subió de 0.35.3 a 0.35.4: la 0.35.3 (parche anterior) resultó
+# vulnerable a un CVE de libheif publicado después (GHSA-g89c-p67h-r497).
 overrides:
-  sharp: 0.35.3
+  sharp: 0.35.4
   postcss: 8.5.20
