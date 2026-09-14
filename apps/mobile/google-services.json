@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "144831467992",
+    "project_id": "cair-8b4c0",
+    "storage_bucket": "cair-8b4c0.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:144831467992:android:277e98e4e62860929d62ad",
+        "android_client_info": {
+          "package_name": "ar.org.cair.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBcN0Of7STmhB44Ump4CJjIxWnHN4cN1Q4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
