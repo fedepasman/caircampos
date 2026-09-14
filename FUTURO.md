@@ -11,6 +11,133 @@ código y en el historial de git, no hace falta duplicarla acá).
 
 ---
 
+## Búsqueda de campos asistida por IA
+
+Hoy `/campos` se filtra con un formulario clásico (modalidad, tipo,
+hectáreas, precio, zona en el mapa). La idea es sumar una entrada en
+lenguaje natural — _"Me interesan campos de ganado, no más de 3000
+hectáreas en las mejores zonas ganaderas"_ — sin que la IA tenga acceso
+directo a la base en ningún momento: solo traduce texto libre a los
+mismos parámetros estructurados que el formulario ya produce, y quien
+consulta la base sigue siendo la query de Supabase de siempre, con Zod
+validando la salida de la IA antes de usarla (mismo criterio que cualquier
+otro dato que cruza un borde de confianza en este proyecto).
+
+**Decisión ya tomada:** nunca dejar que el modelo genere SQL ni tenga una
+herramienta de consulta directa a la base. Es la diferencia entre "un
+traductor de intención" (seguro, la capa de Zod + RLS de siempre sigue
+siendo la que manda) y "un agente con acceso a la base" (superficie de
+inyección real, resultados no deterministas, nada de lo que ya protege al
+resto del proyecto lo protegería a esto). Tampoco un modelo local: el stack
+entero es serverless (Vercel + Supabase + Cloudflare, sin cómputo propio
+corriendo 24/7, ver `OPERACIONES.md`) — un modelo local necesitaría la
+primera pieza de infraestructura con estado del proyecto, para una tarea
+(extraer 3-4 campos de una frase) que un modelo chico y rápido por API
+(clase Haiku) resuelve con altísima confiabilidad y costo por búsqueda casi
+nulo.
+
+**Nota de proceso:** esta es la primera pieza de IA real del stack. Hoy
+`CLAUDE.md` dice que el skill `llm-security` "no aplica: el stack no tiene
+ningún componente LLM" — el día que se implemente cualquiera de las fases
+de abajo, esa línea queda desactualizada y el skill pasa a ser relevante
+de verdad para revisar el diseño.
+
+### Fase 1 — Extracción de filtros estructurados (la base, sin esto no hay nada más)
+
+- Esquema Zod nuevo en `@cair/schemas` que espeje los parámetros que
+  `/campos` ya acepta por query string (`modalidad`, `tipo_campo`,
+  `hectareas_min/max`, `precio_min/max`, `provincia`, `q`) — es literalmente
+  el contrato de salida que se le exige al modelo.
+- Route Handler en `apps/web` (no Edge Function: hoy el buscador de campos
+  solo existe en el sitio público, no en mobile — si mobile lo suma más
+  adelante, ahí sí migra a Edge Function por la regla de "lo que necesitan
+  ambos clientes" de `CLAUDE.md`). Recibe el texto libre, llama a la API de
+  Claude pidiendo salida estructurada (tool use / structured output) contra
+  el esquema de arriba, parsea la respuesta con `.safeParse()` antes de
+  usarla.
+- El resultado son los mismos query params que ya arma
+  `apps/web/src/app/(sitio)/campos/page.tsx` — no se toca esa página, se le
+  agrega una entrada alternativa que redirige a `/campos?...` con lo que
+  extrajo la IA.
+- **Contexto de dominio curado, no conocimiento genérico del modelo**: para
+  algo como "mejores zonas ganaderas" no confiar en que el modelo lo sepa
+  de memoria (puede errar o quedar desactualizado) — pasarle una lista
+  curada por CAIR como parte del prompt. La autoridad de dominio la tiene
+  CAIR; el modelo solo interpreta lenguaje ambiguo.
+- **Fallback obligatorio**: si la llamada a la IA falla o da baja confianza,
+  cae al buscador de texto libre que ya existe (`escaparParaFiltroOr`) —
+  nunca bloquear la búsqueda por esto.
+- Secreto nuevo, mismo patrón que cualquier otro (`RESEND_API_KEY`, R2):
+  `ANTHROPIC_API_KEY` solo servidor, nunca `NEXT_PUBLIC_`.
+
+### Fase 2 — Explicar el resultado ("por qué matchea")
+
+Barato: no necesita otra llamada a la IA. En el render de cada tarjeta de
+`/campos`, derivar de los filtros ya aplicados por qué ese campo matchea
+("Ganadero, 2400 ha — dentro de tu límite de 3000 — en Corrientes, zona
+ganadera") y mostrarlo. Importa en un sector donde la confianza
+institucional es el activo de CAIR (la home ya tiene "Transparencia" como
+una de sus tres franjas) — una IA que filtra sin explicarse genera
+desconfianza, una que muestra el razonamiento no.
+
+### Fase 3 — Ranking semántico (embeddings)
+
+Para lo que un filtro estructurado no puede capturar ("con buen acceso",
+"potencial de riego", texto libre de `campos.descripcion`). Requiere:
+
+- Habilitar la extensión `pgvector` en `supabase/schemas/00_extensions.sql`
+  (no está instalada todavía — confirmado, solo está PostGIS).
+- Columna `embedding vector(N)` en `campos`, recalculada on insert/update
+  (trigger o Edge Function que llama a una API de embeddings).
+- Los filtros estructurados de la Fase 1 siguen siendo el corte duro (nunca
+  mostrar un campo de 5000 ha a quien pidió "no más de 3000"); el embedding
+  solo reordena _dentro_ de lo que ya cumple la condición dura — nunca la
+  reemplaza.
+
+### Fase 4 — Perfiles de búsqueda guardados + alertas proactivas
+
+La que más cambia el negocio, no solo la búsqueda: en vez de que la IA
+responda solo cuando preguntan, un comprador guarda su pedido en lenguaje
+natural, se extrae una vez a filtros estructurados (Fase 1), y esa
+"búsqueda guardada" corre contra cada campo nuevo que se publica — si
+matchea, aviso al comprador.
+
+- Tabla nueva `busquedas_guardadas` (texto original + filtros extraídos),
+  vinculada a `compradores` — mismo criterio de RLS que `consultas`.
+- Trigger en `campos` (en la transición a `publicado = true` y
+  `revisado_por_cair = 'aprobado'`) que corre las búsquedas guardadas
+  contra el campo nuevo — **no** reprocesar campos viejos contra búsquedas
+  nuevas, para no generar un alud de notificaciones retroactivas al guardar
+  una búsqueda.
+- Reusa el patrón exacto que ya existe para avisarle a un socio de una
+  consulta nueva (`04_consultas.sql` → Edge Function
+  `enviar-notificacion-consulta`, trigger vía `pg_net`) — acá el evento es
+  "se publicó un campo que matchea" en vez de "entró una consulta", con
+  Resend para el mail si el comprador no tiene la app.
+- No abre superficie de privacidad nueva: sigue siendo la misma regla de
+  siempre (el dato de contacto del comprador nunca sale de su lado) — lo
+  único que cruza es "este campo matchea este perfil", mismo tipo de evento
+  que ya dispara consultas hoy.
+- Decisiones a tomar cuando se implemente: cuántas búsquedas guardadas por
+  comprador, si expiran, y si el aviso es push, mail o ambos (probablemente
+  configurable, mismo lugar que las preferencias de notificación si en
+  algún momento existen).
+
+### Fase 5 — WhatsApp como canal de entrada (la más grande, dejar para el final)
+
+En vez de depender de que el comprador entre al sitio: mandar el pedido
+por WhatsApp, recibir los campos que matchean directo en el chat. Es la
+integración más cara de todas (API de WhatsApp Business — Twilio o Meta
+Cloud API —, webhook receptor como Edge Function, manejo de opt-in/consentimiento
+según las políticas de WhatsApp Business). Vale la pena porque es
+literalmente el canal que ya se identificó como fuerte en el agro (mismo
+motivo por el que se armó Open Graph con foto y precio para que un campo
+se vea bien al compartirse por WhatsApp), pero merece su propia
+investigación dedicada cuando se la priorice — no alcanza con lo pensado
+acá.
+
+---
+
 ## Migrar los 1220 avisos de campos desde caircampos.org (WordPress viejo)
 
 CAIR tiene 1220 avisos publicados en su sitio actual (WordPress,

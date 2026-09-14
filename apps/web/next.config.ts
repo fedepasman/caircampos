@@ -33,6 +33,15 @@ const config: NextConfig = {
   // para quien busque vulnerabilidades conocidas de una versión concreta.
   poweredByHeader: false,
 
+  // Solo afecta a `next dev`: en producción Next no hace este chequeo. Sin
+  // esto, probar desde el celular (IP de red local o un devtunnel) bloquea
+  // el websocket de HMR — el navegador queda con un bundle desactualizado
+  // respecto del servidor y eso se manifiesta como errores de hidratación
+  // que no tienen que ver con el código. `*.devtunnels.ms` es wildcard real
+  // (Next matchea subdominios), así que cubre cualquier túnel de VS Code sin
+  // tener que actualizar esto en cada sesión.
+  allowedDevOrigins: ['192.168.68.54', '*.devtunnels.ms'],
+
   images: {
     remotePatterns: [
       // Fotografía de stock del hero y de "Ubicaciones principales",

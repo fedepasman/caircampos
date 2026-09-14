@@ -88,6 +88,15 @@ export function formatearPrecioUsd(precioUsd: number | null): string {
 }
 
 /**
+ * Formatea un entero grande para mostrar (miles separados con punto,
+ * convención `es-AR`) — usado por cifras institucionales reales (cantidad
+ * de socios, de campos, hectáreas totales), nunca por valores inventados.
+ */
+export function formatearNumero(valor: number): string {
+  return new Intl.NumberFormat('es-AR').format(valor);
+}
+
+/**
  * Escapa un término de búsqueda antes de interpolarlo en un `.or()` de
  * PostgREST: esa sintaxis usa `,`/`(`/`)` como separadores de filtros, así
  * que sin escapar, un valor como `zzz,titulo.ilike.*` inyecta una condición
