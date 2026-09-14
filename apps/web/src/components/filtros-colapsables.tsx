@@ -37,9 +37,7 @@ export function FiltrosColapsables({
       </button>
 
       {/* `hidden`/`block` decide la visibilidad en mobile; `lg:block` gana
-         siempre en desktop sin importar el estado — mismo patrón que ya usa
-         el botón "Buscar en una zona" de BuscadorPorRadio para su propio
-         modo activo/inactivo. */}
+         siempre en desktop sin importar el estado. */}
       <div className={`${abierto ? 'block' : 'hidden'} mt-4 lg:mt-0 lg:block`}>{children}</div>
     </>
   );
