@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Hanken_Grotesk, Libre_Caslon_Text } from 'next/font/google';
 import { env } from '../lib/env';
+import { ProveedorQuery } from '../components/proveedor-query';
 import './globals.css';
 
 // Self-hosted por Next (sin <link> a Google Fonts en runtime). Los nombres
@@ -43,7 +44,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   // panel/layout.tsx).
   return (
     <html lang="es-AR" className={`${libreCaslonText.variable} ${hankenGrotesk.variable}`}>
-      <body className="font-body bg-neutral-100 text-neutral-950 antialiased">{children}</body>
+      <body className="font-body bg-neutral-100 text-neutral-950 antialiased">
+        <ProveedorQuery>{children}</ProveedorQuery>
+      </body>
     </html>
   );
 }

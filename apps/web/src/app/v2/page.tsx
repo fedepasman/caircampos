@@ -302,7 +302,7 @@ export default async function InicioV2() {
 
           {camposParaMapa && camposParaMapa.length > 0 ? (
             <div className="mt-8">
-              <BuscadorMapa campos={camposParaMapa} />
+              <BuscadorMapa campos={camposParaMapa} basePathFicha="/v2/campos" />
             </div>
           ) : (
             <p className="mt-8 text-center text-neutral-800">

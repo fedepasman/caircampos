@@ -104,21 +104,25 @@ select ok(
   'authenticated debe poder ejecutar public.asignar_numero_socio'
 );
 
--- `campos_en_radio` no es security definer (RLS se aplica normal), así que
+-- `campos_en_bbox` no es security definer (RLS se aplica normal), así que
 -- tanto anon como authenticated pueden ejecutarla — el filtro de a quién le
 -- muestra qué sigue siendo enteramente cosa de las políticas de `campos`.
 select ok(
   has_function_privilege(
-    'anon', 'public.campos_en_radio(double precision, double precision, double precision)', 'EXECUTE'
+    'anon',
+    'public.campos_en_bbox(double precision, double precision, double precision, double precision)',
+    'EXECUTE'
   ),
-  'anon debe poder ejecutar public.campos_en_radio'
+  'anon debe poder ejecutar public.campos_en_bbox'
 );
 
 select ok(
   has_function_privilege(
-    'authenticated', 'public.campos_en_radio(double precision, double precision, double precision)', 'EXECUTE'
+    'authenticated',
+    'public.campos_en_bbox(double precision, double precision, double precision, double precision)',
+    'EXECUTE'
   ),
-  'authenticated debe poder ejecutar public.campos_en_radio'
+  'authenticated debe poder ejecutar public.campos_en_bbox'
 );
 
 -- Las cinco políticas de campos existen con los roles esperados. No

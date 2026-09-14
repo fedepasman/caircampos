@@ -17,11 +17,13 @@ export type CampoParaMapa = Pick<
   campo_fotos?: { object_key: string; orden: number }[];
 };
 
-/** Centro y radio (en km) de una zona de búsqueda, dibujada como círculo. */
-export interface ZonaBusqueda {
-  lat: number;
-  lng: number;
-  radioKm: number;
+/** Bounding box del viewport visible, nombres calcados de los accessors de
+ * `mapboxgl.LngLatBounds` — se pasan directo a la RPC `campos_en_bbox`. */
+export interface BoundingBoxMapa {
+  norte: number;
+  sur: number;
+  este: number;
+  oeste: number;
 }
 
 // Centro de Argentina: encuadre de respaldo si todavía no hay campos
@@ -31,59 +33,6 @@ const CENTRO_ARGENTINA: [number, number] = [-63.6167, -38.4161];
 const FUENTE_CAMPOS = 'campos';
 const CAPA_CLUSTERS = 'clusters';
 const CAPA_CONTEO = 'cluster-count';
-
-const FUENTE_ZONA = 'zona-busqueda';
-const CAPA_ZONA_RELLENO = 'zona-busqueda-relleno';
-const CAPA_ZONA_BORDE = 'zona-busqueda-borde';
-const RADIO_TIERRA_KM = 6371;
-
-interface FeatureCollectionDePoligonos {
-  type: 'FeatureCollection';
-  features: {
-    type: 'Feature';
-    geometry: { type: 'Polygon'; coordinates: [number, number][][] };
-    properties: Record<string, never>;
-  }[];
-}
-
-/**
- * Círculo geodésico aproximado (64 puntos) alrededor de `lat`/`lng`, vía la
- * fórmula de punto-destino sobre una esfera. Cálculo propio, ~15 líneas: no
- * amerita sumar `@turf/turf` (no está en el catálogo) solo para esto.
- */
-function construirCirculoGeojson(zona: ZonaBusqueda): FeatureCollectionDePoligonos {
-  const puntos = 64;
-  const anguloDistancia = zona.radioKm / RADIO_TIERRA_KM;
-  const latRad = (zona.lat * Math.PI) / 180;
-  const lngRad = (zona.lng * Math.PI) / 180;
-
-  const coordenadas: [number, number][] = [];
-  for (let i = 0; i <= puntos; i++) {
-    const rumbo = (i * 2 * Math.PI) / puntos;
-    const latDestino = Math.asin(
-      Math.sin(latRad) * Math.cos(anguloDistancia) +
-        Math.cos(latRad) * Math.sin(anguloDistancia) * Math.cos(rumbo),
-    );
-    const lngDestino =
-      lngRad +
-      Math.atan2(
-        Math.sin(rumbo) * Math.sin(anguloDistancia) * Math.cos(latRad),
-        Math.cos(anguloDistancia) - Math.sin(latRad) * Math.sin(latDestino),
-      );
-    coordenadas.push([(lngDestino * 180) / Math.PI, (latDestino * 180) / Math.PI]);
-  }
-
-  return {
-    type: 'FeatureCollection',
-    features: [
-      {
-        type: 'Feature',
-        geometry: { type: 'Polygon', coordinates: [coordenadas] },
-        properties: {},
-      },
-    ],
-  };
-}
 
 // Forma mínima propia en vez de depender del namespace global `GeoJSON`
 // (lo trae mapbox-gl transitivamente, pero no siempre queda visible según
@@ -173,20 +122,26 @@ function construirTarjetaHover(propiedades: PropiedadesCampo): HTMLDivElement {
 
 export function MapaCampos({
   campos,
-  zona,
-  onClicMapa,
+  basePathFicha,
+  onMoverViewport,
 }: {
   campos: CampoParaMapa[];
-  zona?: ZonaBusqueda | undefined;
-  onClicMapa?: ((lat: number, lng: number) => void) | undefined;
+  basePathFicha: '/campos' | '/v2/campos';
+  onMoverViewport?: ((bbox: BoundingBoxMapa) => void) | undefined;
 }) {
   const contenedorRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const mapaRef = useRef<mapboxgl.Map | null>(null);
-  const onClicMapaRef = useRef(onClicMapa);
+  const onMoverViewportRef = useRef(onMoverViewport);
+  const basePathFichaRef = useRef(basePathFicha);
+  // Solo para sembrar la fuente y el `fitBounds` iniciales — el efecto de
+  // montaje corre una única vez ([]), así que no puede depender de `campos`
+  // directamente sin volver a dispararse en cada refetch por bbox.
+  const camposInicialesRef = useRef(campos);
 
   useEffect(() => {
-    onClicMapaRef.current = onClicMapa;
+    onMoverViewportRef.current = onMoverViewport;
+    basePathFichaRef.current = basePathFicha;
   });
 
   useEffect(() => {
@@ -202,9 +157,10 @@ export function MapaCampos({
     });
     mapaRef.current = mapa;
 
-    const primerCampo = campos[0];
+    const camposIniciales = camposInicialesRef.current;
+    const primerCampo = camposIniciales[0];
     if (primerCampo) {
-      const limites = campos.reduce(
+      const limites = camposIniciales.reduce(
         (acumulado, campo) => acumulado.extend([campo.longitud, campo.latitud]),
         new mapboxgl.LngLatBounds(
           [primerCampo.longitud, primerCampo.latitud],
@@ -263,7 +219,7 @@ export function MapaCampos({
           popup.remove();
         });
         elemento.addEventListener('click', () => {
-          router.push(`/campos/${propiedades.id}`);
+          router.push(`${basePathFichaRef.current}/${propiedades.id}`);
         });
 
         marcador.addTo(mapa);
@@ -282,7 +238,7 @@ export function MapaCampos({
     mapa.on('load', () => {
       mapa.addSource(FUENTE_CAMPOS, {
         type: 'geojson',
-        data: construirGeojson(campos),
+        data: construirGeojson(camposIniciales),
         cluster: true,
         clusterMaxZoom: 14,
         clusterRadius: 50,
@@ -358,62 +314,53 @@ export function MapaCampos({
       actualizarMarcadoresIndividuales();
     });
 
-    // Clic genérico del mapa (no sobre un marcador ni un cluster): usado por
-    // el modo "buscar en una zona" para fijar el centro. Un marcador es un
-    // elemento DOM aparte con su propio listener, así que no compite con
-    // este; superponerse ocasionalmente con el clic de un cluster (que además
-    // hace zoom) es una superposición menor aceptable, no un caso a excluir.
-    function alHacerClicGeneral(evento: MapMouseEvent) {
-      onClicMapaRef.current?.(evento.lngLat.lat, evento.lngLat.lng);
+    // Reporta el viewport hacia afuera en cada `moveend` real (estilo
+    // Airbnb: los resultados de abajo se actualizan según lo que se ve en
+    // el mapa). `evento.originalEvent` distingue un gesto real del usuario
+    // (mouse/touch/wheel) de un movimiento programático — el `fitBounds`
+    // inicial de arriba también dispara `moveend`, pero sin `originalEvent`,
+    // así que se descarta acá sin necesidad de ningún flag propio.
+    function alTerminarMovimiento(evento: {
+      originalEvent?: MouseEvent | WheelEvent | TouchEvent;
+    }) {
+      if (!evento.originalEvent) return;
+      const limites = mapa.getBounds();
+      if (!limites) return;
+      onMoverViewportRef.current?.({
+        norte: limites.getNorth(),
+        sur: limites.getSouth(),
+        este: limites.getEast(),
+        oeste: limites.getWest(),
+      });
     }
-    mapa.on('click', alHacerClicGeneral);
+    mapa.on('moveend', alTerminarMovimiento);
 
     return () => {
-      mapa.off('click', alHacerClicGeneral);
+      mapa.off('moveend', alTerminarMovimiento);
       for (const marcador of marcadoresActivos.values()) marcador.remove();
       mapa.remove();
       mapaRef.current = null;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- `router` es estable entre renders; solo `campos` debe reconstruir el mapa.
-  }, [campos]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- corre una sola vez: `campos` se sincroniza en el efecto de abajo vía `source.setData()`, sin recrear el mapa (mover la cámara del usuario en cada refetch sería lo opuesto de lo que pide el paneo estilo Airbnb).
+  }, []);
 
+  // Sincroniza el dataset del mapa con `campos` (SSR inicial o refetch por
+  // bbox) SIN recrear el `mapboxgl.Map` ni tocar la cámara — a diferencia
+  // del efecto de montaje de arriba, que corre una sola vez.
   useEffect(() => {
     const mapa = mapaRef.current;
     if (!mapa) return;
 
-    function aplicarZona() {
+    function actualizarDatos() {
       if (!mapa) return;
-      const datos: FeatureCollectionDePoligonos = zona
-        ? construirCirculoGeojson(zona)
-        : { type: 'FeatureCollection', features: [] };
-
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion -- mismo motivo que el cast de FUENTE_CAMPOS más arriba.
-      const fuente = mapa.getSource(FUENTE_ZONA) as mapboxgl.GeoJSONSource | undefined;
-      if (fuente) {
-        fuente.setData(datos);
-        return;
-      }
-      if (!zona) return;
-
-      mapa.addSource(FUENTE_ZONA, { type: 'geojson', data: datos });
-      mapa.addLayer({
-        id: CAPA_ZONA_RELLENO,
-        type: 'fill',
-        source: FUENTE_ZONA,
-        paint: { 'fill-color': '#18330c', 'fill-opacity': 0.12 },
-      });
-      mapa.addLayer({
-        id: CAPA_ZONA_BORDE,
-        type: 'line',
-        source: FUENTE_ZONA,
-        paint: { 'line-color': '#18330c', 'line-width': 2 },
-      });
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion -- mismo motivo que el cast de más arriba.
+      const fuente = mapa.getSource(FUENTE_CAMPOS) as mapboxgl.GeoJSONSource | undefined;
+      fuente?.setData(construirGeojson(campos));
     }
 
-    if (mapa.isStyleLoaded()) aplicarZona();
-    else mapa.once('load', aplicarZona);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- deps por valor primitivo, no por identidad del objeto `zona` (se recrea en cada render del padre).
-  }, [zona?.lat, zona?.lng, zona?.radioKm]);
+    if (mapa.isStyleLoaded()) actualizarDatos();
+    else mapa.once('load', actualizarDatos);
+  }, [campos]);
 
   return <div ref={contenedorRef} className="h-full w-full" />;
 }

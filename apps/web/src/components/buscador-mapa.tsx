@@ -25,7 +25,13 @@ type CampoParaBusqueda = Pick<
  * landing de resultados `/campos` (`(sitio)/campos/page.tsx`), que además
  * renderiza server-side — este componente se queda deliberadamente simple.
  */
-export function BuscadorMapa({ campos }: { campos: CampoParaBusqueda[] }) {
+export function BuscadorMapa({
+  campos,
+  basePathFicha,
+}: {
+  campos: CampoParaBusqueda[];
+  basePathFicha: '/campos' | '/v2/campos';
+}) {
   const provincias = useMemo(
     () => Array.from(new Set(campos.map((campo) => campo.provincia))).sort(),
     [campos],
@@ -64,7 +70,7 @@ export function BuscadorMapa({ campos }: { campos: CampoParaBusqueda[] }) {
 
   return (
     <div className="relative mt-8 h-[420px] overflow-hidden rounded-lg border border-neutral-600 bg-neutral-50 shadow-lg md:h-[560px]">
-      <MapaCampos campos={camposFiltrados} />
+      <MapaCampos campos={camposFiltrados} basePathFicha={basePathFicha} />
 
       <div className="absolute top-2 left-2 z-10 sm:top-4 sm:left-4">
         <button

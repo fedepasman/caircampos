@@ -281,7 +281,7 @@ export default async function FichaCampoPage({ params }: { params: Promise<{ id:
                 Ubicación Estratégica
               </h2>
               <div className="mt-3 h-72 overflow-hidden rounded-lg border border-neutral-600 shadow-lg sm:h-96">
-                <MapaCampos campos={[campo]} />
+                <MapaCampos campos={[campo]} basePathFicha="/campos" />
               </div>
             </div>
           </div>

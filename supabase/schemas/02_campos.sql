@@ -152,19 +152,28 @@ create trigger antes_de_guardar_campo
   for each row
   execute function private.resetear_revision_al_publicar();
 
--- Filtro de zona en el mapa (punto 5 del pliego): reusa el índice GiST
--- `campos_ubicacion_idx` de arriba, que existía desde el modelo inicial sin
--- que nada lo usara todavía.
+-- Filtro del viewport visible del mapa (punto 5 del pliego), búsqueda estilo
+-- Airbnb: reusa el índice GiST `campos_ubicacion_idx` de arriba. Reemplaza a
+-- `campos_en_radio` (búsqueda por círculo, con selector manual de radio) —
+-- ver docs/adr/ si se documenta el cambio de UX. Nombres de parámetros
+-- calcados de los accessors de `mapboxgl.LngLatBounds`
+-- (getNorth/getSouth/getEast/getWest) para que el cliente llame sin
+-- traducir nombres.
 --
--- Deliberadamente SIN `security definer`: una función `language sql` corre
--- por default con los privilegios de quien la llama, así que RLS de
--- `campos` se sigue aplicando exactamente igual que en un `select` directo
--- (anon solo ve publicados+aprobados, un socio ve además los suyos, admin
--- ve todo) — no hace falta replicar ningún chequeo de rol adentro, a
--- diferencia de `moderar_campo`/`asignar_numero_socio`, que si son
--- `security definer` porque necesitan evadir RLS a propósito.
-create function public.campos_en_radio(
-  centro_lat double precision, centro_lng double precision, radio_metros double precision
+-- Deliberadamente SIN `security definer`, mismo motivo que tenía
+-- `campos_en_radio`: una función `language sql` corre por default con los
+-- privilegios de quien la llama, así que RLS de `campos` se sigue aplicando
+-- exactamente igual que en un `select` directo (anon solo ve
+-- publicados+aprobados, un socio ve además los suyos, admin ve todo) — no
+-- hace falta replicar ningún chequeo de rol adentro, a diferencia de
+-- `moderar_campo`/`asignar_numero_socio`, que sí son `security definer`
+-- porque necesitan evadir RLS a propósito.
+--
+-- No contempla el antimeridiano (oeste > este): el negocio está acotado a
+-- Argentina/Uruguay (`check (pais in (...))` más abajo), sin casos reales
+-- cerca de ±180°.
+create function public.campos_en_bbox(
+  norte double precision, sur double precision, este double precision, oeste double precision
 )
 returns setof public.campos
 language sql
@@ -173,15 +182,23 @@ set search_path = ''
 as $$
   select *
   from public.campos
-  where extensions.st_dwithin(
+  where extensions.st_intersects(
     ubicacion,
-    extensions.st_setsrid(extensions.st_makepoint(centro_lng, centro_lat), 4326)::extensions.geography,
-    radio_metros
+    extensions.st_makeenvelope(oeste, sur, este, norte, 4326)::extensions.geography
   );
 $$;
 
-comment on function public.campos_en_radio(double precision, double precision, double precision) is
-  'Campos dentro de un radio (en metros) de un punto. RLS se aplica normal: no es security definer.';
+comment on function public.campos_en_bbox(double precision, double precision, double precision, double precision) is
+  'Campos dentro del bounding box (norte/sur/este/oeste) del viewport del mapa. RLS se aplica normal: no es security definer.';
 
-grant execute on function public.campos_en_radio(double precision, double precision, double precision)
+-- Postgres otorga EXECUTE a PUBLIC por defecto en toda función nueva (a
+-- diferencia de las tablas, donde el default de Supabase ya viene sin
+-- TRUNCATE para anon/authenticated) — sin este REVOKE, el GRANT de abajo
+-- sería cosmético: cualquier rol ejecutaría la función igual, vía PUBLIC.
+-- `campos_en_radio` (la función que esta reemplaza) tenía este mismo hueco;
+-- se corrige acá en vez de arrastrarlo.
+revoke execute on function public.campos_en_bbox(double precision, double precision, double precision, double precision)
+  from public;
+
+grant execute on function public.campos_en_bbox(double precision, double precision, double precision, double precision)
   to anon, authenticated;

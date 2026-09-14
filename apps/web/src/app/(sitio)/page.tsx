@@ -255,7 +255,7 @@ export default async function Home() {
           </h2>
 
           {camposParaMapa && camposParaMapa.length > 0 ? (
-            <BuscadorMapa campos={camposParaMapa} />
+            <BuscadorMapa campos={camposParaMapa} basePathFicha="/campos" />
           ) : (
             <p className="mt-8 text-center text-neutral-800">
               Todavía no hay campos publicados para mostrar en el mapa.
